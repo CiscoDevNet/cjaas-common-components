@@ -1,0 +1,74 @@
+/**
+ * Copyright (c) Cisco Systems, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+.connection {
+  margin-left: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background-color: #ec5656;
+  margin-bottom: 10px;
+}
+
+.connection[title="Connected"] {
+  background-color: #087e0e;
+}
+.header {
+  height: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.collapse-details::part(button) {
+  font-size: 12px;
+  line-height: 150%;
+  color: $timeline-hyperlink-text-color;
+}
+
+.person {
+  font-size: 21px;
+  padding: 4px;
+  margin-bottom: 12px;
+  color: white;
+  border-radius: 4px;
+  display: inline-block;
+  background-color: #3ba9ea;
+}
+.refresh {
+  margin-left: auto;
+  margin-bottom: 10px;
+}
+.stream {
+  position: relative;
+  z-index: 1;
+}
+.block {
+  display: block;
+}
+.has-line:not(:last-child)::after {
+  height: 16px;
+  content: " ";
+  width: 1px;
+  display: block;
+  left: 28px;
+  position: relative;
+  top: 100%;
+  background: var(--badge-outline-color, #b2b2b2);
+}
+.badge-text {
+  color: var(--md-secondary-text-color);
+  text-transform: capitalize;
+}
+.empty-state {
+  min-height: 120px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
