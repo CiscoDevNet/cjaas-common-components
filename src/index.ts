@@ -8,5 +8,4 @@
 
 export { Timeline } from "./components/timeline/Timeline";
 export { TimelineItem } from "./components/timeline/TimelineItem";
-
 // eslint-disable-next-line prettier/prettier
