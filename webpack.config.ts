@@ -8,13 +8,13 @@ import RemovePlugin from "remove-files-webpack-plugin";
 import * as webpack from "webpack";
 import merge from "webpack-merge";
 import nodeExternals from "webpack-node-externals";
-import WebpackLoadChunksPlugin from "./webpack.plugin.LoadChunks";
-
 const pSrc = path.resolve("src");
 const pDist = path.resolve("dist");
 export const pBuild = path.resolve("build");
+const pAssets = path.resolve("src/assets");
 const pCss = path.resolve("src/assets/styles");
 const pImg = path.resolve("src/assets/images");
+
 const p1 = path.resolve("./node_modules/@momentum-ui");
 const p2 = path.resolve("../node_modules/@momentum-ui");
 const pMomentum = fs.existsSync(p1) ? p1 : fs.existsSync(p2) ? p2 : null;
@@ -41,11 +41,10 @@ const common: webpack.Configuration = {
         use: {
           loader: "file-loader",
           options: {
-            name: "images/[name].[hash:8].[ext]",
+            name: "images-cjaas-common/[name].[hash:8].[ext]",
             esModule: false
           }
-        },
-        include: pSrc
+        }
       }
     ]
   }
@@ -70,18 +69,9 @@ function ruleCSS({ isDev }: { isDev: boolean }) {
     test: /\.scss$/,
     use: [
       { loader: "lit-scss-loader", options: { minify: !isDev } },
-      { loader: "string-replace-loader", options: { search: /\\/g, replace: "\\\\" } },
       { loader: "extract-loader" },
       { loader: "css-loader", options: { sourceMap: isDev, importLoaders: 2 } },
-      {
-        loader: "sass-loader",
-        options: {
-          sourceMap: isDev,
-          sassOptions: {
-            outputStyle: "compressed"
-          }
-        }
-      },
+      { loader: "sass-loader", options: { sourceMap: isDev } },
       {
         loader: "alias-resolve-loader",
         options: {
@@ -120,11 +110,9 @@ export const commonDev = merge(common, {
       { from: `${pMomentum}/core/images`, to: "images" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "css" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "css" },
-      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" },
-      { from: `${pCss}/*.css`, to: "css", flatten: true },
+      { from: `${pMomentum}/icons/fonts`, to: "fonts" },
       { from: `${pMomentum}/icons/fonts`, to: "icons/fonts" },
-      // if you want 'momentum-ui.min.css' to work we must copy to second location
-      { from: `${pMomentum}/icons/fonts`, to: "fonts" }
+      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" }
     ])
   ]
 });
@@ -137,42 +125,21 @@ const dev = merge(commonDev, {
 // ----------
 
 const commonDist = merge(common, {
+  devtool: "source-map",
   entry: {
-    "index-entry": "./src/index.ts",
-    "comp/md-timeline-entry": "./src/components/timeline/Timeline",
-    "comp/md-timeline-item-entry": "./src/components/timeline/TimelineItem"
+    index: "./src/index.ts"
   },
   output: {
     path: pDist,
-    publicPath: "/",
     filename: "[name].js",
-    chunkFilename: "chunks/[id].js",
     libraryTarget: "umd"
   },
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-      maxInitialRequests: Infinity,
-      maxAsyncRequests: Infinity,
-      minSize: 0
-    }
-  },
-  externals: [nodeExternals({ modulesFromFile: true, importType: "umd" })],
+  externals: [nodeExternals({ modulesFromFile: true }), "@momentum-ui/web-components"],
   plugins: [
     new CleanWebpackPlugin(),
-    new WebpackLoadChunksPlugin({
-      trimNameEnd: 6
-    }),
     new CopyWebpackPlugin([
-      { from: `${pMomentum}/core/fonts`, to: "assets/fonts" },
-      { from: `${pMomentum}/core/images`, to: "assets/images" },
-      { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "assets/styles" },
-      { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "assets/styles" },
-      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "assets/styles" },
-      { from: `${pMomentum}/icons/fonts`, to: "assets/icons/fonts" },
-      { from: `${pCss}/*.css`, to: "assets/styles", flatten: true },
-      { from: `${pSrc}/**/*.json`, to: "css", flatten: true }
-      // if you want 'momentum-ui.min.css' to work we must copy to second location
+      { from: `${pAssets}/i18n`, to: "i18n" },
+      { from: `${pAssets}/images`, to: "images" }
     ]),
     new RemovePlugin({
       after: {
@@ -182,11 +149,6 @@ const commonDist = merge(common, {
           {
             folder: "./dist/types",
             method: p => new RegExp(/\.test\.d\.ts(\.map)*$/).test(p),
-            recursive: true
-          },
-          {
-            folder: "./dist/types",
-            method: p => new RegExp(/\.stories\.d\.ts(\.map)*$/).test(p),
             recursive: true
           }
         ]
