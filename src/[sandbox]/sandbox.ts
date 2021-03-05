@@ -1,4 +1,3 @@
-import reset from "@/wc_scss/reset.scss";
 import styles from "@/[sandbox]/sandbox.scss";
 import "elix/define/ListExplorer.js";
 import {
@@ -70,7 +69,7 @@ export class Sandbox extends LitElement {
   }
 
   static get styles() {
-    return [reset, styles];
+    return [styles];
   }
 
   render() {

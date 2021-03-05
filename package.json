@@ -26,7 +26,10 @@
     "deploy-storybook": "storybook-to-ghpages",
     "storybook:deploy": "npm run deploy-storybook",
     "storybook:deploy-ci": "storybook-to-ghpages --ci",
-    "snapshot": "npm run storybook:resource && build-storybook && percy-storybook --widths=1280"
+    "snapshot": "npm run storybook:resource && build-storybook && percy-storybook --widths=1280",
+    "postinstall": "npm run build:tokens",
+    "clearVars": "node ./src/utils/clearVars.js",
+    "build:tokens": "node ./src/utils/generateScssFromTokens.js"
   },
   "resolutions": {
     "jest": "^26.4.2",
