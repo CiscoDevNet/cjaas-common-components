@@ -11,7 +11,7 @@
 }
 
 @mixin secondary-text {
-  color: var(--md-secondary-text-color, #545454);
+  color: var(--md-secondary-text-color, $md-gray-70);
 }
 
 @mixin primary-text {

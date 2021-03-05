@@ -1,13 +1,8 @@
 import styles from "@/[sandbox]/sandbox.scss";
 import "elix/define/ListExplorer.js";
-import {
-  customElement,
-  html,
-  LitElement,
-  property,
-  PropertyValues,
-} from "lit-element";
+import { customElement, html, LitElement, property, PropertyValues } from "lit-element";
 import { timelineTemplate } from "./examples/timeline";
+import { profileTemplate } from "./examples/profile";
 import "@momentum-ui/web-components";
 
 @customElement("momentum-ui-web-components-sandbox")
@@ -74,17 +69,16 @@ export class Sandbox extends LitElement {
 
   render() {
     return html`
-      <md-theme
-        class="theme-toggle"
-        id="app-theme"
-        ?darkTheme=${this.darkTheme}
-        ?lumos=${this.lumos}
-      >
+      <md-theme class="theme-toggle" id="app-theme" ?darkTheme=${this.darkTheme} ?lumos=${this.lumos}>
         ${this.themeToggle()}
         <elix-list-explorer class="explorer">
           <div class="container" aria-label="cjs-timeline">
             <h2>cjs-timeline</h2>
             ${timelineTemplate}
+          </div>
+          <div class="container" aria-label="cjs-profile">
+            <h2>cjs-profile</h2>
+            ${profileTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>
