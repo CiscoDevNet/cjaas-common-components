@@ -9,6 +9,7 @@
 import { fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
 import "../profile/Profile";
 import { ProfileView } from "../profile/Profile";
+import { profileMock, presetTagsMock } from "../../[sandbox]/sandbox.mock";
 
 describe("Profile component", () => {
   afterEach(() => {
@@ -16,12 +17,36 @@ describe("Profile component", () => {
   });
 
   test("should render one profile component", async () => {
-    expect.hasAssertions();
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <profile-view></profile-view>
+        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
       `
     );
     expect(component).not.toBeNull();
   });
+
+  test("should render one profile component", async () => {
+    const component: ProfileView.ELEMENT = await fixture(
+      html`
+        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+      `
+    );
+    expect(component.shadowRoot!.querySelector(".contact-item")!.querySelector("span")!.textContent).toEqual(
+      component.presetTags.email
+    );
+  });
+
+  test("should render one profile component", async () => {
+    const component: ProfileView.ELEMENT = await fixture(
+      html`
+        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+      `
+    );
+    expect(component.getValue(component.profile[0])).toBe(profileMock[0].result[0]);
+  });
 });
+
+// contactItem()
+// getTopContent()
+// getTable()
+// getValue(x: any)
