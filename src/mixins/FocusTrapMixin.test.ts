@@ -10,6 +10,7 @@ import {
 } from "@open-wc/testing-helpers";
 import { customElement, html, LitElement, property, PropertyValues, query } from "lit-element";
 import { AnyConstructor, FocusTrapMixin } from "./FocusTrapMixin";
+import "@momentum-ui/web-components/dist/comp/md-input";
 
 Object.defineProperties(Element.prototype, {
   getBoundingClientRect: {
