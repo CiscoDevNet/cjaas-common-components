@@ -17,7 +17,7 @@ describe("Profile component", () => {
 
   test("should render one profile component", async () => {
     expect.hasAssertions();
-    const component: ProfileView = await fixture(
+    const component: ProfileView.ELEMENT = await fixture(
       html`
         <profile-view></profile-view>
       `
