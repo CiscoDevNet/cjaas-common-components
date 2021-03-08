@@ -23,7 +23,7 @@ export default {
   }
 };
 
-export const Timeline = () => {
+export const Profile = () => {
   return html`
     <profile-view .profile=${profileMock} .presetTags=${presetTagsMock}> </profile-view>
   `;
