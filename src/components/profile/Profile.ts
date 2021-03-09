@@ -3,7 +3,7 @@ import { LitElement, html, property } from "lit-element";
 import styles from "./scss/module.scss";
 
 export namespace ProfileView {
-  @customElementWithCheck("cjs-profile")
+  @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     @property() profile: any;
     @property() presetTags: any = {};
@@ -92,6 +92,6 @@ export namespace ProfileView {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "cjs-profile": ProfileView.ELEMENT;
+    "cjaas-profile": ProfileView.ELEMENT;
   }
 }

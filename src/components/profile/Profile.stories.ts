@@ -14,17 +14,17 @@ import { profileMock, presetTagsMock } from "@/[sandbox]/sandbox.mock";
 
 export default {
   title: "Profile",
-  component: "cjs-profile",
+  component: "cjaas-profile",
   decorators: [withKnobs, withA11y],
   parameters: {
     a11y: {
-      element: "cjs-profile"
+      element: "cjaas-profile"
     }
   }
 };
 
 export const Profile = () => {
   return html`
-    <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+    <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
   `;
 };

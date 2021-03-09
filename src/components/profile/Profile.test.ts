@@ -19,7 +19,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
       `
     );
     expect(component).not.toBeNull();
@@ -28,7 +28,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
       `
     );
     expect(component.shadowRoot!.querySelector(".contact-item")!.querySelector("span")!.textContent).toEqual(
@@ -39,7 +39,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
       `
     );
     expect(component.getValue(component.profile[0])).toBe(profileMock[0].result[0]);

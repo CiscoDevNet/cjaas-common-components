@@ -76,8 +76,8 @@ export class Sandbox extends LitElement {
             <h2>cjs-timeline</h2>
             ${timelineTemplate}
           </div>
-          <div class="container" aria-label="cjs-profile">
-            <h2>cjs-profile</h2>
+          <div class="container" aria-label="cjaas-profile">
+            <h2>cjaas-profile</h2>
             ${profileTemplate}
           </div>
         </elix-list-explorer>

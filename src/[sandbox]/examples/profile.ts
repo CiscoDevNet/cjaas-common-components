@@ -4,5 +4,5 @@ import { html } from "lit-element";
 
 export const profileTemplate = html`
   <h3>Default</h3>
-  <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
+  <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
 `;
