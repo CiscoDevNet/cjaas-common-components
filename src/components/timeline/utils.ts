@@ -8,7 +8,7 @@
 
 import { DateTime } from "luxon";
 
-export function getTapeEventFromMessage(message: any) {
+export function getTimelineEventFromMessage(message: any) {
   const event: any = {};
 
   event.title = message.type;

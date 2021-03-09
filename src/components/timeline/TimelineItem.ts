@@ -14,7 +14,7 @@ import { getIconData, getTimeStamp } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 
 export namespace TimelineItem {
-  @customElementWithCheck("cjs-timeline-item")
+  @customElementWithCheck("cjaas-timeline-item")
   export class ELEMENT extends LitElement {
     @property({ type: String }) id = "";
     @property({ type: String }) title = "";
@@ -100,6 +100,6 @@ export namespace TimelineItem {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "cjs-timeline-item": TimelineItem.ELEMENT;
+    "cjaas-timeline-item": TimelineItem.ELEMENT;
   }
 }

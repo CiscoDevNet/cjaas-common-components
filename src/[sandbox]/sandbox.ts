@@ -72,12 +72,12 @@ export class Sandbox extends LitElement {
       <md-theme class="theme-toggle" id="app-theme" ?darkTheme=${this.darkTheme} ?lumos=${this.lumos}>
         ${this.themeToggle()}
         <elix-list-explorer class="explorer">
-          <div class="container" aria-label="cjs-timeline">
-            <h2>cjs-timeline</h2>
+          <div class="container" aria-label="cjaas-timeline">
+            <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
-          <div class="container" aria-label="cjs-profile">
-            <h2>cjs-profile</h2>
+          <div class="container" aria-label="cjaas-profile">
+            <h2>cjaas-profile</h2>
             ${profileTemplate}
           </div>
         </elix-list-explorer>
