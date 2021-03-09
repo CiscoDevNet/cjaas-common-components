@@ -7,9 +7,10 @@
  */
 
 import { withA11y } from "@storybook/addon-a11y";
-import {withKnobs } from "@storybook/addon-knobs";
+import { withKnobs, boolean } from "@storybook/addon-knobs";
 import { html } from "lit-element";
 import "@/components/timeline/Timeline";
+import "@/components/timeline/TimelineItem";
 
 export default {
   title: "Timeline",
