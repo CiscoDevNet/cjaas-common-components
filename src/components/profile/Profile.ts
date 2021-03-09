@@ -9,8 +9,8 @@ export namespace ProfileView {
     @property() presetTags: any = {};
 
     contactItem() {
-      // accept a type parameter to render phone / email / etc.
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
+      // accept a type parameter to render phone / email / etc.
       return html`
         <div class="contact-item">
           <md-badge circle color="violet">
@@ -64,7 +64,7 @@ export namespace ProfileView {
         try {
           result = x.result.map(x.query.formatValue).join(", ");
         } catch (err) {
-          console.log("Unable to format value", err);
+          console.log("CJAAS Profile: Unable to format table value", err);
         }
       }
 
