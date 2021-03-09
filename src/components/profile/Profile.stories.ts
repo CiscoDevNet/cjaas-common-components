@@ -23,7 +23,7 @@ export default {
   }
 };
 
-export const Timeline = () => {
+export const Profile = () => {
   return html`
     <cjs-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjs-profile>
   `;
