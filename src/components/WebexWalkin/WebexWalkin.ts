@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues } from "lit-element";
+import { LitElement, html, property, PropertyValues }  from "lit-element";
 import { bindMeetingEvents, joinMeeting } from "./meeting";
 import { nothing } from "lit-html";
 import { customElementWithCheck } from "@/mixins";
@@ -23,7 +23,7 @@ export namespace WebexWalkin {
     @property({ attribute: "agent-id" }) agentId: string | null = null;
 
     @property({ type: Number }) seconds = 180; // seconds
-    progressValue: number | null = null;
+    progressValue: number | null = 100;
     intervalID: any;
 
     fullScreen = false;
@@ -77,7 +77,6 @@ export namespace WebexWalkin {
     }
 
     public startTimer() {
-      this.progressValue = 100;
       if (this.intervalID !== undefined) {
         clearInterval(this.intervalID);
       }

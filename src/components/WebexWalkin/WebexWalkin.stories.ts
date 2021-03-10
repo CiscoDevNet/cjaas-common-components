@@ -7,9 +7,9 @@
  */
 
 import { withA11y } from "@storybook/addon-a11y";
-import { withKnobs } from "@storybook/addon-knobs";
+import { withKnobs, text } from "@storybook/addon-knobs";
 import { html } from "lit-element";
-import "@/components/WebexWalkin/WebexWalkin";
+import "@/components/webexWalkin/WebexWalkin";
 
 export default {
   title: "WebexWalkin",
@@ -23,11 +23,15 @@ export default {
 };
 
 export const WebexWalkin = () => {
+  const accessToken = text("Access Token", "");
+  const brandName = text("Agent Name", "venki");
+  const agentEmail = text("Agent Email", "v3nki@cisco.com");
+
   return html`
     <cjaas-webex-walkin
-      access-token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZjUxZjkzMC0zYjYwLTQ4ZGQtODcyZi0wZjY3ZGYyNDVjNDAiLCJuYW1lIjoidmVua2kiLCJpc3MiOiJZMmx6WTI5emNHRnlhem92TDNWekwwOVNSMEZPU1ZwQlZFbFBUaTgyTVRZMlpURTNNUzAxTkdSakxUUmxaRGN0WW1NNVl5MWtOekpoTjJVNFpUSmlZelEiLCJleHAiOjE2MTUzNDA3MDN9.S21EXN9E_Vqw6LN2RKahO-92pt7-P-zQWeIZDWodvq8"
-      brand-name="venki"
-      agent-id="v3nki@cisco.com"
+      access-token=${accessToken}
+      brand-name=${brandName}
+      agent-id=${agentEmail}
     >
     </cjaas-webex-walkin>
   `;
