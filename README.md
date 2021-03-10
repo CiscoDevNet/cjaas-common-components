@@ -6,9 +6,8 @@ npm module.
 ## Get Started
 1. Install Dependencies
     >`yarn`
-4. Start Sandbox Locally
+2. Start Sandbox Locally
     >`yarn start`
-
 
 ## Goals
 * **Independent** — pick and use only the components you need.
