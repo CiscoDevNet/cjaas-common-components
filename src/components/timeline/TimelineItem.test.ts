@@ -19,7 +19,7 @@ describe("TimelineItem component", () => {
     expect.hasAssertions();
     const component: TimelineItem.ELEMENT = await fixture(
       html`
-        <md-timeline-item></md-timeline-item>
+        <cjaas-timeline-item></cjaas-timeline-item>
       `
     );
     expect(component).not.toBeNull();

@@ -9,7 +9,7 @@
 import { LitElement, html, property, internalProperty } from "lit-element";
 import { groupBy } from "lodash";
 
-import { getRelativeDate, getTapeEventFromMessage } from "./utils";
+import { getRelativeDate, getTimelineEventFromMessage } from "./utils";
 import { repeat } from "lit-html/directives/repeat";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
@@ -25,7 +25,7 @@ export namespace Timeline {
     data: string;
   }
 
-  export type TapeEvent = {
+  export type TimelineEvent = {
     title: string;
     text?: string;
     person?: string;
@@ -37,9 +37,9 @@ export namespace Timeline {
     id: string;
   };
 
-  @customElementWithCheck("cjs-timeline")
+  @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
-    @property({ type: Array }) tapeEvents: TapeEvent[] = [];
+    @property({ type: Array }) timelineEvents: TimelineEvent[] = [];
     @property({ type: String }) baseURL = "https://trycjaas.exp.bz";
     @property({ reflect: true }) type:
       | "journey"
@@ -83,47 +83,47 @@ export namespace Timeline {
       });
 
       if (flag) {
-        this.tapeEvents = [];
+        this.timelineEvents = [];
         this.requestUpdate();
         this.subscribeToStream();
       }
     }
 
-    public enqueueEvent(event: TapeEvent) {
+    public enqueueEvent(event: TimelineEvent) {
       // logger.info("adding new event");
 
       while (
-        this.tapeEvents.length >= this.limit &&
+        this.timelineEvents.length >= this.limit &&
         this.type === "livestream"
       ) {
         this.dequeuePastOneEvent();
       }
 
-      const dataLength = this.tapeEvents.length;
+      const dataLength = this.timelineEvents.length;
 
       // events may not be chronologically sorted by default
       if (dataLength === 0) {
-        this.tapeEvents = [event];
-      } else if (this.tapeEvents[0].timestamp < event.timestamp) {
-        this.tapeEvents = [event, ...this.tapeEvents];
-      } else if (this.tapeEvents[dataLength - 1].timestamp > event.timestamp) {
-        this.tapeEvents = [...this.tapeEvents, event];
+        this.timelineEvents = [event];
+      } else if (this.timelineEvents[0].timestamp < event.timestamp) {
+        this.timelineEvents = [event, ...this.timelineEvents];
+      } else if (this.timelineEvents[dataLength - 1].timestamp > event.timestamp) {
+        this.timelineEvents = [...this.timelineEvents, event];
       } else {
         let currentIndex = 0;
-        let currentItem = this.tapeEvents[currentIndex];
+        let currentItem = this.timelineEvents[currentIndex];
         while (
           currentItem.timestamp > event.timestamp &&
-          currentIndex < this.tapeEvents.length
+          currentIndex < this.timelineEvents.length
         ) {
           currentIndex = currentIndex + 1;
-          currentItem = this.tapeEvents[currentIndex];
+          currentItem = this.timelineEvents[currentIndex];
         }
-        this.tapeEvents.splice(currentIndex, 0, event);
+        this.timelineEvents.splice(currentIndex, 0, event);
       }
     }
 
     dequeuePastOneEvent() {
-      this.tapeEvents.shift();
+      this.timelineEvents.shift();
     }
 
     // defaults to top 10 for journey
@@ -152,8 +152,8 @@ export namespace Timeline {
         .then((x: Response) => x.json())
         .then((x: Array<ServerSentEvent>) => {
           x?.map((y: ServerSentEvent) =>
-            getTapeEventFromMessage(y)
-          ).map((z: TapeEvent) => this.enqueueEvent(z));
+            getTimelineEventFromMessage(y)
+          ).map((z: TimelineEvent) => this.enqueueEvent(z));
         });
     }
 
@@ -180,7 +180,7 @@ export namespace Timeline {
           }
 
           if (data) {
-            this.enqueueEvent(getTapeEventFromMessage(data));
+            this.enqueueEvent(getTimelineEventFromMessage(data));
           }
         };
 
@@ -208,17 +208,17 @@ export namespace Timeline {
       `;
     };
 
-    renderEventItems(groupedEvent: { key: string; children: TapeEvent[] }) {
+    renderEventItems(groupedEvent: { key: string; children: TimelineEvent[] }) {
       return html`
-        <div class="tape-group has-line">
+        <div class="timeline has-line">
           <md-badge .outlined=${true} class="has-line block">
             <span class="badge-text">${groupedEvent.key}</span>
           </md-badge>
           ${repeat(
             groupedEvent.children,
-            (event: TapeEvent) => event.id,
-            (event: TapeEvent) => html`
-              <cjs-timeline-item
+            (event: TimelineEvent) => event.id,
+            (event: TimelineEvent) => html`
+              <cjaas-timeline-item
                 .title=${event.title}
                 .timestamp=${event.timestamp}
                 .data=${event.data}
@@ -226,7 +226,7 @@ export namespace Timeline {
                 .person=${event.person || null}
                 ?expanded="${this.expandDetails}"
                 class="has-line"
-              ></cjs-timeline-item>
+              ></cjaas-timeline-item>
             `
           )}
         </div>
@@ -239,7 +239,7 @@ export namespace Timeline {
 
     render() {
       // groups events by date
-      const groupedDates = groupBy(this.tapeEvents, (event: TapeEvent) =>
+      const groupedDates = groupBy(this.timelineEvents, (event: TimelineEvent) =>
         getRelativeDate(event.timestamp)
       );
 
@@ -275,6 +275,6 @@ export namespace Timeline {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "cjs-timeline": Timeline.ELEMENT;
+    "cjaas-timeline": Timeline.ELEMENT;
   }
 }

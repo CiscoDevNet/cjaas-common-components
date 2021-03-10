@@ -6,13 +6,8 @@ npm module.
 ## Get Started
 1. Install Dependencies
     >`yarn`
-2. Install uuip-publish-auth Globally
-    >`yarn global add uuip-publish`
-3. Authenticate with your Cisco Credentials
-    >`yarn npm:auth`
-4. Start Sandbox Locally
+2. Start Sandbox Locally
     >`yarn start`
-
 
 ## Goals
 * **Independent** — pick and use only the components you need.
