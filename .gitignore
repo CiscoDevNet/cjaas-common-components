@@ -2,6 +2,7 @@
 /coverage
 /build
 /dist
+/package/dist
 /.storybook/custom-elements.json
 /publish
 /.out

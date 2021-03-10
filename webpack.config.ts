@@ -8,6 +8,9 @@ import RemovePlugin from "remove-files-webpack-plugin";
 import * as webpack from "webpack";
 import merge from "webpack-merge";
 import nodeExternals from "webpack-node-externals";
+import FileManagerPlugin from "filemanager-webpack-plugin";
+import "./webpack.define";
+
 const pSrc = path.resolve("src");
 const pDist = path.resolve("dist");
 export const pBuild = path.resolve("build");
@@ -176,7 +179,15 @@ const distProd = merge(commonDist, {
   mode: "production",
   module: {
     rules: [ruleTS({ isDev: false }), ruleCSS({ isDev: false })]
-  }
+  },
+  plugins: [
+    new FileManagerPlugin({
+      events: {
+        onStart: [{ delete: ["./package/dist"] }],
+        onEnd: [{ copy: [{ source: "./dist", destination: "./package/dist" }] }]
+      }
+    })
+  ]
 });
 
 export default [dev, distDev, distDevWatch, distProd];
