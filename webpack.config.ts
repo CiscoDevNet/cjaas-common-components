@@ -183,8 +183,15 @@ const distProd = merge(commonDist, {
   plugins: [
     new FileManagerPlugin({
       events: {
-        onStart: [{ delete: ["./package/dist"] }],
-        onEnd: [{ copy: [{ source: "./dist", destination: "./package/dist" }] }]
+        onStart: [{ delete: ["./package/dist", "./package/README.md"] }],
+        onEnd: [
+          {
+            copy: [
+              { source: "./dist", destination: "./package/dist" },
+              { source: "./README.md", destination: "./package/README.md" }
+            ]
+          }
+        ]
       }
     })
   ]
