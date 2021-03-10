@@ -9,4 +9,5 @@
 export { Timeline } from "./components/timeline/Timeline";
 export { ProfileView } from "./components/profile/Profile";
 export { TimelineItem } from "./components/timeline/TimelineItem";
+export { WebexWalkin } from "./components/WebexWalkin/WebexWalkin";
 // eslint-disable-next-line prettier/prettier

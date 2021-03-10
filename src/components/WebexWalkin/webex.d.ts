@@ -6,10 +6,4 @@
  *
  */
 
-@import "@/wc_scss/colors/settings-base.scss";
-@import "@/wc_scss/colors/settings";
-
-@import "./settings";
-@import "./mixins";
-@import "./timelineItem";
-@import "./timeline";
+declare module "webex";
