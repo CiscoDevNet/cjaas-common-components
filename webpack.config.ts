@@ -7,7 +7,8 @@ import * as path from "path";
 import RemovePlugin from "remove-files-webpack-plugin";
 import * as webpack from "webpack";
 import merge from "webpack-merge";
-import nodeExternals from "webpack-node-externals";
+import WebpackLoadChunksPlugin from "./webpack.plugin.LoadChunks";
+
 const pSrc = path.resolve("src");
 const pDist = path.resolve("dist");
 export const pBuild = path.resolve("build");
@@ -108,11 +109,12 @@ export const commonDev = merge(common, {
     new CopyWebpackPlugin([
       { from: `${pMomentum}/core/fonts`, to: "fonts" },
       { from: `${pMomentum}/core/images`, to: "images" },
+      { from: `${pMomentum}/icons/fonts`, to: "icons/fonts" },
+      { from: `${pMomentum}/icons/fonts`, to: "fonts" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "css" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "css" },
-      { from: `${pMomentum}/icons/fonts`, to: "fonts" },
-      { from: `${pMomentum}/icons/fonts`, to: "icons/fonts" },
-      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" }
+      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" },
+      { from: `${pCss}/*.css`, to: "css", flatten: true },
     ])
   ]
 });
@@ -135,14 +137,33 @@ const commonDist = merge(common, {
   },
   output: {
     path: pDist,
+    publicPath: "/",
     filename: "[name].js",
+    chunkFilename: "chunks/[id].js",
     libraryTarget: "umd"
+  },
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+      maxInitialRequests: Infinity,
+      maxAsyncRequests: Infinity,
+      minSize: 0
+    }
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new WebpackLoadChunksPlugin({
+      trimNameEnd: 6
+    }),
     new CopyWebpackPlugin([
-      { from: `${pAssets}/i18n`, to: "i18n" },
-      { from: `${pAssets}/images`, to: "images" }
+      { from: `${pMomentum}/core/fonts`, to: "assets/fonts" },
+      { from: `${pMomentum}/core/images`, to: "assets/images" },
+      { from: `${pMomentum}/icons/fonts`, to: "assets/fonts" },
+      { from: `${pMomentum}/icons/fonts`, to: "assets/icons/fonts" },
+      { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "assets/styles" },
+      { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "assets/styles" },
+      { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "assets/styles" },
+      { from: `${pCss}/*.css`, to: "assets/styles", flatten: true }
     ]),
     new RemovePlugin({
       after: {
@@ -152,6 +173,11 @@ const commonDist = merge(common, {
           {
             folder: "./dist/types",
             method: p => new RegExp(/\.test\.d\.ts(\.map)*$/).test(p),
+            recursive: true
+          },
+          {
+            folder: "./dist/types",
+            method: p => new RegExp(/\.stories\.d\.ts(\.map)*$/).test(p),
             recursive: true
           }
         ]
