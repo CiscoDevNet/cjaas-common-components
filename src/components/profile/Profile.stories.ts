@@ -9,7 +9,7 @@
 import { withA11y } from "@storybook/addon-a11y";
 import { withKnobs } from "@storybook/addon-knobs";
 import { html } from "lit-element";
-import "@/components/profile/Profile";
+import "../../components/profile/Profile";
 import { profileMock, presetTagsMock } from "@/[sandbox]/sandbox.mock";
 
 export default {

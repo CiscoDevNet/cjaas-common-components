@@ -6,10 +6,10 @@
  *
  */
 
-import { withA11y } from "@/components/webexWalkin/node_modules/@storybook/addon-a11y";
-import { withKnobs, text } from "@/components/webexWalkin/node_modules/@storybook/addon-knobs";
-import { html } from "@/components/webexWalkin/node_modules/lit-element";
-import "@/components/webexWalkin/WebexWalkin";
+import { withA11y } from "@storybook/addon-a11y";
+import { withKnobs, text } from "@storybook/addon-knobs";
+import { html } from "lit-element";
+import "../../components/webexWalkin/WebexWalkin";
 
 export default {
   title: "WebexWalkin",

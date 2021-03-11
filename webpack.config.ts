@@ -127,14 +127,17 @@ const dev = merge(commonDev, {
 const commonDist = merge(common, {
   devtool: "source-map",
   entry: {
-    index: "./src/index.ts"
+    "index-entry": "./src/index.ts",
+    "comp/cjaas-profile-entry": "./src/components/profile/Profile.ts",
+    "comp/cjaas-timeline-entry": "./src/components/timeline/Timeline.ts",
+    "comp/cjaas-timeline-item-entry": "./src/components/timeline//TimelineItem.ts",
+    "comp/cjaas-webex-walkin-entry": "./src/components/webexWalkin/WebexWalkin.ts"
   },
   output: {
     path: pDist,
     filename: "[name].js",
     libraryTarget: "umd"
   },
-  externals: [nodeExternals({ modulesFromFile: true }), "@momentum-ui/web-components"],
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([

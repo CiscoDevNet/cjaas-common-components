@@ -6,10 +6,11 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues }  from "@/components/webexWalkin/node_modules/lit-element";
+import { LitElement, html, property, PropertyValues, internalProperty }  from "lit-element";
 import { bindMeetingEvents, joinMeeting } from "./meeting";
-import { nothing } from "@/components/webexWalkin/node_modules/lit-html";
+import { nothing } from "lit-html";
 import { customElementWithCheck } from "@/mixins";
+import { MILLISECONDS_PER_SECOND } from "@/constants";
 import styles from "./scss/module.scss";
 
 export namespace WebexWalkin {
@@ -21,19 +22,18 @@ export namespace WebexWalkin {
     @property({ attribute: "access-token" }) accessToken: string | null = null;
     @property({ attribute: "brand-name" }) brandName: string | null = null;
     @property({ attribute: "agent-id" }) agentId: string | null = null;
-
     @property({ type: Number }) seconds = 180; // seconds
-    progressValue: number | null = 100;
-    intervalID: any;
 
-    fullScreen = false;
-    webex: any;
-    public isWebexMeetingConnected = false;
-    public isAuthDenied = false;
-    showMeetingControls = false;
+    @internalProperty() progressValue: number = 100;
+    @internalProperty() intervalID: any;
+    @internalProperty() fullScreen = false;
+    @internalProperty() webex: any;
+    @internalProperty() isWebexMeetingConnected = false;
+    @internalProperty() isAuthDenied = false;
+    @internalProperty() showMeetingControls = false;
 
-    profile: any | null = null;
-    isAudioOnly = false;
+    @internalProperty() profile: any | null = null;
+    @internalProperty() isAudioOnly = false;
 
     connectedCallback() {
       super.connectedCallback();
@@ -82,8 +82,7 @@ export namespace WebexWalkin {
       }
 
       this.intervalID = setInterval(() => {
-        this.progressValue = (this.progressValue as number) - (10 * 100) / (this.seconds * 1000);
-
+        this.progressValue = this.progressValue - (MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND));
         this.requestUpdate();
 
         if (this.progressValue <= 0) {
@@ -103,10 +102,11 @@ export namespace WebexWalkin {
       return this.progressValue
         ? html`
             <md-progress-bar
-              .type=${"determinate"}
+              class="walkin-progress-bar"
+              type="determinate"
               .value=${this.progressValue}
-              .displayFormat=${"none"}
-              .dynamic=${true}
+              displayFormat="none"
+              dynamic
             ></md-progress-bar>
           `
         : nothing;
@@ -118,7 +118,7 @@ export namespace WebexWalkin {
           ${this.renderProgressBar()}
           <div class="banner">
             <div class="profile-details">
-              <div class="display-name">${this.profile.nickName}</div>
+              <div class="display-name">${this.profile?.nickName}</div>
               <div class="info">
                 Customer Success, ${this.brandName?.toUpperCase()}
               </div>
@@ -190,7 +190,7 @@ export namespace WebexWalkin {
         <div class="call-container connecting">
           <div class=${this.fullScreen ? "self-video-container fullscreen" : "self-video-container"}>
             <div class="calling-info">
-              Calling ${this.profile.nickName}
+              Calling ${this.profile?.nickName}
             </div>
             ${this.isAudioOnly
               ? nothing
@@ -271,7 +271,7 @@ export namespace WebexWalkin {
       this.isAudioOnly = isAudioOnly;
       this.requestUpdate();
 
-      this.webex.meetings.create(this.profile.emails[0]).then((meeting: any) => {
+      this.webex.meetings.create(this.profile?.emails[0]).then((meeting: any) => {
         bindMeetingEvents(
           meeting,
           this.shadowRoot,

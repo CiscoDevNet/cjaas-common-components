@@ -6,7 +6,7 @@
  *
  */
 
-import { fixture, fixtureCleanup, html } from "@/components/webexWalkin/node_modules/@open-wc/testing-helpers";
+import { fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
 import "./WebexWalkin";
 import { WebexWalkin } from "./WebexWalkin";
 
