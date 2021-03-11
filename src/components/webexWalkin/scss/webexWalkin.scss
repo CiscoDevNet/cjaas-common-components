@@ -6,11 +6,11 @@
  *
  */
 
-.banner {
-  height: 180px;
+ .banner {
+  height: rem-calc(180);
   max-height: 50%;
   width: 100%;
-  font-size: 24px;
+  font-size: rem-calc(24);
   color: white;
   display: flex;
   align-items: flex-end;
@@ -33,16 +33,16 @@
     color: #ffffff;
     position: absolute;
     z-index: 4;
-    padding: 12px;
+    padding: rem-calc(12);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
   }
   .display-name {
-    font-size: 24px;
+    font-size: rem-calc(24);
   }
   .info {
-    font-size: 12px;
+    font-size: rem-calc(12);
     font-style: italic;
   }
 }
@@ -63,23 +63,23 @@
   align-items: flex-end;
   flex-direction: column;
   justify-content: flex-end;
-  height: 180px;
+  height: rem-calc(180);
   max-height: 50%;
-  padding: 8px;
+  padding: rem-calc(8);
 }
 
 .message {
   background-color: var(--md-tertiary-bg-color, $md-gray-10);
-  border-radius: 12px;
-  margin: 12px;
-  padding: 8px;
-  font-size: 14px;
+  border-radius: rem-calc(12);
+  margin: rem-calc(12);
+  padding: rem-calc(8);
+  font-size: rem-calc(14);
   line-height: 1.5;
 }
 
 :host {
   display: block;
-  min-height: 120px;
+  min-height: rem-calc(120);
   height: 100%;
   position: relative;
   box-sizing: border-box;
@@ -97,20 +97,20 @@ div {
 .call-controls-answered {
   position: absolute;
   z-index: 2;
-  min-width: 97px;
-  bottom: 20px;
-  height: 44px;
+  min-width: rem-calc(97);
+  bottom: rem-calc(20);
+  height: rem-calc(44);
   left: calc(50% - 72px);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   md-button {
-    margin: 0 4px;
+    margin: 0 rem-calc(4);
   }
   &.fullscreen {
-    bottom: 48px;
+    bottom: rem-calc(48);
     md-button {
-      margin: 0 24px;
+      margin: 0 rem-calc(24);
       &:last-child {
         margin-right: 0;
       }
@@ -166,8 +166,8 @@ div {
 
 #resize {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: rem-calc(10);
+  right: rem-calc(10);
   z-index: 2;
 }
 
@@ -179,9 +179,9 @@ div {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 12px;
+  padding: rem-calc(4) rem-calc(12);
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: rem-calc(14);
 }
 
 .self-video-container {
@@ -190,10 +190,10 @@ div {
   z-index: 2;
   height: 35%;
   width: 16%;
-  min-height: 67px;
-  min-width: 84px;
-  bottom: 10px;
-  right: 10px;
+  min-height: rem-calc(67);
+  min-width: rem-calc(84);
+  bottom: rem-calc(10);
+  right: rem-calc(10);
   position: absolute;
   transition: all ease-in 350ms;
 
@@ -218,7 +218,7 @@ div {
   bottom: 0;
 }
 .resize-icon {
-  box-shadow: 2px 2px 7px 3px #eeedef;
+  box-shadow: rem-calc(2) rem-calc(2) rem-calc(7) rem-calc(3) #eeedef;
 }
 .card-title md-icon {
   cursor: pointer;
@@ -226,13 +226,13 @@ div {
 .calling-info {
   display: none;
   position: absolute;
-  top: 12px;
+  top: rem-calc(12);
   width: 100%;
   text-align: center;
   color: var(--md-primary-text-color, $md-gray-100);
-  font-size: 16px;
+  font-size: rem-calc(16);
   z-index: 10;
-  text-decoration: 2px 2px 4px black;
+  text-decoration: rem-calc(2) rem-calc(2) rem-calc(4) black;
 }
 
 .connecting .calling-info {
@@ -241,5 +241,5 @@ div {
 
 .walkin-progress-bar {
   display: block;
-  height: 4px;
+  height: rem-calc(4);
 }

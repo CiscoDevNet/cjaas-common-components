@@ -1,7 +1,7 @@
-import "../../components/webexWalkin/WebexWalkin";
+import "@/components/webexWalkin/WebexWalkin";
 import { html } from "lit-element";
 
-const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0OThiZTQ2Zi0zMDI1LTQxY2UtYTljNS1lY2I0NGNlNzk0ZmEiLCJuYW1lIjoidmVua2kiLCJpc3MiOiJZMmx6WTI5emNHRnlhem92TDNWekwwOVNSMEZPU1ZwQlZFbFBUaTgyTVRZMlpURTNNUzAxTkdSakxUUmxaRGN0WW1NNVl5MWtOekpoTjJVNFpUSmlZelEiLCJleHAiOjE2MTU1MDI2MjF9.JUOy_l0962TNWb2k5G-240nGDBrY6x1yeEUc51aE-Hg";
+const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3OGFmYTk3NC03MTU5LTRjZDktOGUzYS05OGU1ZDlmNzVhMGQiLCJuYW1lIjoidmVua2kiLCJpc3MiOiJZMmx6WTI5emNHRnlhem92TDNWekwwOVNSMEZPU1ZwQlZFbFBUaTgyTVRZMlpURTNNUzAxTkdSakxUUmxaRGN0WW1NNVl5MWtOekpoTjJVNFpUSmlZelEiLCJleHAiOjE2MTU1MDQ2MjF9.u6JcK5TINZFcYcvmQvQp7PPdE2Smd4nEdhjioh6uFlw";
 
 export const webexWalkinTemplate = html`
   <h3>Default</h3>

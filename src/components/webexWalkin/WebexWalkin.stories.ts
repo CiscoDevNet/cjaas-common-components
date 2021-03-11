@@ -9,7 +9,7 @@
 import { withA11y } from "@storybook/addon-a11y";
 import { withKnobs, text } from "@storybook/addon-knobs";
 import { html } from "lit-element";
-import "../../components/webexWalkin/WebexWalkin";
+import "@/components/webexWalkin/WebexWalkin";
 
 export default {
   title: "WebexWalkin",

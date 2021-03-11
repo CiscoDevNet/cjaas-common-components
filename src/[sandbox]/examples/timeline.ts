@@ -1,5 +1,5 @@
-import "../../components/timeline/Timeline";
-import "../../components/timeline/TimelineItem";
+import "@/components/timeline/Timeline";
+import "@/components/timeline/TimelineItem";
 import { html } from "lit-element";
 
 export const timelineTemplate = html`
