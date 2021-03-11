@@ -3,6 +3,7 @@
 /build
 /dist
 /package/dist
+/package/README.md
 /.storybook/custom-elements.json
 /publish
 /.out
