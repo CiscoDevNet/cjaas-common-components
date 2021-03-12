@@ -12,16 +12,19 @@ npm module.
 ## How to Use
 1. Install Cjaas web components and Momentum web components
 ```
-yarn add "@cjaas/common-components" --dev
-yarn add "@momentum-ui/web-components" --dev
+yarn add "@cjaas/common-components"
+yarn add "@momentum-ui/web-components"
 ```
-2. Import components
-Entire Libraries
+2. Import Momentum components
 ```js
 import "@momentum-ui/web-components";
+```
+
+3. Import Cjaas common components (entire library or each individual component)
+```js
 import '@cjaas/common-components';
 ```
-or individual components
+or
 ```js
 import '@cjaas/common-components/dist/comp/cjaas-timeline';
 import '@cjaas/common-components/dist/comp/cjaas-timeline-item';
