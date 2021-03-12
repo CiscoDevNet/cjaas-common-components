@@ -9,6 +9,27 @@ npm module.
 2. Start Sandbox Locally
     >`yarn start`
 
+## How to Use
+1. Install Cjaas web components and Momentum web components
+```
+yarn add "@cjaas/common-components" --dev
+yarn add "@momentum-ui/web-components" --dev
+```
+2. Import components
+Entire Libraries
+```js
+import "@momentum-ui/web-components";
+import '@cjaas/common-components';
+```
+or individual components
+```js
+import '@cjaas/common-components/dist/comp/cjaas-timeline';
+import '@cjaas/common-components/dist/comp/cjaas-timeline-item';
+```
+
+## Component Specific Documentation
+-  [Webex Walkin Documentation](src/components/webexWalkin/WEBEX_WALKIN.md)
+
 ## Goals
 * **Independent** — pick and use only the components you need.
 * **Customizable** — properties allow many different config options to suit your app.
