@@ -43,3 +43,5 @@ export enum ARIA_INVALID {
   SPELLING = "spelling",
   TRUE = "true",
 }
+
+export const MILLISECONDS_PER_SECOND = 1000;
