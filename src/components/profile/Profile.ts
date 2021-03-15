@@ -24,25 +24,21 @@ export namespace ProfileView {
           <md-badge circle color="violet">
             <md-icon name="icon-email-active_12" size="8"></md-icon>
           </md-badge>
-          <span>${this.presetTags.email}</span>
+          <span>${this.presetTags?.email}</span>
         </div>
       `;
     }
 
     getTopContent() {
+      const name = this.presetTags?.name?.join(" ");
       return html`
         <section class="top-content">
-          <md-avatar
-            .title="${this.presetTags["name"].join(" ")}"
-            alt=${this.presetTags["name"].join(" ")}
-            src=${this.profile.picture || undefined}
-            .size=${48}
-          ></md-avatar>
+          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
           <h5 title="Name" class="customer-name">
-            ${this.presetTags["name"].join(" ")}
+            ${name}
           </h5>
           <h5 title="Label" class="customer-label">
-            ${this.presetTags["label"] ? this.presetTags["label"].join(" ") : "VIP Customer"}
+            ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
           </h5>
           ${this.contactItem()}
         </section>
@@ -53,7 +49,7 @@ export namespace ProfileView {
       return html`
         <table title="Profile Details">
           ${this.profile
-            .filter((x: any) => x.query.type === "table")
+            ?.filter((x: any) => x.query.type === "table")
             .map((x: any) => {
               return html`
                 <tr>
@@ -88,13 +84,19 @@ export namespace ProfileView {
     }
 
     render() {
-      return html`
-        <section class="profile" title="Customer Profile">
-          ${this.getTopContent()}
-          <hr />
-          ${this.getTable()}
-        </section>
-      `;
+      if (this.profile && this.presetTags) {
+        return html`
+          <section class="profile" title="Customer Profile">
+            ${this.getTopContent()}
+            <hr />
+            ${this.getTable()}
+          </section>
+        `;
+      } else {
+        return html`
+          <p>No profile or preset tags provided</p>
+        `;
+      }
     }
   }
 }
