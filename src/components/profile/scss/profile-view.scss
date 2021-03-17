@@ -53,15 +53,15 @@ table {
     }
   }
 
-  md-avatar {
-    margin-top: 0.25rem;
+}
+md-avatar {
+  margin-top: 0.25rem;
 
-    &::part(avatar) {
-      width: 3rem;
-      height: 3rem;
-      box-sizing: border-box;
-      border: 2px solid var(--color-gray-10);
-    }
+  &::part(avatar) {
+    width: 3rem;
+    height: 3rem;
+    box-sizing: border-box;
+    border: 2px solid var(--color-gray-10);
   }
 }
 
@@ -75,5 +75,51 @@ table {
     height: 1rem;
     display: inline-flex;
     padding: 0.5rem;
+  }
+}
+
+.snapshot {
+  border: 1px solid var(--md-quaternary-bg-color, #dedede);
+  border-radius: .5rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.compact {
+  --avatar-height: 2.5rem;
+
+  border: 1px solid var(--md-quaternary-bg-color, #dedede);
+  border-radius: .5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 5rem;
+  padding: 1.25rem .75rem;
+
+  .customer-titles {
+    height: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 1rem;
+  }
+
+  md-avatar {
+    margin: 0;
+    &::part(avatar) {
+      width: var(--avatar-height);
+      height: var(--avatar-height);
+      border: none;
+    }
+  }
+
+  h5 {
+    margin:0;
+  }
+  .customer-name{
+    font-size: .875rem;
+  }
+  .customer-label{
+    font-size: .75rem;
+    font-weight: normal;
   }
 }

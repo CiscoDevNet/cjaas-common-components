@@ -6,7 +6,7 @@
  *
  */
 
-import { fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
+import { elementUpdated, fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
 import "../profile/Profile";
 import { ProfileView } from "../profile/Profile";
 import { profileMock, presetTagsMock } from "../../[sandbox]/sandbox.mock";
@@ -44,9 +44,26 @@ describe("Profile component", () => {
     );
     expect(component.getValue(component.profile[0])).toBe(profileMock[0].result[0]);
   });
+  test("should render snapshot view", async () => {
+    const component: ProfileView.ELEMENT = await fixture(
+      html`
+        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+      `
+    );
+    const snapshotRender = spyOn(component, "getSnapshot");
+    component.snapshot = true;
+    await component.updateComplete;
+    expect(snapshotRender).toHaveBeenCalled();
+  });
+  test("should render compact view", async () => {
+    const component: ProfileView.ELEMENT = await fixture(
+      html`
+        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+      `
+    );
+    const compactRender = spyOn(component, "getCompact");
+    component.compact = true;
+    await component.updateComplete;
+    expect(compactRender).toHaveBeenCalled();
+  });
 });
-
-// contactItem()
-// getTopContent()
-// getTable()
-// getValue(x: any)
