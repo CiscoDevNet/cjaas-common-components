@@ -79,6 +79,8 @@ export namespace Timeline {
           this.streamId
         ) {
           flag = true;
+        } else if(name === "tapeEvents"){
+          flag = true;
         }
       });
 
