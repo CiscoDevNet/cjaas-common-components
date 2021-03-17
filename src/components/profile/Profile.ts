@@ -14,6 +14,8 @@ export namespace ProfileView {
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     @property() profile: any;
+    @property({ type: Boolean }) snapshot = false;
+    @property({ type: Boolean }) compact = false;
     @property() presetTags: any = {};
 
     contactItem() {
@@ -83,15 +85,43 @@ export namespace ProfileView {
       return styles;
     }
 
+    getSnapshot() {
+      return html`
+        <div class="snapshot">
+          ${this.getTopContent()}
+        </div>
+      `;
+    }
+    getCompact() {
+      const name = this.presetTags?.name?.join(" ");
+      return html`
+        <div class="compact">
+          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
+          <div class="customer-titles">
+            <h5 title="Name" class="customer-name">
+              ${name}
+            </h5>
+            <h5 title="Label" class="customer-label">
+              ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
+            </h5>
+          </div>
+        </div>
+      `;
+    }
+
     render() {
       if (this.profile && this.presetTags) {
-        return html`
-          <section class="profile" title="Customer Profile">
-            ${this.getTopContent()}
-            <hr />
-            ${this.getTable()}
-          </section>
-        `;
+        return this.compact
+          ? this.getCompact()
+          : this.snapshot
+          ? this.getSnapshot()
+          : html`
+              <section class="profile" title="Customer Profile">
+                ${this.getTopContent()}
+                <hr />
+                ${this.getTable()}
+              </section>
+            `;
       } else {
         return html`
           <p>No profile or preset tags provided</p>
