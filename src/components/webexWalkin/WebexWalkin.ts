@@ -71,7 +71,7 @@ export namespace WebexWalkin {
     getWelcomeScreen() {
       return html`
         <div class="stretch stack-two-column">
-          <cjs-timer></cjs-timer>
+          <cjaas-timer></cjaas-timer>
           <div class="banner">
             <div class="profile-details">
               <div class="display-name">${this.profile?.nickName}</div>
@@ -119,13 +119,6 @@ export namespace WebexWalkin {
       return this.webex.people.list({
         email
       });
-    }
-
-    // deprecated
-    getAvailableAgent() {
-      return fetch(
-        "https://cjaas-webex-bot.azurewebsites.net/api/walkin-agents?name=" + this.brandName?.toLowerCase()
-      ).then((x: Response) => x.json());
     }
 
     resizeModal() {
