@@ -3,7 +3,9 @@ import "elix/define/ListExplorer.js";
 import { customElement, html, LitElement, property, PropertyValues } from "lit-element";
 import { timelineTemplate } from "./examples/timeline";
 import { profileTemplate } from "./examples/profile";
-import { timerTemplate, getWebexWalkinTemplate } from "./examples/webexWalkin";
+import { getWebexWalkinTemplate } from "./examples/webexWalkin";
+import { timerTemplate } from "./examples/timer";
+
 import "@momentum-ui/web-components";
 
 @customElement("momentum-ui-web-components-sandbox")
