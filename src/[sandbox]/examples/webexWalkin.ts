@@ -9,14 +9,16 @@ export const getWebexWalkinTemplate = function(shadowRoot: ShadowRoot | null) {
   return html`
     <h3>Default</h3>
     <p>
-      Navigate to the following link to get a temporary access token (duration: 15 minutes)
+      Navigate to the following link or click the button below to get a temporary access token
       <br />
+      (duration: 15 minutes)
+      </br />
       <a href="https://cjaas-webex-bot.azurewebsites.net/api/guest-access?name=Alex" target="_blank">
         https://cjaas-webex-bot.azurewebsites.net/api/guest-access?name=Alex</a
       >
     </p>
     <md-button @click=${() => setAccessToken(shadowRoot)}>Set AccessToken</md-button>
-    <div class="webex-walkin-sandbox-wrapper">
+    <div class="webex-walkin-sandbox-wrapper" style="margin-top: 1rem">
       <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="v3nki@cisco.com">
       </cjaas-webex-walkin>
     </div>
@@ -34,7 +36,3 @@ function setAccessToken(shadowRoot: ShadowRoot | null) {
       }
     });
 }
-
-export const timerTemplate = html`
-  <cjaas-timer></cjaas-timer>
-`;
