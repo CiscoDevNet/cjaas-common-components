@@ -3,7 +3,7 @@ import "elix/define/ListExplorer.js";
 import { customElement, html, LitElement, property, PropertyValues } from "lit-element";
 import { timelineTemplate } from "./examples/timeline";
 import { profileTemplate } from "./examples/profile";
-import { webexWalkinTemplate } from "./examples/webexWalkin";
+import { timerTemplate, getWebexWalkinTemplate } from "./examples/webexWalkin";
 import "@momentum-ui/web-components";
 
 @customElement("momentum-ui-web-components-sandbox")
@@ -83,7 +83,11 @@ export class Sandbox extends LitElement {
           </div>
           <div class="container" aria-label="cjaas-webex-walkin">
             <h2>cjaas-webex-walkin</h2>
-            ${webexWalkinTemplate}
+            ${getWebexWalkinTemplate(this.shadowRoot)}
+          </div>
+          <div class="container" aria-label="cjaas-timer">
+            <h2>cjaas-timer</h2>
+            ${timerTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>
