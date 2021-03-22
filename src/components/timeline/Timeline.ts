@@ -107,7 +107,7 @@ export namespace Timeline {
     // public enqueueEvent(event: TimelineEvent) {
     public enqueueEvent(event: CustomEvent<{ event: TimelineEvent }>) {
       const { event: enqueuedEvent } = event.detail;
-      logger.info("adding new event");
+      // logger.info("adding new event");
 
       while (
         this.timelineEvents.length >= this.limit &&
