@@ -1,7 +1,6 @@
 import "@/components/timeline/AboveTimeline";
 import "@/components/timeline/Timeline";
 import "@/components/timeline/TimelineItem";
-// import "../../components/timeline/AboveTimeline";
 import { html } from "lit-element";
 import { timelineEventsMock } from "../sandbox.mock";
 

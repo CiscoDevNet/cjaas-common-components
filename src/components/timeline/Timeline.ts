@@ -11,8 +11,9 @@ import { groupBy } from "lodash";
 
 import { getRelativeDate, getTimelineEventFromMessage } from "./utils";
 import { repeat } from "lit-html/directives/repeat";
-import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
+import "../timeline/TimelineItem";
+import styles from "./scss/module.scss";
 
 /**
  * An example element.
