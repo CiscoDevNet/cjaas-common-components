@@ -9,6 +9,7 @@ import * as webpack from "webpack";
 import merge from "webpack-merge";
 import WebpackLoadChunksPlugin from "./webpack.plugin.LoadChunks";
 import FileManagerPlugin from "filemanager-webpack-plugin";
+import "./webpack.define";
 
 const pSrc = path.resolve("src");
 const pDist = path.resolve("dist");
