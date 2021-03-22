@@ -6,12 +6,13 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues, internalProperty }  from "lit-element";
+import { LitElement, html, property, PropertyValues, internalProperty } from "lit-element";
 import { bindMeetingEvents, joinMeeting } from "./meeting";
 import { nothing } from "lit-html";
 import { customElementWithCheck } from "@/mixins";
 import { MILLISECONDS_PER_SECOND } from "@/constants";
 import styles from "./scss/module.scss";
+import timerStyles from "./scss/timer.scss";
 
 export namespace WebexWalkin {
   @customElementWithCheck("cjaas-webex-walkin")
@@ -22,10 +23,7 @@ export namespace WebexWalkin {
     @property({ attribute: "access-token" }) accessToken: string | null = null;
     @property({ attribute: "brand-name" }) brandName: string | null = null;
     @property({ attribute: "agent-id" }) agentId: string | null = null;
-    @property({ type: Number }) seconds = 180; // seconds
 
-    @internalProperty() progressValue: number = 100;
-    @internalProperty() intervalID: any;
     @internalProperty() fullScreen = false;
     @internalProperty() webex: any;
     @internalProperty() isWebexMeetingConnected = false;
@@ -37,12 +35,10 @@ export namespace WebexWalkin {
 
     connectedCallback() {
       super.connectedCallback();
-      this.startTimer();
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      clearInterval(this.intervalID);
     }
 
     updated(changedProperties: PropertyValues) {
@@ -55,10 +51,6 @@ export namespace WebexWalkin {
             this.initiateMeeting();
           }
         }, 500);
-      }
-
-      if (changedProperties.has("seconds")) {
-        this.startTimer();
       }
     }
 
@@ -76,46 +68,10 @@ export namespace WebexWalkin {
       `;
     }
 
-    public startTimer() {
-      if (this.intervalID !== undefined) {
-        clearInterval(this.intervalID);
-      }
-
-      this.intervalID = setInterval(() => {
-        this.progressValue = this.progressValue - (MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND));
-        this.requestUpdate();
-
-        if (this.progressValue <= 0) {
-          this.progressValue = 0;
-          clearInterval(this.intervalID);
-          const event = new CustomEvent("timed-out", {
-            composed: true,
-            bubbles: true
-          });
-
-          this.dispatchEvent(event);
-        }
-      }, 10);
-    }
-
-    renderProgressBar = () => {
-      return this.progressValue
-        ? html`
-            <md-progress-bar
-              class="walkin-progress-bar"
-              type="determinate"
-              .value=${this.progressValue}
-              displayFormat="none"
-              dynamic
-            ></md-progress-bar>
-          `
-        : nothing;
-    };
-
     getWelcomeScreen() {
       return html`
         <div class="stretch stack-two-column">
-          ${this.renderProgressBar()}
+          <cjs-timer></cjs-timer>
           <div class="banner">
             <div class="profile-details">
               <div class="display-name">${this.profile?.nickName}</div>
@@ -352,10 +308,83 @@ export namespace WebexWalkin {
       `;
     }
   }
+
+  @customElementWithCheck("cjaas-timer")
+  export class TIMER extends LitElement {
+    // time in seconds
+    @property({ type: Number }) seconds = 180;
+
+    progressValue: number | null = null;
+
+    intervalID: any;
+
+    connectedCallback() {
+      super.connectedCallback();
+      this.startTimer();
+    }
+
+    updated(changedProperties: any) {
+      changedProperties.forEach((oldValue: string, name: string) => {
+        console.log("Oldvalue", oldValue);
+
+        if (name === "timer") {
+          this.startTimer();
+        }
+      });
+    }
+
+    public startTimer() {
+      this.progressValue = 100;
+      if (this.intervalID !== undefined) {
+        clearInterval(this.intervalID);
+      }
+
+      this.intervalID = setInterval(() => {
+        this.progressValue =
+          (this.progressValue as number) - MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND);
+
+        this.requestUpdate();
+
+        if (this.progressValue <= 0) {
+          this.progressValue = 0;
+          clearInterval(this.intervalID);
+          const event = new CustomEvent("timed-out", {
+            composed: true,
+            bubbles: true
+          });
+
+          this.dispatchEvent(event);
+        }
+      }, 10);
+    }
+
+    render() {
+      return this.progressValue
+        ? html`
+            <md-progress-bar
+              .type=${"determinate"}
+              .value=${this.progressValue}
+              .displayFormat=${"none"}
+              .dynamic=${true}
+            ></md-progress-bar>
+          `
+        : nothing;
+    }
+
+    static get styles() {
+      return timerStyles;
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      clearInterval(this.intervalID);
+    }
+  }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
     "cjaas-webex-walkin": WebexWalkin.ELEMENT;
+    "cjaas-timer": WebexWalkin.TIMER;
   }
 }

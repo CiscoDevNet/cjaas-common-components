@@ -1,7 +1,8 @@
 import "@/components/webexWalkin/WebexWalkin";
 import { html } from "lit-element";
 
-const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3OGFmYTk3NC03MTU5LTRjZDktOGUzYS05OGU1ZDlmNzVhMGQiLCJuYW1lIjoidmVua2kiLCJpc3MiOiJZMmx6WTI5emNHRnlhem92TDNWekwwOVNSMEZPU1ZwQlZFbFBUaTgyTVRZMlpURTNNUzAxTkdSakxUUmxaRGN0WW1NNVl5MWtOekpoTjJVNFpUSmlZelEiLCJleHAiOjE2MTU1MDQ2MjF9.u6JcK5TINZFcYcvmQvQp7PPdE2Smd4nEdhjioh6uFlw";
+const accessToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3OGFmYTk3NC03MTU5LTRjZDktOGUzYS05OGU1ZDlmNzVhMGQiLCJuYW1lIjoidmVua2kiLCJpc3MiOiJZMmx6WTI5emNHRnlhem92TDNWekwwOVNSMEZPU1ZwQlZFbFBUaTgyTVRZMlpURTNNUzAxTkdSakxUUmxaRGN0WW1NNVl5MWtOekpoTjJVNFpUSmlZelEiLCJleHAiOjE2MTU1MDQ2MjF9.u6JcK5TINZFcYcvmQvQp7PPdE2Smd4nEdhjioh6uFlw";
 
 export const webexWalkinTemplate = html`
   <h3>Default</h3>
@@ -14,11 +15,10 @@ export const webexWalkinTemplate = html`
   </p>
 
   <div class="webex-walkin-sandbox-wrapper">
-    <cjaas-webex-walkin
-      access-token=${accessToken}
-      brand-name="venki"
-      agent-id="v3nki@cisco.com"
-    >
-    </cjaas-webex-walkin>
+    <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="v3nki@cisco.com"> </cjaas-webex-walkin>
   </div>
+`;
+
+export const timerTemplate = html`
+  <cjaas-timer></cjaas-timer>
 `;
