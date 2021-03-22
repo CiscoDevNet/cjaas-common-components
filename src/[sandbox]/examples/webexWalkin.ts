@@ -34,3 +34,7 @@ function setAccessToken(shadowRoot: ShadowRoot | null) {
       }
     });
 }
+
+export const timerTemplate = html`
+  <cjaas-timer></cjaas-timer>
+`;
