@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) Cisco Systems, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
 import { customElementWithCheck } from "@/mixins";
 import { LitElement, html, property } from "lit-element";
 import styles from "./scss/module.scss";
@@ -6,6 +14,8 @@ export namespace ProfileView {
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     @property() profile: any;
+    @property({ type: Boolean }) snapshot = false;
+    @property({ type: Boolean }) compact = false;
     @property() presetTags: any = {};
 
     contactItem() {
@@ -22,20 +32,15 @@ export namespace ProfileView {
     }
 
     getTopContent() {
-      const joinedPresetTags = this.presetTags.name?.join(" ");
+      const name = this.presetTags?.name?.join(" ");
       return html`
         <section class="top-content">
-          <md-avatar
-            .title="${joinedPresetTags}"
-            alt=${joinedPresetTags}
-            src=${this.profile?.picture || undefined}
-            .size=${48}
-          ></md-avatar>
+          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
           <h5 title="Name" class="customer-name">
-            ${joinedPresetTags}
+            ${name}
           </h5>
           <h5 title="Label" class="customer-label">
-            ${this.presetTags.label?.join(" ") || "VIP Customer"}
+            ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
           </h5>
           ${this.contactItem()}
         </section>
@@ -63,14 +68,14 @@ export namespace ProfileView {
 
       if (x.query.formatValue) {
         try {
-          result = x.result.map(x.query.formatValue)?.join(", ");
+          result = x.result.map(x.query.formatValue).join(", ");
         } catch (err) {
           console.log("CJAAS Profile: Unable to format table value", err);
         }
       }
 
       if (result === null) {
-        result = x.result?.join(", ") || "-";
+        result = x.result.join(", ") || "-";
       }
 
       return result;
@@ -80,18 +85,46 @@ export namespace ProfileView {
       return styles;
     }
 
+    getSnapshot() {
+      return html`
+        <div class="snapshot">
+          ${this.getTopContent()}
+        </div>
+      `;
+    }
+    getCompact() {
+      const name = this.presetTags?.name?.join(" ");
+      return html`
+        <div class="compact">
+          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
+          <div class="customer-titles">
+            <h5 title="Name" class="customer-name">
+              ${name}
+            </h5>
+            <h5 title="Label" class="customer-label">
+              ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
+            </h5>
+          </div>
+        </div>
+      `;
+    }
+
     render() {
       if (this.profile && this.presetTags) {
-        return html`
-          <section class="profile" title="Customer Profile">
-            ${this.getTopContent()}
-            <hr />
-            ${this.getTable()}
-          </section>
-        `;
+        return this.compact
+          ? this.getCompact()
+          : this.snapshot
+          ? this.getSnapshot()
+          : html`
+              <section class="profile" title="Customer Profile">
+                ${this.getTopContent()}
+                <hr />
+                ${this.getTable()}
+              </section>
+            `;
       } else {
         return html`
-          <p>Profile and PresetTags properties are undefined</p>
+          <p>No profile or preset tags provided</p>
         `;
       }
     }

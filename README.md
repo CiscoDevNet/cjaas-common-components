@@ -9,11 +9,29 @@ npm module.
 2. Start Sandbox Locally
     >`yarn start`
 
-## How to use in your own application
-1. Install Package
-    >`yarn add "@cjaas/common-components" --dev --save`
-2. Import common-components at the top level JS/TS file of application
-    >`import "@cjaas/common-components";`;
+## How to Use
+1. Install Cjaas web components and Momentum web components
+```
+yarn add "@cjaas/common-components"
+yarn add "@momentum-ui/web-components"
+```
+2. Import Momentum components
+```js
+import "@momentum-ui/web-components";
+```
+
+3. Import Cjaas common components (entire library or each individual component)
+```js
+import '@cjaas/common-components';
+```
+or
+```js
+import '@cjaas/common-components/dist/comp/cjaas-timeline';
+import '@cjaas/common-components/dist/comp/cjaas-timeline-item';
+```
+
+## Component Specific Documentation
+-  [Webex Walkin Documentation](src/components/webexWalkin/WEBEX_WALKIN.md)
 
 ## Goals
 * **Independent** — pick and use only the components you need.
@@ -64,4 +82,4 @@ npm module.
 
 ## Copyright
 
-Copyright (c) 2019 Cisco Systems
+Copyright (c) 2021 Cisco Systems

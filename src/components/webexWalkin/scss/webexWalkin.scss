@@ -1,0 +1,245 @@
+/**
+ * Copyright (c) Cisco Systems, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+ .banner {
+  height: rem-calc(180);
+  max-height: 50%;
+  width: 100%;
+  font-size: rem-calc(24);
+  color: white;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  border-radius: box-sizing;
+  img {
+    height: 100%;
+    position: absolute;
+    right: 0px;
+  }
+  &:after {
+    content: " ";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background: linear-gradient(to right, #2c3e50, #f5f2f20f);
+    opacity: 0.8;
+  }
+  .profile-details {
+    color: #ffffff;
+    position: absolute;
+    z-index: 4;
+    padding: rem-calc(12);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .display-name {
+    font-size: rem-calc(24);
+  }
+  .info {
+    font-size: rem-calc(12);
+    font-style: italic;
+  }
+}
+
+#self-view {
+  z-index: 2;
+  height: 120%;
+  width: 300%;
+  left: -100%;
+  top: -12%;
+  position: relative;
+  transform: rotateY(180deg);
+}
+
+.invite {
+  background-color: var(--md-primary-bg-color, $md-white);
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: rem-calc(180);
+  max-height: 50%;
+  padding: rem-calc(8);
+}
+
+.message {
+  background-color: var(--md-tertiary-bg-color, $md-gray-10);
+  border-radius: rem-calc(12);
+  margin: rem-calc(12);
+  padding: rem-calc(8);
+  font-size: rem-calc(14);
+  line-height: 1.5;
+}
+
+:host {
+  display: block;
+  min-height: rem-calc(120);
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+  background-color: var(--md-primary-bg-color, $md-white);
+  font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+div {
+  box-sizing: border-box;
+}
+#stop-share {
+  display: none;
+}
+
+.call-controls-answered {
+  position: absolute;
+  z-index: 2;
+  min-width: rem-calc(97);
+  bottom: rem-calc(20);
+  height: rem-calc(44);
+  left: calc(50% - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  md-button {
+    margin: 0 rem-calc(4);
+  }
+  &.fullscreen {
+    bottom: rem-calc(48);
+    md-button {
+      margin: 0 rem-calc(24);
+      &:last-child {
+        margin-right: 0;
+      }
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+  &.started #screen-share {
+    display: none;
+  }
+
+  &.started #stop-share {
+    display: inline;
+  }
+}
+
+.connecting #screen-share {
+  display: none;
+}
+
+.call-container {
+  display: flex;
+  height: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.remote {
+  width: 100%;
+  height: 100%;
+  video {
+    width: 100%;
+    height: 100%;
+    background: #eeeeee;
+  }
+}
+
+.spinner {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.stretch {
+  height: 100%;
+  width: 100%;
+}
+
+.stretch.outer {
+  height: calc(100% - 33px);
+}
+
+#resize {
+  position: absolute;
+  top: rem-calc(10);
+  right: rem-calc(10);
+  z-index: 2;
+}
+
+.card-title {
+  width: 100%;
+  background: #005fa3;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: rem-calc(4) rem-calc(12);
+  text-transform: uppercase;
+  font-size: rem-calc(14);
+}
+
+.self-video-container {
+  overflow: hidden;
+  background: transparent;
+  z-index: 2;
+  height: 35%;
+  width: 16%;
+  min-height: rem-calc(67);
+  min-width: rem-calc(84);
+  bottom: rem-calc(10);
+  right: rem-calc(10);
+  position: absolute;
+  transition: all ease-in 350ms;
+
+  &.fullscreen {
+    overflow: visible;
+    width: 40%;
+
+    #self-view {
+      width: 100%;
+      height: 100%;
+      left: 0;
+      right: 0;
+    }
+  }
+}
+
+.connecting .self-video-container {
+  background-color: var(--md-primary-bg-color, $md-white);
+  height: 100%;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+}
+.resize-icon {
+  box-shadow: rem-calc(2) rem-calc(2) rem-calc(7) rem-calc(3) #eeedef;
+}
+.card-title md-icon {
+  cursor: pointer;
+}
+.calling-info {
+  display: none;
+  position: absolute;
+  top: rem-calc(12);
+  width: 100%;
+  text-align: center;
+  color: var(--md-primary-text-color, $md-gray-100);
+  font-size: rem-calc(16);
+  z-index: 10;
+  text-decoration: rem-calc(2) rem-calc(2) rem-calc(4) black;
+}
+
+.connecting .calling-info {
+  display: block;
+}
+
+.walkin-progress-bar {
+  display: block;
+  height: rem-calc(4);
+}
