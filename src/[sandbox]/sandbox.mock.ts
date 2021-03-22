@@ -276,3 +276,34 @@ export const presetTagsMock: any = {
   name: ["Venki", "V"],
   email: "v3nki"
 };
+
+export const timelineEventsMock: any = [
+  {
+    data: {
+      firstName: "Venki",
+      lastName: "V",
+      email: "v3nki"
+    },
+    datacontenttype: "application/json",
+    id: "9cc22087-284d-46db-9e4e-fa7ed9723976",
+    person: "560021-Venki",
+    source: "Website",
+    specversion: "1.0",
+    time: "2021-03-05T19:00:05.596Z",
+    type: "Quote"
+  },
+  {
+    data: {
+      firstName: "Bob",
+      lastName: "Barker",
+      email: "bob@gmail.com"
+    },
+    datacontenttype: "application/json",
+    id: "1234",
+    person: "560021-Venki",
+    source: "Website",
+    specversion: "1.0",
+    time: "2021-03-05T19:00:05.596Z",
+    type: "Quote"
+  }
+];
