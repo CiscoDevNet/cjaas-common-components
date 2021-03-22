@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues, internalProperty }  from "lit-element";
+import { LitElement, html, property, PropertyValues, internalProperty } from "lit-element";
 import { bindMeetingEvents, joinMeeting } from "./meeting";
 import { nothing } from "lit-html";
 import { customElementWithCheck } from "@/mixins";
@@ -82,7 +82,7 @@ export namespace WebexWalkin {
       }
 
       this.intervalID = setInterval(() => {
-        this.progressValue = this.progressValue - (MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND));
+        this.progressValue = this.progressValue - MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND);
         this.requestUpdate();
 
         if (this.progressValue <= 0) {
@@ -163,13 +163,6 @@ export namespace WebexWalkin {
       return this.webex.people.list({
         email
       });
-    }
-
-    // deprecated
-    getAvailableAgent() {
-      return fetch(
-        "https://cjaas-webex-bot.azurewebsites.net/api/walkin-agents?name=" + this.brandName?.toLowerCase()
-      ).then((x: Response) => x.json());
     }
 
     resizeModal() {
