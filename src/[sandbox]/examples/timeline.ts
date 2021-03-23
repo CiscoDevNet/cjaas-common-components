@@ -1,5 +1,4 @@
 import "@/components/timeline/Timeline";
-import "@/components/timeline/TimelineItem";
 import { html } from "lit-element";
 import { mockedTimelineEvents } from "../sandbox.mock";
 
