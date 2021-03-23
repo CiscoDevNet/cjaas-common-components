@@ -16,11 +16,7 @@ import "../timeline/TimelineItem";
 import styles from "./scss/module.scss";
 
 export namespace Timeline {
-  export interface ServerSentEvent {
-    data: string;
-  }
-
-  export type TimelineEvent = {
+  export type TimelineItem = {
     title: string;
     text?: string;
     person?: string;
@@ -34,8 +30,8 @@ export namespace Timeline {
 
   @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
-    @property({ type: Array }) timelineEvents: TimelineEvent[] = [];
-    @property({ type: Number }) limit = 5;
+    @property({ type: Array }) timelineItems: TimelineItem[] = [];
+    @property({ type: Number, reflect: true }) limit = 5;
 
     @internalProperty() expandDetails = false;
 
@@ -51,29 +47,27 @@ export namespace Timeline {
       `;
     };
 
-    renderEventItems(groupedEvent: { key: string; children: TimelineEvent[] }) {
+    renderTimelineItems(groupedItem: { key: string; children: TimelineItem[] }) {
       return html`
         <div class="timeline has-line">
           <md-badge .outlined=${true} class="has-line block">
-            <span class="badge-text">${groupedEvent.key}</span>
+            <span class="badge-text">${groupedItem.key}</span>
           </md-badge>
           ${repeat(
-            groupedEvent.children,
-            (event: TimelineEvent) => event.id,
-            (event: TimelineEvent, currentIndex: number) => {
-              if (currentIndex < this.limit) {
-                return html`
-                  <cjaas-timeline-item
-                    .title=${event.title}
-                    .timestamp=${event.timestamp}
-                    .data=${event.data}
-                    .id=${event.id}
-                    .person=${event.person || null}
-                    ?expanded="${this.expandDetails}"
-                    class="has-line"
-                  ></cjaas-timeline-item>
-                `;
-              }
+            groupedItem.children,
+            (item: TimelineItem) => item.id,
+            (item: TimelineItem) => {
+              return html`
+                <cjaas-timeline-item
+                  .title=${item.title}
+                  .timestamp=${item.timestamp}
+                  .data=${item.data}
+                  .id=${item.id}
+                  .person=${item.person || null}
+                  ?expanded="${this.expandDetails}"
+                  class="has-line"
+                ></cjaas-timeline-item>
+              `;
             }
           )}
         </div>
@@ -85,10 +79,10 @@ export namespace Timeline {
     }
 
     render() {
-      // groups events by date
-      const groupedDates = groupBy(this.timelineEvents, (event: TimelineEvent) => getRelativeDate(event.timestamp));
+      // groups items by date
+      const groupedDates = groupBy(this.timelineItems, (item: TimelineItem) => getRelativeDate(item.timestamp));
 
-      const groupedEvents = Object.keys(groupedDates).map((key: string) => {
+      const groupedItems = Object.keys(groupedDates).map((key: string) => {
         const obj = { key, children: groupedDates[key] };
         return obj;
       });
@@ -100,9 +94,9 @@ export namespace Timeline {
             </div>
             <div class="stream">
               ${repeat(
-                groupedEvents,
-                eventData => eventData.key,
-                eventData => this.renderEventItems(eventData)
+                groupedItems,
+                itemData => itemData.key,
+                itemData => this.renderTimelineItems(itemData)
               )}
             </div>
             <div class="footer"></div>
