@@ -277,7 +277,7 @@ export const presetTagsMock: any = {
   email: "v3nki"
 };
 
-export const mockedtimelineEvents: any = [
+export const mockedTimelineEvents: any = [
   {
     data: {
       firstName: "Venki",

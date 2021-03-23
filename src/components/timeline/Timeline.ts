@@ -15,12 +15,6 @@ import { customElementWithCheck } from "@/mixins";
 import "../timeline/TimelineItem";
 import styles from "./scss/module.scss";
 
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
 export namespace Timeline {
   export interface ServerSentEvent {
     data: string;
@@ -98,8 +92,6 @@ export namespace Timeline {
         const obj = { key, children: groupedDates[key] };
         return obj;
       });
-
-      console.log("[log] groupedEvent", groupedEvents);
 
       return Object.keys(groupedDates).length > 0
         ? html`
