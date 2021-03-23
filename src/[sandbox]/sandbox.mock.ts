@@ -326,50 +326,6 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
   },
   {
     data: {
-      firstName: "Bruce",
-      lastName: "Springsteen",
-      email: "springsteen@gmail.com"
-    },
-    id: "mock22087-284d-46db-9e4e-8888",
-    title: "Add To Cart",
-    person: "560021-Venki",
-    timestamp: "2021-03-20T12:00:05.596Z"
-  },
-  {
-    data: {
-      firstName: "Bruce",
-      lastName: "Springsteen",
-      email: "springsteen@gmail.com"
-    },
-    id: "mock22087-284d-46db-9e4e-8888",
-    title: "Add To Cart",
-    person: "560021-Venki",
-    timestamp: "2021-03-20T12:00:05.596Z"
-  },
-  {
-    data: {
-      firstName: "Bruce",
-      lastName: "Springsteen",
-      email: "springsteen@gmail.com"
-    },
-    id: "mock22087-284d-46db-9e4e-8888",
-    title: "Add To Cart",
-    person: "560021-Venki",
-    timestamp: "2021-03-20T12:00:05.596Z"
-  },
-  {
-    data: {
-      firstName: "Bruce",
-      lastName: "Springsteen",
-      email: "springsteen@gmail.com"
-    },
-    id: "mock22087-284d-46db-9e4e-8888",
-    title: "Add To Cart",
-    person: "560021-Venki",
-    timestamp: "2021-03-20T12:00:05.596Z"
-  },
-  {
-    data: {
       firstName: "Janis",
       lastName: "Joplin",
       email: "joplin@gmail.com"
