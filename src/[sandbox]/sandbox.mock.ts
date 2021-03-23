@@ -1,3 +1,5 @@
+import { Timeline } from "../components/timeline/Timeline";
+
 export const profileViewMockTemplate = {
   Name: "Test Template 2",
   DatapointCount: 100,
@@ -277,34 +279,28 @@ export const presetTagsMock: any = {
   email: "v3nki"
 };
 
-export const mockedTimelineEvents: any = [
+export const mockedTimelineItems: Timeline.TimelineItem[] = [
   {
     data: {
-      firstName: "Venki",
-      lastName: "V",
-      email: "v3nki"
+      firstName: "Jackson",
+      lastName: "Browne",
+      email: "jackson@gmail.com"
     },
-    datacontenttype: "application/json",
-    id: "mock22087-284d-46db-9e4e-3976",
+    id: "mock22087-284d-46db-9e4e-0001",
+    title: "Add To Cart",
     person: "560021-Venki",
-    source: "Website",
-    specversion: "1.0",
-    time: "2021-03-05T19:00:05.596Z",
-    type: "Quote"
+    timestamp: "2021-02-16T05:00:05.596Z"
   },
   {
     data: {
-      firstName: "Bob",
-      lastName: "Barker",
-      email: "bob@gmail.com"
+      firstName: "Led",
+      lastName: "Zeppelin",
+      email: "zeppelin@gmail.com"
     },
-    datacontenttype: "application/json",
-    id: "mock2087-284d-46db-9e4e-23988",
+    id: "mock22087-284d-46db-9e4e-2222",
+    title: "Add To Cart",
     person: "560021-Venki",
-    source: "Website",
-    specversion: "1.0",
-    time: "2021-03-05T19:00:05.596Z",
-    type: "Quote"
+    timestamp: "2021-03-17T01:00:05.596Z"
   },
   {
     data: {
@@ -312,27 +308,65 @@ export const mockedTimelineEvents: any = [
       lastName: "Petty",
       email: "tom@gmail.com"
     },
-    datacontenttype: "application/json",
-    id: "mock22087-284d-46db-9e4e-23912",
+    id: "mock22087-284d-46db-9e4e-1110",
+    title: "Add To Cart",
     person: "560021-Venki",
-    source: "Website",
-    specversion: "1.0",
-    time: "2021-03-05T19:00:05.596Z",
-    type: "Quote"
+    timestamp: "2021-03-20T13:00:05.596Z"
   },
   {
     data: {
       firstName: "Bruce",
       lastName: "Springsteen",
-      email: "spring@gmail.com"
+      email: "springsteen@gmail.com"
     },
-    datacontenttype: "application/json",
-    id: "mock22087-284d-46db-9e4e-2222",
+    id: "mock22087-284d-46db-9e4e-8888",
+    title: "Add To Cart",
     person: "560021-Venki",
-    source: "Website",
-    specversion: "1.0",
-    time: "2021-03-05T19:00:05.596Z",
-    type: "Quote"
+    timestamp: "2021-03-20T12:00:05.596Z"
+  },
+  {
+    data: {
+      firstName: "Bruce",
+      lastName: "Springsteen",
+      email: "springsteen@gmail.com"
+    },
+    id: "mock22087-284d-46db-9e4e-8888",
+    title: "Add To Cart",
+    person: "560021-Venki",
+    timestamp: "2021-03-20T12:00:05.596Z"
+  },
+  {
+    data: {
+      firstName: "Bruce",
+      lastName: "Springsteen",
+      email: "springsteen@gmail.com"
+    },
+    id: "mock22087-284d-46db-9e4e-8888",
+    title: "Add To Cart",
+    person: "560021-Venki",
+    timestamp: "2021-03-20T12:00:05.596Z"
+  },
+  {
+    data: {
+      firstName: "Bruce",
+      lastName: "Springsteen",
+      email: "springsteen@gmail.com"
+    },
+    id: "mock22087-284d-46db-9e4e-8888",
+    title: "Add To Cart",
+    person: "560021-Venki",
+    timestamp: "2021-03-20T12:00:05.596Z"
+  },
+  {
+    data: {
+      firstName: "Bruce",
+      lastName: "Springsteen",
+      email: "springsteen@gmail.com"
+    },
+    id: "mock22087-284d-46db-9e4e-8888",
+    title: "Add To Cart",
+    person: "560021-Venki",
+    timestamp: "2021-03-20T12:00:05.596Z"
   },
   {
     data: {
@@ -340,12 +374,9 @@ export const mockedTimelineEvents: any = [
       lastName: "Joplin",
       email: "joplin@gmail.com"
     },
-    datacontenttype: "application/json",
     id: "mock22087-284d-46db-9e4e-4555",
+    title: "Add To Cart",
     person: "560021-Venki",
-    source: "Website",
-    specversion: "1.0",
-    time: "2021-03-05T19:00:05.596Z",
-    type: "Quote"
+    timestamp: "2021-03-05T19:00:05.596Z"
   }
 ];

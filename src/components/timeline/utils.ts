@@ -28,20 +28,20 @@ export function getTimelineEventFromMessage(message: any) {
 export const EVENT_ICON_MAP: any = {
   "Page Visit": {
     name: "icon-open-pages_16",
-    color: "purple",
+    color: "purple"
   },
   Identify: {
     name: "icon-user_16",
-    color: "blue",
+    color: "blue"
   },
   "NPS.*": {
     name: "icon-analysis_16",
-    color: "red",
+    color: "red"
   },
   "Walkin Offered": {
     name: "icon-audio-video_16",
-    color: "yellow",
-  },
+    color: "yellow"
+  }
 };
 
 const TEMP_ICON_MAP: any = {};
@@ -60,7 +60,7 @@ const staticColors = [
   "violet",
   "cyan",
   "cobalt",
-  "pink",
+  "pink"
 ];
 
 const staticIcons = [
@@ -69,7 +69,7 @@ const staticIcons = [
   "icon-breakout-session_16",
   "icon-commenting_16",
   "icon-explore_16",
-  "icon-filter-circle_16",
+  "icon-filter-circle_16"
 ];
 
 function getRandomColor() {
@@ -94,7 +94,7 @@ export function getIconData(eventName: string) {
   if (!result && !TEMP_ICON_MAP[eventName]) {
     result = {
       name: getRandomIcon(),
-      color: getRandomColor(),
+      color: getRandomColor()
     };
 
     TEMP_ICON_MAP[eventName] = result;
@@ -107,9 +107,7 @@ export function getIconData(eventName: string) {
 
 export function getTimeStamp(date: DateTime) {
   const now = DateTime.local();
-  const diff: any = now
-    .diff(date, ["days", "hours", "minutes", "seconds"])
-    .toObject();
+  const diff: any = now.diff(date, ["days", "hours", "minutes", "seconds"]).toObject();
 
   if (diff === undefined) {
     return;
@@ -134,8 +132,6 @@ export function getRelativeDate(timestamp: string) {
   const dt = DateTime.local();
   const nowIsoString = dt.toISO();
 
-  const relativeValue = DateTime.fromISO(
-    timestamp || nowIsoString
-  ).toRelativeCalendar();
+  const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar();
   return relativeValue;
 }

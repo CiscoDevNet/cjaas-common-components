@@ -11,7 +11,7 @@ import { withKnobs } from "@storybook/addon-knobs";
 import { html } from "lit-element";
 import "@/components/timeline/Timeline";
 import "@/components/timeline/TimelineItem";
-import { mockedTimelineEvents } from "@/[sandbox]/sandbox.mock";
+import { mockedTimelineItems } from "@/[sandbox]/sandbox.mock";
 
 export default {
   title: "Timeline",
@@ -28,7 +28,7 @@ export const Timeline = () => {
   return html`
       <cjaas-timeline
         id="cjaas-timeline"
-        .timelineEvents=${mockedTimelineEvents}
+        .timelineItems=${mockedTimelineItems}
         limit="4"
       >
       </cjaas-timeline>
