@@ -10,9 +10,8 @@ import { LitElement, html, property, PropertyValues, internalProperty } from "li
 import { bindMeetingEvents, joinMeeting } from "./meeting";
 import { nothing } from "lit-html";
 import { customElementWithCheck } from "@/mixins";
-import { MILLISECONDS_PER_SECOND } from "@/constants";
+import "../timer/Timer";
 import styles from "./scss/module.scss";
-import timerStyles from "./scss/timer.scss";
 
 export namespace WebexWalkin {
   @customElementWithCheck("cjaas-webex-walkin")
@@ -301,83 +300,10 @@ export namespace WebexWalkin {
       `;
     }
   }
-
-  @customElementWithCheck("cjaas-timer")
-  export class TIMER extends LitElement {
-    // time in seconds
-    @property({ type: Number }) seconds = 180;
-
-    progressValue: number | null = null;
-
-    intervalID: any;
-
-    connectedCallback() {
-      super.connectedCallback();
-      this.startTimer();
-    }
-
-    updated(changedProperties: any) {
-      changedProperties.forEach((oldValue: string, name: string) => {
-        console.log("Oldvalue", oldValue);
-
-        if (name === "timer") {
-          this.startTimer();
-        }
-      });
-    }
-
-    public startTimer() {
-      this.progressValue = 100;
-      if (this.intervalID !== undefined) {
-        clearInterval(this.intervalID);
-      }
-
-      this.intervalID = setInterval(() => {
-        this.progressValue =
-          (this.progressValue as number) - MILLISECONDS_PER_SECOND / (this.seconds * MILLISECONDS_PER_SECOND);
-
-        this.requestUpdate();
-
-        if (this.progressValue <= 0) {
-          this.progressValue = 0;
-          clearInterval(this.intervalID);
-          const event = new CustomEvent("timed-out", {
-            composed: true,
-            bubbles: true
-          });
-
-          this.dispatchEvent(event);
-        }
-      }, 10);
-    }
-
-    render() {
-      return this.progressValue
-        ? html`
-            <md-progress-bar
-              .type=${"determinate"}
-              .value=${this.progressValue}
-              .displayFormat=${"none"}
-              .dynamic=${true}
-            ></md-progress-bar>
-          `
-        : nothing;
-    }
-
-    static get styles() {
-      return timerStyles;
-    }
-
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      clearInterval(this.intervalID);
-    }
-  }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
     "cjaas-webex-walkin": WebexWalkin.ELEMENT;
-    "cjaas-timer": WebexWalkin.TIMER;
   }
 }

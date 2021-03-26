@@ -12,7 +12,7 @@ import { html } from "lit-element";
 import "@/components/webexWalkin/WebexWalkin";
 
 export default {
-  title: "WebexWalkin",
+  title: "Webex Walkin",
   component: "cjaas-webex-walkin",
   decorators: [withKnobs, withA11y],
   parameters: {

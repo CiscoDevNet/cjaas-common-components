@@ -73,7 +73,7 @@ export namespace TimelineItem {
     };
 
     render() {
-      const timeStamp = getTimeStamp(this.timestamp || DateTime.local());
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.timestamp) || DateTime.local());
       const iconData = getIconData(this.title);
 
       return html`
