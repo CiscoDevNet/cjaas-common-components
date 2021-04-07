@@ -19,7 +19,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
       `
     );
     expect(component).not.toBeNull();
@@ -28,26 +28,26 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
       `
     );
     expect(component.shadowRoot!.querySelector(".contact-item")!.querySelector("span")!.textContent).toEqual(
-      component.presetTags.email
+      component.contactData?.email
     );
   });
 
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .profileData=${profileMock} .contactData=${presetTagsMock}> </cjaas-profile>
       `
     );
-    expect(component.getValue(component.profile[0])).toBe(profileMock[0].result[0]);
+    expect(component.getValue(component.profileData[0])).toBe(profileMock[0].result[0]);
   });
   test("should render snapshot view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
       `
     );
     const snapshotRender = spyOn(component, "getSnapshot");
@@ -58,7 +58,7 @@ describe("Profile component", () => {
   test("should render compact view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profile=${profileMock} .presetTags=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
       `
     );
     const compactRender = spyOn(component, "getCompact");

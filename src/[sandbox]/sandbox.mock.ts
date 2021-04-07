@@ -275,8 +275,9 @@ export const profileMock = [
 ];
 
 export const presetTagsMock: any = {
-  name: ["Venki", "V"],
-  email: "v3nki"
+  name: "Venki",
+  email: "v3nki@venki.com",
+  label: "Preferred customer"
 };
 
 export const mockedTimelineItems: Timeline.TimelineItem[] = [

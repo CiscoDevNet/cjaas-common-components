@@ -7,62 +7,112 @@
  */
 
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, html, property } from "lit-element";
+import { LitElement, html, property, internalProperty } from "lit-element";
+import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 
 export namespace ProfileView {
+  interface ContactData {
+    contactChannels?: object[];
+    email?: string;
+    name?: string;
+    label?: string;
+    imgSrc?: string;
+  }
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
-    @property() profile: any;
+    @property() contactData: ContactData | undefined = undefined;
+    @property() profileData: any | undefined = undefined;
     @property({ type: Boolean }) snapshot = false;
     @property({ type: Boolean }) compact = false;
-    @property() presetTags: any = {};
+    @property({ type: Boolean }) loading = false;
+
+    connectedCallback() {
+      super.connectedCallback();
+      this.extractDataPoints();
+    }
 
     contactItem() {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
-      // accept a type parameter to render phone / email / etc.
+      // Accept a type parameter to render phone / email / etc.
+      // See the "contactData.contactChannels" property, parse an array of objects.
       return html`
         <div class="contact-item">
           <md-badge circle color="violet">
             <md-icon name="icon-email-active_12" size="8"></md-icon>
           </md-badge>
-          <span>${this.presetTags?.email}</span>
+          <span>${this.contactData?.email}</span>
         </div>
       `;
     }
 
+    dataPointFilter(dataPoint: string) {
+      // Usage agnostic, simply retrieves the usable data. Specific to CJaaS API
+      const dataAttribute = this.profileData?.filter((x: any) => x.query.Metadata === dataPoint);
+      return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
+    }
+
+    extractDataPoints() {
+      // we should expose attributes for easy use on simple datapoints that would be a part of snapshot and compact profile views
+      // compact can work with just the current ContactData interface
+      // Snapshot can to the same, with additional parsing of a many-contact-methods array
+
+      // In absence of user-fed values, parse the profile object for the relevant details
+      if (!this.contactData && this.profileData) {
+        const contactDetails = {
+          name: this.dataPointFilter("firstName"),
+          email: this.dataPointFilter("email"),
+          label: this.dataPointFilter("label"),
+          imgSrc: this.dataPointFilter("imgSrc")
+        };
+        this.contactData = contactDetails;
+      }
+    }
+
     getTopContent() {
-      const name = this.presetTags?.name?.join(" ");
+      const name = this.contactData?.name || "";
       return html`
         <section class="top-content">
-          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
-          <h5 title="Name" class="customer-name">
-            ${name}
-          </h5>
-          <h5 title="Label" class="customer-label">
-            ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
-          </h5>
-          ${this.contactItem()}
+          ${this.loading
+            ? this.getLoading()
+            : html`
+                <md-avatar
+                  .title="${name}"
+                  alt=${name}
+                  src=${ifDefined(this.contactData?.imgSrc || undefined)}
+                  .size=${48}
+                ></md-avatar>
+                <h5 title="Name" class="customer-name">
+                  ${name}
+                </h5>
+                <h5 title="Label" class="customer-label">
+                  ${this.contactData?.label}
+                </h5>
+                ${this.contactItem()}
+              `}
         </section>
       `;
     }
 
     getTable() {
-      return html`
-        <table title="Profile Details">
-          ${this.profile
-            ?.filter((x: any) => x.query.type === "table")
-            .map((x: any) => {
-              return html`
-                <tr>
-                  <td class="title">${x.query.DisplayName}</td>
-                  <td class="value">${this.getValue(x)}</td>
-                </tr>
-              `;
-            })}
-        </table>
-      `;
+      return this.loading
+        ? this.getLoading()
+        : html`
+            <table title="Profile Details">
+              ${this.profileData
+                ?.filter((x: any) => x.query.type === "table")
+                .map((x: any) => {
+                  return html`
+                    <tr>
+                      <td class="title">${x.query.DisplayName}</td>
+                      <td class="value">${this.getValue(x)}</td>
+                    </tr>
+                  `;
+                })}
+            </table>
+          `;
     }
+
     getValue(x: any) {
       let result = null;
 
@@ -85,32 +135,48 @@ export namespace ProfileView {
       return styles;
     }
 
-    getSnapshot() {
+    getLoading() {
       return html`
-        <div class="snapshot">
-          ${this.getTopContent()}
-        </div>
+        <md-loading></md-loading>
       `;
     }
-    getCompact() {
-      const name = this.presetTags?.name?.join(" ");
+
+    getSnapshot() {
       return html`
-        <div class="compact">
-          <md-avatar .title="${name}" alt=${name} src=${this.profile?.picture || undefined} .size=${48}></md-avatar>
-          <div class="customer-titles">
-            <h5 title="Name" class="customer-name">
-              ${name}
-            </h5>
-            <h5 title="Label" class="customer-label">
-              ${this.presetTags?.label ? this.presetTags?.label?.join(" ") : "VIP Customer"}
-            </h5>
-          </div>
-        </div>
+        <section class="snapshot" title="Customer Profile">
+          ${this.loading ? this.getLoading() : this.getTopContent()}
+        </section>
+      `;
+    }
+
+    getCompact() {
+      const name = this.contactData?.name || "";
+      return html`
+        <section class="compact" title="Customer Profile">
+          ${this.loading
+            ? this.getLoading()
+            : html`
+                <md-avatar
+                  .title="${name}"
+                  alt=${name}
+                  src=${ifDefined(this.contactData?.imgSrc || undefined)}
+                  .size=${48}
+                ></md-avatar>
+                <div class="customer-titles">
+                  <h5 title="Name" class="customer-name">
+                    ${name}
+                  </h5>
+                  <h5 title="Label" class="customer-label">
+                    ${this.contactData?.label}
+                  </h5>
+                </div>
+              `}
+        </section>
       `;
     }
 
     render() {
-      if (this.profile && this.presetTags) {
+      if (this.contactData) {
         return this.compact
           ? this.getCompact()
           : this.snapshot
@@ -124,7 +190,7 @@ export namespace ProfileView {
             `;
       } else {
         return html`
-          <p>No profile or preset tags provided</p>
+          <p>No data provided</p>
         `;
       }
     }
