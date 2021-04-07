@@ -12,8 +12,11 @@ import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 
 export namespace ProfileView {
+  interface ContactChannel {
+    [key: string]: string;
+  }
   interface ContactData {
-    contactChannels?: object[];
+    contactChannels?: ContactChannel[];
     email?: string;
     name?: string;
     label?: string;
@@ -53,11 +56,6 @@ export namespace ProfileView {
     }
 
     extractDataPoints() {
-      // we should expose attributes for easy use on simple datapoints that would be a part of snapshot and compact profile views
-      // compact can work with just the current ContactData interface
-      // Snapshot can to the same, with additional parsing of a many-contact-methods array
-
-      // In absence of user-fed values, parse the profile object for the relevant details
       if (!this.contactData && this.profileData) {
         const contactDetails = {
           name: this.dataPointFilter("firstName"),
@@ -131,10 +129,6 @@ export namespace ProfileView {
       return result;
     }
 
-    static get styles() {
-      return styles;
-    }
-
     getLoading() {
       return html`
         <md-loading></md-loading>
@@ -173,6 +167,10 @@ export namespace ProfileView {
               `}
         </section>
       `;
+    }
+
+    static get styles() {
+      return styles;
     }
 
     render() {
