@@ -145,7 +145,7 @@ export namespace ProfileView {
 
     getSnapshot() {
       return html`
-        <section class="snapshot" title="Customer Profile">
+        <section class="snapshot" part="profile-snapshot" title="Customer Profile">
           ${this.loading ? this.getLoading() : this.getTopContent()}
         </section>
       `;
@@ -154,7 +154,7 @@ export namespace ProfileView {
     getCompact() {
       const name = this.contactData?.name || "";
       return html`
-        <section class="compact" title="Customer Profile">
+        <section class="compact" part="profile-compact" title="Customer Profile">
           ${this.loading
             ? this.getLoading()
             : html`
@@ -188,7 +188,7 @@ export namespace ProfileView {
           : this.snapshot
           ? this.getSnapshot()
           : html`
-              <section class="profile" title="Customer Profile">
+              <section class="profile" part="profile" title="Customer Profile">
                 ${this.getTopContent()}
                 <hr />
                 ${this.getTable()}
