@@ -7,7 +7,7 @@
  */
 
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, html, property, internalProperty } from "lit-element";
+import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 
@@ -35,6 +35,16 @@ export namespace ProfileView {
       this.extractDataPoints();
     }
 
+    updated(changedProperties: PropertyValues) {
+      super.updated(changedProperties);
+      if (changedProperties.has("profileData")) {
+        this.extractDataPoints(true);
+      }
+      if (changedProperties.has("contactData")) {
+        this.requestUpdate();
+      }
+    }
+
     contactItem() {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
       // Accept a type parameter to render phone / email / etc.
@@ -55,8 +65,8 @@ export namespace ProfileView {
       return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
     }
 
-    extractDataPoints() {
-      if (!this.contactData && this.profileData) {
+    extractDataPoints(update?: boolean) {
+      if ((!this.contactData && this.profileData) || update) {
         const contactDetails = {
           name: this.dataPointFilter("firstName"),
           email: this.dataPointFilter("email"),
