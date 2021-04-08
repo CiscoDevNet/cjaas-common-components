@@ -7,7 +7,7 @@
  */
 
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
+import { LitElement, html, property, PropertyValues } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 
