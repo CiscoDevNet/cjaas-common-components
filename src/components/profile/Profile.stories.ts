@@ -27,7 +27,12 @@ export const Profile = () => {
   const snapshot = boolean("snapshot", false);
   const compact = boolean("compact", false);
   return html`
-    <cjaas-profile .profile=${profileMock} .presetTags=${contactDataMock} ?snapshot=${snapshot} ?compact=${compact}>
+    <cjaas-profile
+      .profileData=${profileMock}
+      .contactData=${contactDataMock}
+      ?snapshot=${snapshot}
+      ?compact=${compact}
+    >
     </cjaas-profile>
   `;
 };
