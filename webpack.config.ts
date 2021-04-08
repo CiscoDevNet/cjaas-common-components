@@ -132,7 +132,7 @@ const commonDist = merge(common, {
     "index-entry": "./src/index.ts",
     "comp/cjaas-profile-entry": "./src/components/profile/Profile.ts",
     "comp/cjaas-timeline-entry": "./src/components/timeline/Timeline.ts",
-    "comp/cjaas-timeline-item-entry": "./src/components/timeline//TimelineItem.ts",
+    "comp/cjaas-timeline-item-entry": "./src/components/timeline/TimelineItem.ts",
     "comp/cjaas-webex-walkin-entry": "./src/components/webexWalkin/WebexWalkin.ts",
     "comp/cjaas-timer-entry": "./src/components/timer/Timer.ts"
   },
