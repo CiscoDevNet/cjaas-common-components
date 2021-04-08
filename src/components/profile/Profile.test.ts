@@ -9,7 +9,7 @@
 import { elementUpdated, fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
 import "../profile/Profile";
 import { ProfileView } from "../profile/Profile";
-import { profileMock, presetTagsMock } from "../../[sandbox]/sandbox.mock";
+import { profileMock, contactDataMock } from "../../[sandbox]/sandbox.mock";
 
 describe("Profile component", () => {
   afterEach(() => {
@@ -19,7 +19,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
       `
     );
     expect(component).not.toBeNull();
@@ -28,7 +28,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
       `
     );
     expect(component.shadowRoot!.querySelector(".contact-item")!.querySelector("span")!.textContent).toEqual(
@@ -39,7 +39,7 @@ describe("Profile component", () => {
   test("should render one profile component", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .profileData=${profileMock} .contactData=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .profileData=${profileMock} .contactData=${contactDataMock}> </cjaas-profile>
       `
     );
     expect(component.getValue(component.profileData[0])).toBe(profileMock[0].result[0]);
@@ -47,7 +47,7 @@ describe("Profile component", () => {
   test("should render snapshot view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
       `
     );
     const snapshotRender = spyOn(component, "getSnapshot");
@@ -58,7 +58,7 @@ describe("Profile component", () => {
   test("should render compact view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${presetTagsMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
       `
     );
     const compactRender = spyOn(component, "getCompact");

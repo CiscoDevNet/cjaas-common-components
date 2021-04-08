@@ -15,8 +15,8 @@ export namespace ProfileView {
   interface ContactChannel {
     [key: string]: string;
   }
-  interface ContactData {
-    contactChannels?: ContactChannel[];
+  export interface ContactData {
+    contactChannels?: ContactChannel;
     email?: string;
     name?: string;
     label?: string;
@@ -39,9 +39,6 @@ export namespace ProfileView {
       super.updated(changedProperties);
       if (changedProperties.has("profileData")) {
         this.extractDataPoints(true);
-      }
-      if (changedProperties.has("contactData")) {
-        this.requestUpdate();
       }
     }
 
@@ -67,6 +64,7 @@ export namespace ProfileView {
 
     extractDataPoints(update?: boolean) {
       if ((!this.contactData && this.profileData) || update) {
+        // TODO: Pending more API development, populate the contactChannels her as well
         const contactDetails = {
           name: this.dataPointFilter("firstName"),
           email: this.dataPointFilter("email"),
