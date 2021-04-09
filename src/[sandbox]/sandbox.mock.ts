@@ -1,4 +1,5 @@
 import { Timeline } from "../components/timeline/Timeline";
+import { ProfileView } from "../components/profile/Profile";
 
 export const profileViewMockTemplate = {
   Name: "Test Template 2",
@@ -274,9 +275,15 @@ export const profileMock = [
   }
 ];
 
-export const presetTagsMock: any = {
-  name: ["Venki", "V"],
-  email: "v3nki"
+export const contactDataMock: ProfileView.ContactData = {
+  contactChannels: {
+    email: "v3nki@venki.com",
+    phone: "555-555-5555",
+    whatsApp: "MyProfileName"
+  },
+  name: "Venki",
+  email: "v3nki@venki.com",
+  label: "Preferred customer"
 };
 
 export const mockedTimelineItems: Timeline.TimelineItem[] = [
