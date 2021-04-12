@@ -7,6 +7,7 @@ import * as path from "path";
 import RemovePlugin from "remove-files-webpack-plugin";
 import * as webpack from "webpack";
 import merge from "webpack-merge";
+import nodeExternals from "webpack-node-externals";
 import WebpackLoadChunksPlugin from "./webpack.plugin.LoadChunks";
 
 const pSrc = path.resolve("src");
@@ -45,7 +46,8 @@ const common: webpack.Configuration = {
             name: "images-cjaas-common/[name].[hash:8].[ext]",
             esModule: false
           }
-        }
+        },
+        include: pSrc
       }
     ]
   }
@@ -70,9 +72,18 @@ function ruleCSS({ isDev }: { isDev: boolean }) {
     test: /\.scss$/,
     use: [
       { loader: "lit-scss-loader", options: { minify: !isDev } },
+      { loader: "string-replace-loader", options: { search: /\\/g, replace: "\\\\" } },
       { loader: "extract-loader" },
       { loader: "css-loader", options: { sourceMap: isDev, importLoaders: 2 } },
-      { loader: "sass-loader", options: { sourceMap: isDev } },
+      {
+        loader: "sass-loader",
+        options: {
+          sourceMap: isDev,
+          sassOptions: {
+            outputStyle: "compressed"
+          }
+        }
+      },
       {
         loader: "alias-resolve-loader",
         options: {
@@ -127,7 +138,6 @@ const dev = merge(commonDev, {
 // ----------
 
 const commonDist = merge(common, {
-  devtool: "source-map",
   entry: {
     "index-entry": "./src/index.ts",
     "comp/cjaas-profile-entry": "./src/components/profile/Profile.ts",
@@ -140,8 +150,9 @@ const commonDist = merge(common, {
     path: pDist,
     publicPath: "/",
     filename: "[name].js",
-    chunkFilename: "chunks/[id].js",
-    libraryTarget: "umd"
+    chunkFilename: "chunks/cjaas-[id].js",
+    libraryTarget: "umd",
+    jsonpFunction: "common-components-[id]"
   },
   optimization: {
     splitChunks: {
@@ -151,6 +162,7 @@ const commonDist = merge(common, {
       minSize: 0
     }
   },
+  externals: [nodeExternals({ modulesFromFile: true, importType: "umd" })],
   plugins: [
     new CleanWebpackPlugin(),
     new WebpackLoadChunksPlugin({

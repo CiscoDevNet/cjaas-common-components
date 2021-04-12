@@ -319,7 +319,7 @@ describe("FocusTrap Mixin", () => {
   test("should prefer autofocus element in tab sequence", async () => {
     const focusTrap = el.shadowRoot!.querySelector<FocusTrap>("focus-trap");
     const focusableChild = focusTrap!.querySelector<FocusableChild>("focusable-child");
-    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input");
+    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input") as any;
 
     mdInput!.autofocus = true;
 
@@ -368,7 +368,7 @@ describe("FocusTrap Mixin", () => {
     await nextFrame();
     await elementUpdated(el);
 
-    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input");
+    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input") as any;
     const input = mdInput!.shadowRoot!.querySelector("input");
 
     input!.click();
@@ -381,7 +381,7 @@ describe("FocusTrap Mixin", () => {
   test("szhould change focus trap index if new focusable element was clicked", async () => {
     const focusTrap = el.shadowRoot!.querySelector<FocusTrap>("focus-trap");
     const focusableChild = focusTrap!.querySelector<FocusableChild>("focusable-child");
-    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input");
+    const mdInput = focusableChild!.shadowRoot!.querySelector("md-input") as any;
     const input = mdInput!.shadowRoot!.querySelector("input");
 
     mdInput!.tabIndex = -1;

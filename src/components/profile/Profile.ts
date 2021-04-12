@@ -11,6 +11,11 @@ import { LitElement, html, property, PropertyValues } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 
+import "@momentum-ui/web-components/dist/comp/md-badge";
+import "@momentum-ui/web-components/dist/comp/md-icon";
+import "@momentum-ui/web-components/dist/comp/md-avatar";
+import "@momentum-ui/web-components/dist/comp/md-loading";
+
 export namespace ProfileView {
   interface ContactChannel {
     [key: string]: string;

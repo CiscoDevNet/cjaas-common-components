@@ -6,7 +6,7 @@ import { profileTemplate } from "./examples/profile";
 import { getWebexWalkinTemplate } from "./examples/webexWalkin";
 import { timerTemplate } from "./examples/timer";
 
-import "@momentum-ui/web-components";
+import "@momentum-ui/web-components/dist/comp/md-theme";
 
 @customElement("momentum-ui-web-components-sandbox")
 export class Sandbox extends LitElement {
