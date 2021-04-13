@@ -7,7 +7,6 @@ import * as path from "path";
 import RemovePlugin from "remove-files-webpack-plugin";
 import * as webpack from "webpack";
 import merge from "webpack-merge";
-import nodeExternals from "webpack-node-externals";
 import WebpackLoadChunksPlugin from "./webpack.plugin.LoadChunks";
 
 const pSrc = path.resolve("src");
@@ -162,7 +161,6 @@ const commonDist = merge(common, {
       minSize: 0
     }
   },
-  externals: [nodeExternals({ modulesFromFile: true, importType: "umd" })],
   plugins: [
     new CleanWebpackPlugin(),
     new WebpackLoadChunksPlugin({
