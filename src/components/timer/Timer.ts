@@ -4,6 +4,8 @@ import { nothing, html } from "lit-html";
 import { MILLISECONDS_PER_SECOND } from "@/constants";
 import styles from "./scss/module.scss";
 
+import "@momentum-ui/web-components/dist/comp/md-progress-bar";
+
 export namespace Timer {
   @customElementWithCheck("cjaas-timer")
   export class ELEMENT extends LitElement {
