@@ -15,6 +15,10 @@ import { customElementWithCheck } from "@/mixins";
 import "../timeline/TimelineItem";
 import styles from "./scss/module.scss";
 
+import "@momentum-ui/web-components/dist/comp/md-badge";
+import "@momentum-ui/web-components/dist/comp/md-button";
+import "@momentum-ui/web-components/dist/comp/md-spinner";
+
 export namespace Timeline {
   export type TimelineItem = {
     title: string;
