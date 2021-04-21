@@ -17,4 +17,8 @@ export const profileTemplate = html`
   <cjaas-profile .contactData=${contactDataMock} compact> </cjaas-profile>
   <h4>Compact display, Loading</h4>
   <cjaas-profile .contactData=${contactDataMock} compact loading> </cjaas-profile>
+  <h4>With "No Data" Localized Message passed in</h4>
+  <cjaas-profile>
+    <p slot="l10n-no-data-message">No se han proporcionado datos</p>
+  </cjaas-profile>
 `;

@@ -29,6 +29,25 @@
     </cjaas-webex-walkin>
 ```
 
+## Localization
+
+By default, if the server connection fails the component will render the message "Unable to connect to server", but this can be easily replaced with Localized text content using the named slot `"l10n-no-connect-message"`.
+
+```html
+<cjaas-webex-walkin access-token=${accessToken} brand-name="example" agent-id="example@cisco.com">
+  <span slot="l10n-no-connect-message">No se puede conectar al servidor</span>
+</cjaas-webex-walkin>
+```
+
+## Named Slots
+In addition to the Localization slot detailed above, you can provide a custom card title.
+```html
+<cjaas-webex-walkin access-token=${accessToken} brand-name="example" agent-id="example@cisco.com">
+  <div slot="card-title">MY OWN WEBEX NAME</div>
+</cjaas-webex-walkin>
+```
+
+
 ## Copyright
 
 Copyright (c) 2021 Cisco Systems

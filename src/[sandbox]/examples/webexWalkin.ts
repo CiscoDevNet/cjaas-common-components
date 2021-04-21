@@ -22,6 +22,13 @@ export const getWebexWalkinTemplate = function(shadowRoot: ShadowRoot | null) {
       <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="v3nki@cisco.com">
       </cjaas-webex-walkin>
     </div>
+    <div class="webex-walkin-sandbox-wrapper" style="margin-top: 1rem">
+      <h3>Localization Message Provided:</h3>
+      <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="v3nki@cisco.com">
+        <span slot="l10n-no-connect-message">No se puede conectar al servidor</span>
+        <div slot="card-title">MY OWN WEBEX NAME</div>
+      </cjaas-webex-walkin>
+    </div>
   `;
 };
 
@@ -30,7 +37,7 @@ function setAccessToken(shadowRoot: ShadowRoot | null) {
     .then(x => x.text())
     .then(token => {
       alert("Updating...");
-      let walkinComp: WebexWalkin.ELEMENT | null | undefined = shadowRoot?.querySelector("cjaas-webex-walkin");
+      const walkinComp: WebexWalkin.ELEMENT | null | undefined = shadowRoot?.querySelector("cjaas-webex-walkin");
       if (walkinComp) {
         walkinComp.accessToken = token;
       }
