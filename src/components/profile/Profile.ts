@@ -201,7 +201,9 @@ export namespace ProfileView {
             `;
       } else {
         return html`
-          <p>No data provided</p>
+          <slot name="l10n-no-data-message">
+            <p>No data provided</p>
+          </slot>
         `;
       }
     }

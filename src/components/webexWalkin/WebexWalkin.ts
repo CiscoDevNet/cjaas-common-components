@@ -58,7 +58,9 @@ export namespace WebexWalkin {
         <div class="spinner">
           ${this.isAuthDenied
             ? html`
-                <span class="error-message">Unable to connect to server</span>
+                <slot name="l10n-no-connect-message">
+                  <span class="error-message">Unable to connect to server</span>
+                </slot>
               `
             : html`
                 <md-spinner size="32"></md-spinner>
@@ -288,7 +290,9 @@ export namespace WebexWalkin {
     render() {
       return html`
         <div class="card-title">
-          <div>Webex Walk In</div>
+          <slot name="card-title">
+            <div>Webex Walk In</div>
+          </slot>
         </div>
         <div class="stretch outer">
           ${this.isWebexMeetingConnected
