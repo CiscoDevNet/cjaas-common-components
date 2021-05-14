@@ -42,7 +42,7 @@
     "@momentum-ui/icons": "^8.8.2",
     "@momentum-ui/tokens": "^1.6.2",
     "@momentum-ui/utils": "^6.2.12",
-    "@momentum-ui/web-components": "^2.2.0",
+    "@momentum-ui/web-components": "^2.2.2",
     "lit-element": "2.3.1",
     "lit-html": "1.2.1"
   },
@@ -69,7 +69,7 @@
     "@momentum-ui/icons": "^8.8.2",
     "@momentum-ui/tokens": "^1.6.2",
     "@momentum-ui/utils": "^6.2.12",
-    "@momentum-ui/web-components": "^2.2.0",
+    "@momentum-ui/web-components": "^2.2.2",
     "@open-wc/testing-helpers": "1.8.9",
     "@percy/storybook": "^3.3.0",
     "@storybook/addon-a11y": "^5.3.18",
