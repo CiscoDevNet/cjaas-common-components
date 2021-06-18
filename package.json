@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -42,7 +42,7 @@
     "@momentum-ui/icons": "^8.8.2",
     "@momentum-ui/tokens": "^1.6.2",
     "@momentum-ui/utils": "^6.2.12",
-    "@momentum-ui/web-components": "^2.2.0",
+    "@momentum-ui/web-components": "^2.2.2",
     "lit-element": "2.3.1",
     "lit-html": "1.2.1"
   },
@@ -69,7 +69,7 @@
     "@momentum-ui/icons": "^8.8.2",
     "@momentum-ui/tokens": "^1.6.2",
     "@momentum-ui/utils": "^6.2.12",
-    "@momentum-ui/web-components": "^2.2.0",
+    "@momentum-ui/web-components": "^2.2.2",
     "@open-wc/testing-helpers": "1.8.9",
     "@percy/storybook": "^3.3.0",
     "@storybook/addon-a11y": "^5.3.18",
@@ -92,7 +92,7 @@
     "@types/sortablejs": "^1.10.6",
     "@types/webpack": "^4.41.7",
     "@types/webpack-dev-server": "^3.10.0",
-    "@types/webpack-merge": "^4.1.5",
+    "@types/webpack-merge": "^5.0.0",
     "@types/webpack-node-externals": "^1.7.1",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
@@ -140,7 +140,7 @@
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
-    "webpack-merge": "^4.2.2",
+    "webpack-merge": "^5.7.3",
     "webpack-node-externals": "^1.7.2"
   }
 }
