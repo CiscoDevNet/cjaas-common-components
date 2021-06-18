@@ -220,12 +220,16 @@ export namespace ConditionBlock {
     }
 
     public getValue() {
-      if (!this.innerRelation) {
-        return null;
-      }
+      const relation = this.innerRelation || "AND";
+
+      const nodes = this.shadowRoot?.querySelectorAll(".block-container>*");
+
+      nodes?.forEach((x, index: number) => {
+        this.conditions[index] = (x as any).getValue();
+      });
 
       return {
-        [this.innerRelation]: this.conditions
+        [relation]: this.conditions
       };
     }
 
