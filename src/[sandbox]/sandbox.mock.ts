@@ -343,3 +343,145 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
     timestamp: "2021-03-05T19:00:05.596Z"
   }
 ];
+
+export const mockConditions = [
+  {
+    field: "ltv",
+    operator: "GT",
+    value: "5000"
+  },
+  {
+    field: "zipCode",
+    operator: "EQ",
+    value: "560021"
+  },
+  {
+    field: "firstName",
+    operator: "EQ",
+    value: "XYZ"
+  }
+];
+
+export const mockOptionsList = [
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "email",
+    limit: 1,
+    displayName: "Email",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "Make",
+    limit: 1,
+    displayName: "Make",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "Model",
+    limit: 1,
+    displayName: "Model",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "License Plate",
+    limit: 1,
+    displayName: "License Plate",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "ltv",
+    limit: 1,
+    displayName: "LTV",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "firstName",
+    limit: 1,
+    displayName: "First Name",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "zipCode",
+    limit: 1,
+    displayName: "Zip Code",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "street",
+    limit: 1,
+    displayName: "Street",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "apt",
+    limit: 1,
+    displayName: "Apt",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "city",
+    limit: 1,
+    displayName: "City",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  },
+  {
+    version: "0.1",
+    event: "Quote",
+    metadata: "lastName",
+    limit: 1,
+    displayName: "Last Name",
+    lookbackDurationType: "days",
+    lookbackPeriod: 50,
+    aggregationMode: "Value",
+    verbose: false
+  }
+];
