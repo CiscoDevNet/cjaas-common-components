@@ -1,0 +1,51 @@
+/**
+ * Copyright (c) Cisco Systems, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+.condition-row {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+  .dot {
+    height: 10px;
+    width: 10px;
+    background: var(--bullet-color, #979796);
+    border-radius: 100%;
+    margin: 0 12px;
+  }
+
+  md-input {
+    min-width: 80px;
+    margin: 0 12px;
+    margin-top: 1rem;
+  }
+  md-dropdown {
+    min-width: 80px;
+    margin: 0 12px;
+  }
+
+  .relation {
+    margin-left: 0;
+  }
+
+  .icon {
+    cursor: pointer;
+    margin: 0 8px;
+  }
+  .add-below-icon {
+    @extend .icon;
+    &:hover {
+      color: var(--add-icon-color, #27aa3d);
+    }
+  }
+  .delete-icon {
+    @extend .icon;
+    &:hover {
+      color: var(--delete-icon-color, #f05006);
+    }
+  }
+}

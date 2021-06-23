@@ -5,6 +5,8 @@ import { timelineTemplate } from "./examples/timeline";
 import { profileTemplate } from "./examples/profile";
 import { getWebexWalkinTemplate } from "./examples/webexWalkin";
 import { timerTemplate } from "./examples/timer";
+import { conditionTemplate } from "./examples/condition";
+import { conditionBlockTemplate } from "./examples/condition-block";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
 
@@ -90,6 +92,14 @@ export class Sandbox extends LitElement {
           <div class="container" aria-label="cjaas-timer">
             <h2>cjaas-timer</h2>
             ${timerTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-condition">
+            <h2>cjaas-condition</h2>
+            ${conditionTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-condition-block">
+            <h2>cjaas-condition-block</h2>
+            ${conditionBlockTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>

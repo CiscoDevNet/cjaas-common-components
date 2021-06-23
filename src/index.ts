@@ -11,4 +11,6 @@ export { ProfileView } from "./components/profile/Profile";
 export { TimelineItem } from "./components/timeline/TimelineItem";
 export { WebexWalkin } from "./components/webexWalkin/WebexWalkin";
 export { Timer } from "./components/timer/Timer";
+export { Condition } from "./components/condition/Condition";
+export { ConditionBlock } from "./components/condition-block/ConditionBlock";
 // eslint-disable-next-line prettier/prettier
