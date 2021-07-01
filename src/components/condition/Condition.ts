@@ -212,10 +212,6 @@ export namespace Condition {
       const operator = this.comparatorElement?.selectedKey;
       const value = this.valueElement?.value.trim();
 
-      if (!field || !operator || !value) {
-        return null;
-      }
-
       const result = {
         field,
         operator,

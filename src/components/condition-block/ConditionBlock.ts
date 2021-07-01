@@ -124,6 +124,8 @@ export namespace ConditionBlock {
                   return this.getConditionBlockTemplate(x, i);
                 } else if (x) {
                   return this.getConditionTemplate(x, i);
+                } else if (!x) {
+                  return this.getDefaultConditionTemplate();
                 }
               })
             : this.getDefaultConditionTemplate()}
