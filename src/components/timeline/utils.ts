@@ -27,37 +27,45 @@ export function getTimelineEventFromMessage(message: any) {
 
 export const EVENT_ICON_MAP: any = {
   "Page Visit": {
-    name: "icon-open-pages_16",
-    color: "purple"
+    name: "icon-mouse-cursor_16",
+    color: "slate"
+  },
+  "Entered ZipCode": {
+    name: "icon-location_16",
+    color: "cyan"
   },
   Identify: {
     name: "icon-user_16",
     color: "blue"
   },
+  Quote: {
+    name: "icon-file-spreadsheet_16",
+    color: "cobalt"
+  },
   "NPS.*": {
     name: "icon-analysis_16",
     color: "red"
   },
-  "Walkin Offered": {
+  "Initiated Walk In": {
     name: "icon-audio-video_16",
     color: "orange"
   },
-  "Journey Action Triggered" : {
+  IMI_Inbound: {
+    name: "icon-call-incoming_16",
+    color: "green"
+  },
+  IMI_Outbound: {
+    name: "icon-call-outgoing_16",
+    color: "darkmint"
+  },
+  "Trigger Sent to Server": {
     name: "icon-event_16",
     color: "violet"
   },
-  "Survey Response Collected" : {
+  "Survey Response Collected": {
     name: "icon-report_16",
-    color: "lime"
-  },
-  "IMI_Inbound" : {
-    name: "icon-call-incoming_16",
-    color: "pink"
-  },
-  "IMI_Outbound" : {
-    name: "icon-call-outgoing_16",
-    color: "mint"
-  },
+    color: "gold"
+  }
 };
 
 const TEMP_ICON_MAP: any = {};
