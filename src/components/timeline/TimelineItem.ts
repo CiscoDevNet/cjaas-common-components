@@ -78,18 +78,12 @@ export namespace TimelineItem {
 
       return html`
         <div class="timeline-item" @click="${() => this.expandDetails()}">
-          <md-badge
-            class="badge"
-            .circle=${true}
-            size="40"
-            .color=${iconData.color}
-          >
+          <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
             <md-icon .name=${iconData.name}></md-icon>
           </md-badge>
           <div class="info-section">
             <div class="title">${this.title}</div>
-            ${this.renderId()}
-            ${this.expanded ? this.renderExpandedDetails() : nothing}
+            ${this.renderId()} ${this.expanded ? this.renderExpandedDetails() : nothing}
           </div>
           <div class="time-stamp">${timeStamp}</div>
         </div>
