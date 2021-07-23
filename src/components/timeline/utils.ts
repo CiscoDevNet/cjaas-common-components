@@ -40,8 +40,24 @@ export const EVENT_ICON_MAP: any = {
   },
   "Walkin Offered": {
     name: "icon-audio-video_16",
-    color: "yellow"
-  }
+    color: "orange"
+  },
+  "Journey Action Triggered" : {
+    name: "icon-event_16",
+    color: "violet"
+  },
+  "Survey Response Collected" : {
+    name: "icon-report_16",
+    color: "lime"
+  },
+  "IMI_Inbound" : {
+    name: "icon-call-incoming_16",
+    color: "pink"
+  },
+  "IMI_Outbound" : {
+    name: "icon-call-outgoing_16",
+    color: "mint"
+  },
 };
 
 const TEMP_ICON_MAP: any = {};
