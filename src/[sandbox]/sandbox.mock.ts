@@ -1,109 +1,121 @@
 import { Timeline } from "../components/timeline/Timeline";
 import { ProfileView } from "../components/profile/Profile";
+import { MultiLineCondition } from "@/components/condition-block/ConditionBlock";
 
 export const profileViewMockTemplate = {
   Name: "Test Template 2",
   DatapointCount: 100,
   Attributes: [
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "email",
-      DisplayName: "Email",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "email",
+      displayName: "Email",
+      metadataType: "string",
+      aggregationMode: "Value",
       type: "tab",
-      Limit: 1,
+      limit: 1,
       tag: "email"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "Make",
-      DisplayName: "Make",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Quote",
+      metadata: "Make",
+      metadataType: "string",
+      displayName: "Make",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "Model",
-      DisplayName: "Model",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Quote",
+      metadataType: "string",
+      metadata: "Model",
+      displayName: "Model",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "ltv",
-      DisplayName: "LTV",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      metadataType: "string",
+      event: "Quote",
+      metadata: "ltv",
+      displayName: "LTV",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "License Plate",
-      DisplayName: "License Plate",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      metadataType: "string",
+      event: "Quote",
+      metadata: "License Plate",
+      displayName: "License Plate",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "firstName",
-      DisplayName: "First Name",
-      AggregationMode: "Value",
+      version: "0.1",
+      metadataType: "string",
+      event: "Quote",
+      metadata: "firstName",
+      displayName: "First Name",
+      aggregationMode: "Value",
       tag: "name",
-      Limit: 1,
+      limit: 1,
       type: "inline"
     },
     {
-      Version: "0.1",
-      Event: "Entered ZipCode",
-      Metadata: "zipCode",
-      DisplayName: "Zip Code",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Entered ZipCode",
+      metadataType: "string",
+      metadata: "zipCode",
+      displayName: "Zip Code",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "street",
-      DisplayName: "Street",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Quote",
+      metadataType: "string",
+      metadata: "street",
+      displayName: "Street",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "apt",
-      DisplayName: "Apt",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadataType: "string",
+      metadata: "apt",
+      displayName: "Apt",
+      limit: 1,
+      aggregationMode: "Value",
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "city",
-      DisplayName: "City",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "city",
+      displayName: "City",
+      metadataType: "string",
+      limit: 1,
+      aggregationMode: "Value",
       type: "table"
     },
     {
-      Version: "0.1",
-      Event: "Quote",
-      Limit: 1,
-      Metadata: "lastName",
-      DisplayName: "Last Name",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadataType: "string",
+      limit: 1,
+      metadata: "lastName",
+      displayName: "Last Name",
+      aggregationMode: "Value",
       tag: "name",
       type: "inline"
     }
@@ -113,18 +125,18 @@ export const profileViewMockTemplate = {
 export const profileMock = [
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "email",
-      DisplayName: "Email",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "email",
+      displayName: "Email",
+      aggregationMode: "Value",
       type: "tab",
       tag: "email",
-      Limit: 1,
+      limit: 1,
       Verbose: true
     },
     result: ["v3nki"],
-    journeyEvents: [
+    journeyevents: [
       {
         data: {
           firstName: "Venki",
@@ -143,135 +155,135 @@ export const profileMock = [
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "Make",
-      DisplayName: "Make",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Quote",
+      metadata: "Make",
+      displayName: "Make",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     result: [""],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "Model",
-      DisplayName: "Model",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "Model",
+      displayName: "Model",
+      limit: 1,
+      aggregationMode: "Value",
       type: "table"
     },
     result: [""],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "License Plate",
-      DisplayName: "License Plate",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "License Plate",
+      displayName: "License Plate",
+      limit: 1,
+      aggregationMode: "Value",
       type: "table"
     },
     result: [""],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "ltv",
-      DisplayName: "LTV",
-      AggregationMode: "Value",
-      Limit: 1,
+      version: "0.1",
+      event: "Quote",
+      metadata: "ltv",
+      displayName: "LTV",
+      aggregationMode: "Value",
+      limit: 1,
       type: "table"
     },
     result: [""],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "firstName",
-      DisplayName: "First Name",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "firstName",
+      displayName: "First Name",
+      limit: 1,
+      aggregationMode: "Value",
       tag: "name",
       type: "inline"
     },
     result: ["Venki"],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Limit: 1,
-      Metadata: "zipCode",
-      DisplayName: "Zip Code",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      limit: 1,
+      metadata: "zipCode",
+      displayName: "Zip Code",
+      aggregationMode: "Value",
       type: "table"
     },
     result: [""],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Metadata: "street",
-      DisplayName: "Street",
-      Limit: 1,
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      metadata: "street",
+      displayName: "Street",
+      limit: 1,
+      aggregationMode: "Value",
       type: "table"
     },
     result: ["street1"],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Limit: 1,
-      Metadata: "apt",
-      DisplayName: "Apt",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      limit: 1,
+      metadata: "apt",
+      displayName: "Apt",
+      aggregationMode: "Value",
       type: "table"
     },
     result: ["apt1"],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Event: "Quote",
-      Limit: 1,
-      Metadata: "city",
-      DisplayName: "City",
-      AggregationMode: "Value",
+      version: "0.1",
+      event: "Quote",
+      limit: 1,
+      metadata: "city",
+      displayName: "City",
+      aggregationMode: "Value",
       type: "table"
     },
     result: ["bengaluru"],
-    journeyEvents: null
+    journeyevents: null
   },
   {
     query: {
-      Version: "0.1",
-      Limit: 1,
-      Event: "Quote",
-      Metadata: "lastName",
-      DisplayName: "Last Name",
-      AggregationMode: "Value",
+      version: "0.1",
+      limit: 1,
+      event: "Quote",
+      metadata: "lastName",
+      displayName: "Last Name",
+      aggregationMode: "Value",
       tag: "name",
       type: "inline"
     },
     result: ["V"],
-    journeyEvents: null
+    journeyevents: null
   }
 ];
 
@@ -344,11 +356,10 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
   }
 ];
 
-export const mockConditions = [
-  "'Quote','ltv','Value' GT 5000",
-  "'Quote','zipCode','Value' EQ 560021",
-  "'Quote','firstName','Value' EQ XYZ"
-];
+export const mockConditions: MultiLineCondition = {
+  args: ["'Quote','ltv','Value' GT 5000", "'Quote','zipCode','Value' EQ 560021", "'Quote','firstName','Value' EQ XYZ"],
+  logic: "AND"
+};
 
 export const mockOptionsList = [
   {
