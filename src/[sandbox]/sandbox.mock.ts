@@ -345,21 +345,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
 ];
 
 export const mockConditions = [
-  {
-    field: "ltv",
-    operator: "GT",
-    value: "5000"
-  },
-  {
-    field: "zipCode",
-    operator: "EQ",
-    value: "560021"
-  },
-  {
-    field: "firstName",
-    operator: "EQ",
-    value: "XYZ"
-  }
+  "'Quote','ltv','Value' GT 5000",
+  "'Quote','zipCode','Value' EQ 560021",
+  "'Quote','firstName','Value' EQ XYZ"
 ];
 
 export const mockOptionsList = [
@@ -371,6 +359,7 @@ export const mockOptionsList = [
     displayName: "Email",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
+    idForAttribute: "'Quote','email','Value'",
     aggregationMode: "Value",
     verbose: false
   },
@@ -382,6 +371,7 @@ export const mockOptionsList = [
     displayName: "Make",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
+    idForAttribute: "'Quote','Make','Value'",
     aggregationMode: "Value",
     verbose: false
   },
@@ -393,6 +383,7 @@ export const mockOptionsList = [
     displayName: "Model",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
+    idForAttribute: "'Quote','Model','Value'",
     aggregationMode: "Value",
     verbose: false
   },
@@ -402,6 +393,7 @@ export const mockOptionsList = [
     metadata: "License Plate",
     limit: 1,
     displayName: "License Plate",
+    idForAttribute: "'Quote','License Plate','Value'",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
     aggregationMode: "Value",
@@ -412,6 +404,7 @@ export const mockOptionsList = [
     event: "Quote",
     metadata: "ltv",
     limit: 1,
+    idForAttribute: "'Quote','ltv','Value'",
     displayName: "LTV",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
@@ -422,6 +415,7 @@ export const mockOptionsList = [
     version: "0.1",
     event: "Quote",
     metadata: "firstName",
+    idForAttribute: "'Quote','firstName','Value'",
     limit: 1,
     displayName: "First Name",
     lookbackDurationType: "days",
@@ -436,6 +430,7 @@ export const mockOptionsList = [
     limit: 1,
     displayName: "Zip Code",
     lookbackDurationType: "days",
+    idForAttribute: "'Quote','zipCode','Value'",
     lookbackPeriod: 50,
     aggregationMode: "Value",
     verbose: false
@@ -445,6 +440,7 @@ export const mockOptionsList = [
     event: "Quote",
     metadata: "street",
     limit: 1,
+    idForAttribute: "'Quote','street','Value'",
     displayName: "Street",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
@@ -456,6 +452,7 @@ export const mockOptionsList = [
     event: "Quote",
     metadata: "apt",
     limit: 1,
+    idForAttribute: "'Quote','apt','Value'",
     displayName: "Apt",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
@@ -467,6 +464,7 @@ export const mockOptionsList = [
     event: "Quote",
     metadata: "city",
     limit: 1,
+    idForAttribute: "'Quote','city','Value'",
     displayName: "City",
     lookbackDurationType: "days",
     lookbackPeriod: 50,
@@ -476,6 +474,7 @@ export const mockOptionsList = [
   {
     version: "0.1",
     event: "Quote",
+    idForAttribute: "'Quote','lastName','Value'",
     metadata: "lastName",
     limit: 1,
     displayName: "Last Name",
