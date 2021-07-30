@@ -8,7 +8,7 @@ Common component used to build Action Configuration. It recursively create condi
 <cjaas-condition-block
     .root=${true}
     .conditions=${mockConditions}
-    .conditionTypes=${mockOptionsList}
+    .optionList=${mockOptionsList}
     .innerRelation=${"AND"}
   ></cjaas-condition-block>
 ```
@@ -31,3 +31,6 @@ Array of objects that consitute a condition block
 
 #### `index number`
 index of the current condition block in the list of conditions under parent condition block
+
+#### `optionList Array<{}>`
+Array of attributes from the template configuration. This gets passed down from the widget.

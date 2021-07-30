@@ -23,7 +23,7 @@ export namespace ConditionBlock {
     @property() relation: "AND" | "OR" | undefined;
     @property() innerRelation: "AND" | "OR" | undefined;
     @property({ type: Boolean, reflect: true }) root = false;
-    @property() conditions: any = [];
+    @property() conditions: ConditionBlockInterface | string | undefined;
     @property({ type: Number }) index = 0;
     @property() optionsList: any;
 
@@ -44,17 +44,27 @@ export namespace ConditionBlock {
             placeholder="Select Operator"
             .selectedKey=${this.relation || null}
             @dropdown-selected=${(ev: any) => {
-              this.relation = ev.detail.option;
               this.triggerUpdate();
+              this.relationUpdated(ev);
             }}
           ></md-dropdown>
         `;
       }
     }
 
+    relationUpdated(ev: CustomEvent) {
+      this.relation = ev.detail.option;
+      this.dispatchEvent(
+        new CustomEvent("relation-updated", {
+          detail: {
+            relation: this.relation
+          }
+        })
+      );
+    }
+
     getConditionBlockTemplate(x: any, index: number) {
-      const _relation: any = Object.keys(x)[0];
-      const _conditions = x[_relation];
+      const _relation: any = x.logic;
 
       return html`
         <cjaas-condition-block
@@ -62,7 +72,8 @@ export namespace ConditionBlock {
           .innerRelation=${_relation}
           .dirty=${true}
           .index=${index}
-          .conditions=${_conditions}
+          .conditions=${x}
+          @relation-updated=${(ev: CustomEvent) => this.setRelation(ev)}
           @delete-block=${(ev: CustomEvent) => this.deleteBlock(ev)}
           @updated-condition=${(ev: CustomEvent) => this.updateCondition(ev)}
           .optionsList=${this.optionsList}
@@ -76,8 +87,6 @@ export namespace ConditionBlock {
           .index=${0}
           .dirty=${false}
           .optionsList=${this.optionsList}
-          .field=${undefined}
-          .operator=${undefined}
           @updated-condition=${(ev: CustomEvent) => this.updateCondition(ev)}
           @add-condition=${(ev: CustomEvent) => this.addNewCondition(ev, 0)}
           @add-condition-block=${(ev: CustomEvent) => this.addNewConditionBlock(ev, 0)}
@@ -85,17 +94,10 @@ export namespace ConditionBlock {
       `;
     }
 
-    getConditionTemplate(x: any, i: number) {
-      let isDirty = false;
-
-      if (x.field || x.operator || x.value) {
-        isDirty = true;
-      }
-
+    getConditionTemplate(x: string, i: number) {
       return html`
         <cjaas-condition
           .index=${i}
-          .dirty=${isDirty}
           .condition=${x}
           .relation=${this.innerRelation}
           .optionsList=${this.optionsList}
@@ -109,8 +111,12 @@ export namespace ConditionBlock {
     }
 
     setRelation(ev: CustomEvent) {
-      console.log(ev, "setting relation");
       this.innerRelation = ev.detail.relation;
+
+      if ((this.conditions as MultiLineCondition)?.args && this.innerRelation) {
+        (this.conditions as MultiLineCondition).logic = this.innerRelation;
+      }
+
       this.triggerUpdate();
     }
 
@@ -118,19 +124,33 @@ export namespace ConditionBlock {
       return html`
         ${this.getOperatorTemplate(this.index)}
         <div class="block-container ${!this.root ? "bordered" : ""}">
-          ${this.conditions.length > 0
-            ? this.conditions.map((x: any, i: number) => {
-                if (this.isConditionBlock(x)) {
-                  return this.getConditionBlockTemplate(x, i);
-                } else if (x) {
-                  return this.getConditionTemplate(x, i);
-                } else if (!x) {
-                  return this.getDefaultConditionTemplate();
-                }
-              })
-            : this.getDefaultConditionTemplate()}
+          ${(this.conditions as MultiLineCondition)?.args
+            ? this.renderMultipleConditions()
+            : this.renderSingleOrDefault()}
         </div>
       `;
+    }
+
+    renderSingleOrDefault() {
+      if (typeof this.conditions === "string") {
+        return this.getConditionTemplate(this.conditions, 0);
+      } else if (this.conditions?.logic === "SINGLE") {
+        return this.getConditionTemplate(this.conditions.condition, 0);
+      } else {
+        return this.getDefaultConditionTemplate();
+      }
+    }
+
+    renderMultipleConditions() {
+      return (this.conditions as MultiLineCondition).args.map((x: any, i: number) => {
+        if (this.isConditionBlock(x)) {
+          return this.getConditionBlockTemplate(x, i);
+        } else if (x) {
+          return this.getConditionTemplate(x, i);
+        } else if (!x) {
+          return this.getConditionTemplate(x, i);
+        }
+      });
     }
 
     updateCondition(event: CustomEvent) {
@@ -142,41 +162,91 @@ export namespace ConditionBlock {
       if (elements) {
         const _value = elements.item(index).getValue();
         if (_value) {
-          this.conditions[index] = _value;
+          this.addConditionToList(index, _value);
         }
       }
 
       this.triggerUpdate();
+      this.requestUpdate();
+    }
+
+    upsertMultiLineCondition(index: number, _value: any, type: "INSERT" | "UPDATE" = "UPDATE") {
+      if (type === "UPDATE") {
+        (this.conditions as MultiLineCondition).args[index] = _value;
+      } else {
+        (this.conditions as MultiLineCondition).args.splice(index, 0, _value);
+      }
+    }
+
+    upsertConditionAsString(_value: any, type: "INSERT" | "UPDATE" = "UPDATE") {
+      if (type === "UPDATE") {
+        this.conditions = _value;
+      } else {
+        const oldCondition: string = this.conditions as string;
+        this.conditions = {
+          args: [oldCondition, _value],
+          logic: this.innerRelation as "AND" | "OR"
+        };
+      }
+    }
+
+    upsertSingleLineCondition(_value: any, type: "INSERT" | "UPDATE" = "UPDATE") {
+      if (type === "INSERT") {
+        const oldCondition: SingleLineCondition = this.conditions as SingleLineCondition;
+
+        this.conditions = {
+          args: [oldCondition.condition, _value],
+          logic: "AND"
+        };
+      } else {
+        this.conditions = _value;
+      }
+    }
+
+    addConditionToList(index: number, _value: any, type: "INSERT" | "UPDATE" = "UPDATE") {
+      if ((this.conditions as MultiLineCondition)?.args) {
+        this.upsertMultiLineCondition(index, _value, type);
+      } else if (index === 0) {
+        this.conditions = _value;
+      } else if (typeof this.conditions === "string") {
+        this.upsertConditionAsString(_value, type);
+      } else if ((this.conditions as SingleLineCondition)?.logic === "SINGLE") {
+        this.upsertSingleLineCondition(_value, type);
+      } else {
+        if (type === "INSERT") {
+          this.conditions = {
+            args: [_value],
+            logic: "AND"
+          };
+        }
+      }
     }
 
     addNewCondition(event: CustomEvent, index: number) {
-      const array = this.conditions.slice();
+      this.addConditionToList(index + 1, "", "INSERT");
 
-      array.splice(index + 1, 0, {
-        field: null,
-        value: null,
-        operator: null
-      });
-
-      this.conditions = array;
       this.requestUpdate();
     }
 
     addNewConditionBlock(event: CustomEvent, index: number) {
-      const array = this.conditions.slice();
+      this.addConditionToList(
+        index + 1,
+        {
+          args: [""],
+          logic: "AND"
+        },
+        "INSERT"
+      );
 
-      array.splice(index + 1, 0, {
-        AND: []
-      });
-
-      this.conditions = array;
       this.requestUpdate();
     }
 
-    deleteCondition(ev: CustomEvent, i: number) {
-      const array = this.conditions.slice();
+    deleteItem(i: number) {
+      const array = (this.conditions as MultiLineCondition).args.slice();
 
       array.splice(i, 1);
+
+      (this.conditions as MultiLineCondition).args = array;
 
       if (array.length === 0) {
         this.dispatchEvent(
@@ -187,34 +257,23 @@ export namespace ConditionBlock {
           })
         );
       }
+    }
 
-      this.conditions = array;
+    deleteCondition(ev: CustomEvent, i: number) {
+      if ((this.conditions as MultiLineCondition)?.args) {
+        this.deleteItem(i);
+      } else if ((this.conditions as SingleLineCondition)?.logic === "SINGLE") {
+        this.conditions = "";
+      }
 
       this.requestUpdate();
     }
 
     deleteBlock(ev: CustomEvent) {
-      const index = ev.detail.index;
+      const i = ev.detail.index;
+      this.deleteItem(i);
 
-      const array = this.conditions.slice();
-
-      array.splice(index, 1);
-
-      this.conditions = array;
-    }
-
-    // block object will have only one key.
-    // key can be one of ['AND','OR']
-    isConditionBlock(x: any) {
-      if (!x) {
-        return false;
-      }
-
-      const keys = Object.keys(x);
-
-      if (["AND", "OR"].indexOf(keys[0]) !== -1) {
-        return true;
-      }
+      this.requestUpdate();
     }
 
     static get styles() {
@@ -227,12 +286,29 @@ export namespace ConditionBlock {
       const nodes = this.shadowRoot?.querySelectorAll(".block-container>*");
 
       nodes?.forEach((x, index: number) => {
-        this.conditions[index] = (x as any).getValue();
+        const value = (x as any).getValue();
+
+        this.addConditionToList(index, value);
       });
 
-      return {
-        [relation]: this.conditions
-      };
+      if (typeof this.conditions === "string" && this.root) {
+        return {
+          logic: "SINGLE",
+          condition: this.conditions
+        };
+      } else if (typeof this.conditions === "string") {
+        return {
+          args: [this.conditions],
+          logic: relation
+        };
+      } else if ((this.conditions as SingleLineCondition)?.logic === "SINGLE") {
+        return {
+          args: (this.conditions as SingleLineCondition).condition,
+          logic: relation
+        };
+      } else {
+        return this.conditions;
+      }
     }
 
     triggerUpdate() {
@@ -245,10 +321,32 @@ export namespace ConditionBlock {
         })
       );
     }
+
+    isConditionBlock(x: any) {
+      if (!x) {
+        return false;
+      }
+
+      if (typeof x === "object" && x.args) {
+        return true;
+      }
+    }
   }
 }
 declare global {
   interface HTMLElementTagNameMap {
     "cjaas-condition-block": ConditionBlock.ELEMENT;
   }
+}
+
+type ConditionBlockInterface = MultiLineCondition | SingleLineCondition;
+
+export interface MultiLineCondition {
+  args: Array<string | ConditionBlockInterface>;
+  logic: "AND" | "OR";
+}
+
+export interface SingleLineCondition {
+  logic: "SINGLE";
+  condition: string;
 }
