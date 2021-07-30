@@ -7,7 +7,7 @@
  */
 
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, html, property, PropertyValues, query } from "lit-element";
+import { LitElement, html, property, PropertyValues, query, internalProperty } from "lit-element";
 import styles from "./scss/module.scss";
 
 import "@momentum-ui/web-components/dist/comp/md-icon";
@@ -24,15 +24,27 @@ export namespace Condition {
     @property() relation: "AND" | "OR" | undefined;
     @property({ type: Number }) index = 0;
     @property({ attribute: false }) optionsList: any[] | undefined;
-    @property() set condition(condition: any) {
-      this.field = condition?.field;
-      this.operator = condition?.operator;
-      this.value = condition?.value;
-    }
     @property({ type: Boolean, reflect: true }) showDelete = true;
-    field: string | undefined;
-    operator: string | undefined;
-    value: string | undefined | null;
+
+    @property() set condition(condition: string) {
+      console.log(condition, "setting a condition");
+      this._condition = condition;
+      const [_original, field, operator, value] = condition?.match(/('.*')\s(.*?)\s(.*)/) || [];
+
+      this.field = field || null;
+      this.operator = operator || null;
+      this.value = value || null;
+    }
+
+    get codition() {
+      return this._condition;
+    }
+
+    @internalProperty() field: string | undefined | null;
+    @internalProperty() operator: string | undefined | null;
+    @internalProperty() value: string | undefined | null;
+    _condition: any;
+
     @query(".field") fieldElement: any;
     @query(".comparator") comparatorElement: any;
     @query(".value") valueElement: any;
@@ -75,14 +87,15 @@ export namespace Condition {
       );
     }
 
+    // idForAttribute is a synthetic property for ease of use
     getFieldPickerTemplate() {
       return html`
         <md-dropdown
           class="field"
           .options=${this.optionsList || []}
-          option-id="metadata"
+          option-id="idForAttribute"
           option-value="displayName"
-          .selectedKey=${this.field || null}
+          .selectedKey=${this.field}
           @dropdown-selected=${(ev: CustomEvent) => this.fieldSelected(ev)}
         >
         </md-dropdown>
@@ -112,7 +125,7 @@ export namespace Condition {
     }
 
     fieldSelected(ev: CustomEvent) {
-      this.field = ev.detail.option.metadata;
+      this.field = ev.detail.option.idForAttribute;
       this.triggerUpdate();
     }
 
@@ -132,8 +145,32 @@ export namespace Condition {
       this.triggerUpdate();
     }
 
+    getAttribute() {
+      const field = this.field;
+      const attribute = this.optionsList?.find(x => x.idForAttribute === field);
+
+      return attribute;
+    }
+
+    getComparatorValues() {
+      const stringValueDistinctComparators = ["EQ", "NEQ", "HAS"];
+
+      const allNumeric = ["EQ", "NEQ", "GTE", "GT", "LTE", "LT"];
+
+      const attribute = this.getAttribute();
+
+      if (
+        attribute &&
+        (attribute.metadataType === "string" || ["Value", "Distinct"].indexOf(attribute.aggregatorMode) !== -1)
+      ) {
+        return stringValueDistinctComparators;
+      } else {
+        return allNumeric;
+      }
+    }
+
     getComparatorTemplate() {
-      const comparators = ["EQ", "NEQ", "GTE", "GT", "LTE", "LT"];
+      const comparators = this.getComparatorValues();
       return html`
         <md-dropdown
           class="comparator"
@@ -209,16 +246,11 @@ export namespace Condition {
     // this would be used by the host
     public getValue() {
       const field = this.fieldElement?.selectedKey;
+
       const operator = this.comparatorElement?.selectedKey;
       const value = this.valueElement?.value.trim();
 
-      const result = {
-        field,
-        operator,
-        value
-      };
-
-      return result;
+      return `${field} ${operator} ${value}`;
     }
   }
 }

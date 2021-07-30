@@ -18,11 +18,11 @@ You may take a look at `src/[sandbox]/sandbox.mock.ts` file to see how to struct
 Array of attributes from the template configuration. This gets passed down from the widget.
 
 
-#### `condition {field: string, operator: string, value: string | number}`
+#### `condition string '${field} ${operator} ${value}'`
 Condition for the component. 
 
-field is the `metadata` from optionList.
-operator is one of `["EQ", "NEQ", "GTE", "GT", "LTE", "LT"]`
+field is the summation of `'${event}','${metadata}','${aggregationMode}'` from optionList.
+operator is one of `["EQ", "NEQ", "GTE", "GT", "LTE", "LT", "HAS"]`
 value is the data that is compared.
 
 
