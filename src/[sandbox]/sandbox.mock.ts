@@ -301,6 +301,19 @@ export const contactDataMock: ProfileView.ContactData = {
 export const mockedTimelineItems: Timeline.TimelineItem[] = [
   {
     data: {
+      "Really Long Key name, like a survey question": "Jackson",
+      "An even longer Really Long Key name, like a survey question that is a bit too long ": "Browne",
+      "An pretty Long Key name, like a survey question that is a bit too long ":
+        "Really Long Key answer data, like a survey question's answer that went too long",
+      email: "jackson@gmail.com"
+    },
+    id: "mock22087-284d-46db-9e4e-0001",
+    title: "Add To Cart",
+    person: "560021-Venki",
+    timestamp: "2021-02-16T05:00:05.596Z"
+  },
+  {
+    data: {
       firstName: "Jackson",
       lastName: "Browne",
       email: "jackson@gmail.com"
