@@ -37,8 +37,8 @@ export namespace TimelineItem {
               if (data[x]) {
                 return html`
                   <tr class="row">
-                    <td class="label">${x}</td>
-                    <td class="value">${data[x] || "-"}</td>
+                    <td title=${x} class="label">${x}</td>
+                    <td title=${data[x]} class="value">${data[x] || "-"}</td>
                   </tr>
                 `;
               }
