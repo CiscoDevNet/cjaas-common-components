@@ -36,10 +36,10 @@ export namespace TimelineItem {
             if (typeof data[x] === "string") {
               if (data[x]) {
                 return html`
-                  <div class="row">
-                    <div class="label">${x}</div>
-                    <div class="value">${data[x] || "-"}</div>
-                  </div>
+                  <tr class="row">
+                    <td title=${x} class="label">${x}</td>
+                    <td title=${data[x]} class="value">${data[x] || "-"}</td>
+                  </tr>
                 `;
               }
             } else {
@@ -53,9 +53,9 @@ export namespace TimelineItem {
     renderExpandedDetails = () => {
       if (this.data === nothing) return nothing;
       return html`
-        <div class="details">
+        <table class="details">
           ${this.createTableRecursive(this.data)}
-        </div>
+        </table>
       `;
     };
 

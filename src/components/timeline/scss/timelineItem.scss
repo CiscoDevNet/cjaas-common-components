@@ -40,11 +40,25 @@
   .sub-title,
   .details {
     @include secondary-text();
-    @include ellipsis-text();
     font-size: 12px;
     line-height: 150%;
     line-height: 12px;
-    margin-top: 8px;
+    margin: 8px 0;
+
+    tr {
+      line-height: 16px;
+      margin-top: 8px;
+    }
+    td {
+      vertical-align: top;
+      padding-right: 2rem;
+      &.label {
+        color: var(--md-secondary-text-color, #545454);
+      }
+      &.value {
+        color: var(--md-primary-text-color, #121212);
+      }
+    }
   }
 
   .time-stamp {
@@ -52,28 +66,5 @@
     @include secondary-text();
     padding-top: 3px;
     flex: 0 0 40px;
-  }
-}
-
-.details {
-  display: block;
-  margin: 8px 0;
-
-  .row {
-    display: flex;
-    flex-direction: row;
-    margin-top: 8px;
-
-    .label {
-      width: 6rem;
-      min-width: 6rem;
-      color: var(--md-secondary-text-color, #545454);
-    }
-
-    .value {
-      @include ellipsis-text();
-      flex: 1;
-      color: var(--md-primary-text-color, #121212);
-    }
   }
 }
