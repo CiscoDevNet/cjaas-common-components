@@ -28,6 +28,7 @@
     flex: 1 1 auto;
     padding-top: 4px;
     width: 0;
+    @include ellipsis-text();
   }
 
   .title {
@@ -37,26 +38,37 @@
     line-height: 14px;
   }
 
-  .sub-title,
-  .details {
+  .sub-title {
     @include secondary-text();
     font-size: 12px;
-    line-height: 150%;
     line-height: 12px;
     margin: 8px 0;
+  }
+
+  .details {
+    font-size: 12px;
+    margin: 8px 0;
+    width: 100%;
 
     tr {
       line-height: 16px;
       margin-top: 8px;
+      width: 0;
     }
     td {
       vertical-align: top;
       padding-right: 2rem;
+      max-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       &.label {
         color: var(--md-secondary-text-color, #545454);
       }
       &.value {
         color: var(--md-primary-text-color, #121212);
+        padding-right: 0;
+        width: 50%;
       }
     }
   }
