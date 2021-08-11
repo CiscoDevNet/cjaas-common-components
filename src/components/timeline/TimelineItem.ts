@@ -36,10 +36,10 @@ export namespace TimelineItem {
             if (typeof data[x] === "string") {
               if (data[x]) {
                 return html`
-                  <div class="row">
-                    <div class="label">${x}</div>
-                    <div class="value">${data[x] || "-"}</div>
-                  </div>
+                  <tr class="row">
+                    <td title=${x} class="label">${x}</td>
+                    <td title=${data[x]} class="value">${data[x] || "-"}</td>
+                  </tr>
                 `;
               }
             } else {
@@ -53,9 +53,9 @@ export namespace TimelineItem {
     renderExpandedDetails = () => {
       if (this.data === nothing) return nothing;
       return html`
-        <div class="details">
+        <table class="details">
           ${this.createTableRecursive(this.data)}
-        </div>
+        </table>
       `;
     };
 
@@ -78,18 +78,12 @@ export namespace TimelineItem {
 
       return html`
         <div class="timeline-item" @click="${() => this.expandDetails()}">
-          <md-badge
-            class="badge"
-            .circle=${true}
-            size="40"
-            .color=${iconData.color}
-          >
+          <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
             <md-icon .name=${iconData.name}></md-icon>
           </md-badge>
           <div class="info-section">
             <div class="title">${this.title}</div>
-            ${this.renderId()}
-            ${this.expanded ? this.renderExpandedDetails() : nothing}
+            ${this.renderId()} ${this.expanded ? this.renderExpandedDetails() : nothing}
           </div>
           <div class="time-stamp">${timeStamp}</div>
         </div>
