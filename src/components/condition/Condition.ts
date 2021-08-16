@@ -14,6 +14,7 @@ import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-dropdown";
 import "@momentum-ui/web-components/dist/comp/md-menu-overlay";
 import "@momentum-ui/web-components/dist/comp/md-menu";
+import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import "@momentum-ui/web-components/dist/comp/md-input";
 import "@momentum-ui/web-components/dist/comp/md-loading";
 import { nothing } from "lit-html";
@@ -114,10 +115,14 @@ export namespace Condition {
               `
             : nothing}
           <div class="add-below-icon" title="Add New Condition">
-            <md-icon name="icon-add_24" size="18" @click=${() => this.addNewCondition()}></md-icon>
+            <md-tooltip message="Add Condition" placement="top">
+              <md-icon name="icon-add_24" size="18" @click=${() => this.addNewCondition()}></md-icon>
+            </md-tooltip>
           </div>
           <div class="icon" title="Add New Condition Block">
-            <md-icon name="icon-flag_24" size="18" @click=${() => this.addNewConditionBlock()}></md-icon>
+            <md-tooltip message="Add Condition Block" placement="top">
+              <md-icon name="icon-condition_16" size="18" @click=${() => this.addNewConditionBlock()}></md-icon>
+            </md-tooltip>
           </div>
           ${this.getDeleteTemplate()}
         </div>
@@ -132,9 +137,11 @@ export namespace Condition {
     getDeleteTemplate() {
       if (this.showDelete) {
         return html`
-          <div class="delete-icon" title="Delete Condition" @click=${() => this.deleteCondition()}>
-            <md-icon name="icon-delete_24" size="18"></md-icon>
-          </div>
+          <md-tooltip message="Delete Condition" placement="top">
+            <div class="delete-icon" title="Delete Condition" @click=${() => this.deleteCondition()}>
+              <md-icon name="icon-delete_24" size="18"></md-icon>
+            </div>
+          </md-tooltip>
         `;
       }
       return nothing;
