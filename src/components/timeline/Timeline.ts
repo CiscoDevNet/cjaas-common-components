@@ -64,7 +64,6 @@ export namespace Timeline {
 
     /*
     In order to standardize timeline behavior across the board, this interface needs to control the filtering and rendering based upon the event types and filter selection made in the consuming Widget
-
     */
 
     @internalProperty() expandDetails = false;
@@ -77,9 +76,8 @@ export namespace Timeline {
       }
     }
 
-    // Retrieves all used event types from current timelineItems
-    // What happens is the widget passes the first event fetch into TimelineItems, which is parsed to a unique set here
-    //
+    // Retrieves all used event types from current timelineItems.
+    // Widget passes the results of first event fetch into TimelineItems, which is parsed to a unique set.
     getEventTypes() {
       const eventArray: Set<string> = new Set();
       this.timelineItems.forEach(event => {
@@ -101,7 +99,7 @@ export namespace Timeline {
     };
 
     getClusterId(text: string, key: number) {
-      return `${text}-${key}`;
+      return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
     }
 
     // Toggles a collapsed view of a single date's group of events
@@ -114,12 +112,9 @@ export namespace Timeline {
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
       // Collapsable by date occurs in this rendering cycle
       const { date, events } = groupedItem;
-
-      const idString = ("date " + groupedItem.date).replace(/\s+/g, "-").toLowerCase();
-
+      const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
 
-      console.log(groupedItem);
       // TO DO: Enhance the styling
       // TO DO: Select a relevant Icon for the clustered view
       return html`
@@ -136,78 +131,42 @@ export namespace Timeline {
       `;
     }
 
+    // Grouping/Collapsing by clusters of event types.
     populateEvents(events: CustomerEvent[]) {
-      // Grouping/Collapsing by clusters of event types
-      let index = 0;
+      let index = 0; // Set index reference independent of Map function index ref
       return events.map((event: CustomerEvent) => {
-        const cluster = [events[index]];
-        if (index < events.length - 1 && events[index].type === events[index + 1].type) {
-          console.log("match");
-          while (index < events.length - 1 && events[index].type === events[index + 1].type) {
-            cluster.push(events[index + 1]);
-            index++;
-            console.log(cluster);
-            console.log("looping");
-          }
-          return html`
-            <div class="cluster has-line">
-              ${cluster.map(event => this.renderEventBlocks(event))}
-            </div>
-          `;
-        } else {
+        if (index >= events.length - 1) {
+          return;
+        }
+
+        const cluster = [events[index]]; // start new cluster
+        const clusterType = events[index].type; // set the new cluster type
+        const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
+
+        while (index < events.length - 1 && events[index].type === events[index + 1].type) {
+          cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
-          return this.renderEventBlocks(event);
+          console.log("loop", index, cluster, event.type);
+        }
+        index++;
+        if (cluster.length > 1) {
+          return this.renderCluster(cluster, clusterType, keyId);
+        } else {
+          return this.renderEventBlocks(events[keyId]);
         }
       });
-
-      // const mainStack = [];
-      // let clusterStack = [];
-
-      // for (let i = 0; i < events.length; i++) {
-      //   const thisEvent = events[i];
-      //   const nextEvent = events[i + 1] || "END";
-      //   if (thisEvent.type === nextEvent.type) {
-      //     console.log("add to current cluster and loop again");
-      //     clusterStack.push(thisEvent);
-      //     // clusterStack.push(nextEvent);
-      //   } else if (thisEvent.type !== nextEvent.type) {
-      //     // if (clusterStack.length > 1) {
-      //     //   console.log("end and render existing cluster");
-      //     //   clusterStack.push(thisEvent);
-      //     //   this.renderCluster();
-      //     // } else {
-      //     //   console.log("if cluster.length === 1 no wrapper");
-      //     //   this.renderCluster();
-      //     // }
-
-      //     clusterStack = [];
-      //   }
-      // }
-
-      // return events.map((event, i) => {
-      //   if (i === events.length -1 )
-      //   return html`
-      //     <div>${event.type}</div>
-      //   `;
-      // });
-
-      // return html`
-      //   ${repeat(
-      //     events,
-      //     (event: CustomerEvent) => event.id,
-      //     (event: CustomerEvent) => this.renderEventBlocks(event)
-      //   )};
-      // `;
     }
 
-    renderSingleton() {
+    renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
+      const clusterId = this.getClusterId(clusterType, keyId);
       return html`
-        <div>singleton</div>
-      `;
-    }
-    renderCluster() {
-      return html`
-        <div>cluster</div>
+        <div class="cluster has-line" id=${clusterId} @click=${() => this.collapseDate(clusterId)}>
+          ${this.collapsed.has(clusterId)
+            ? html`
+                <cjaas-timeline-item title=${`${cluster.length} ${clusterType} events`}></cjaas-timeline-item>
+              `
+            : cluster.map(event => this.renderEventBlocks(event))}
+        </div>
       `;
     }
 
@@ -230,7 +189,7 @@ export namespace Timeline {
     }
 
     render() {
-      // groups items by date
+      // Groups items by date
       // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
       const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) => getRelativeDate(item.time));
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
