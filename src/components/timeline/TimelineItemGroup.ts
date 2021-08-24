@@ -11,6 +11,7 @@ import styles from "./scss/module.scss";
 import { getIconData } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "@/components/timeline/Timeline";
+import "@momentum-ui/web-components/dist/comp/md-chip";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
@@ -58,7 +59,6 @@ export namespace TimelineItemGroup {
           .data=${event.data}
           .id=${event.id}
           .person=${event.person || null}
-          ?expanded="${this.expandDetails}"
           class="has-line"
         ></cjaas-timeline-item>
       `;
@@ -70,7 +70,7 @@ export namespace TimelineItemGroup {
             <cjaas-timeline-item @click=${() => this.expandDetails()} title=${this.title}></cjaas-timeline-item>
           `
         : html`
-            <span @click=${() => this.expandDetails()}>collape group</span>
+            <md-chip small value="collapse events" color="#c7c7c7" @click=${() => this.expandDetails()}></md-chip>
             ${this.events.map(event => {
               return this.renderSingleton(event);
             })}
