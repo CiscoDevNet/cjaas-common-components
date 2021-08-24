@@ -13,6 +13,7 @@ import { getRelativeDate } from "./utils";
 import { repeat } from "lit-html/directives/repeat";
 import { customElementWithCheck } from "@/mixins";
 import "../timeline/TimelineItem";
+import "../timeline/TimelineItemGroup";
 import styles from "./scss/module.scss";
 
 import "@momentum-ui/web-components/dist/comp/md-badge";
@@ -34,9 +35,10 @@ export namespace Timeline {
 
   export interface CustomerEvent {
     data: Record<string, any>;
-    firstName: string;
-    lastName: string;
-    email: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    previously?: string;
     datacontenttype: string;
     id: string;
     person: string;
@@ -56,11 +58,17 @@ export namespace Timeline {
     @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
     @property({ type: Boolean, attribute: "live-stream" }) liveStream = false;
+    @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
 
-    @internalProperty() eventTypes: Array<string> = [];
-    @internalProperty() activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+
+    // @internalProperty() eventTypes: Array<string> = [];
+    // @internalProperty() activeTypes: Array<string> = [];
     // Set to track unique clusters by DATE tag and EVENT cluster w/ unique ID
     @internalProperty() collapsed: Set<string> = new Set(); // INCOMPLETE JUST TESTING
+
+    @internalProperty() testCollapse = false;
 
     /*
     In order to standardize timeline behavior across the board, this interface needs to control the filtering and rendering based upon the event types and filter selection made in the consuming Widget
@@ -134,7 +142,7 @@ export namespace Timeline {
     // Grouping/Collapsing by clusters of event types.
     populateEvents(events: CustomerEvent[]) {
       let index = 0; // Set index reference independent of Map function index ref
-      return events.map((event: CustomerEvent) => {
+      return events.map(() => {
         if (index >= events.length - 1) {
           return;
         }
@@ -146,33 +154,50 @@ export namespace Timeline {
         while (index < events.length - 1 && events[index].type === events[index + 1].type) {
           cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
-          console.log("loop", index, cluster, event.type);
         }
         index++;
         if (cluster.length > 1) {
+          if (this.collapseView) {
+            this.collapsed.add(this.getClusterId(clusterType, keyId));
+          }
           return this.renderCluster(cluster, clusterType, keyId);
         } else {
-          return this.renderEventBlocks(events[keyId]);
+          return this.renderEventBlock(events[keyId]);
         }
       });
     }
 
     renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
       const clusterId = this.getClusterId(clusterType, keyId);
-      return html`
-        <div class="cluster has-line" id=${clusterId} @click=${() => this.collapseDate(clusterId)}>
-          ${this.collapsed.has(clusterId)
-            ? html`
-                <cjaas-timeline-item title=${`${cluster.length} ${clusterType} events`}></cjaas-timeline-item>
-              `
-            : cluster.map(event => this.renderEventBlocks(event))}
-        </div>
-      `;
+
+      return this.collapsed.has(clusterId)
+        ? html`
+            <cjaas-timeline-item-group
+              id=${clusterId}
+              title=${`${cluster.length} ${clusterType} events`}
+              class="has-line"
+              .events=${cluster}
+              ?grouped=${this.collapseView}
+              @ungroup=${() => {
+                console.log("ungroup");
+                this.collapseDate(clusterId);
+              }}
+            ></cjaas-timeline-item-group>
+          `
+        : html`
+            <span @click=${() => this.collapseDate(clusterId)}>collapse group</span>
+            ${cluster.map(event => {
+              return html`
+                ${this.renderEventBlock(event)}
+              `;
+            })}
+          `;
     }
 
-    renderEventBlocks(event: CustomerEvent) {
+    renderEventBlock(event: CustomerEvent) {
       return html`
         <cjaas-timeline-item
+          .event=${event}
           .title=${event.type}
           .timestamp=${event.time}
           .data=${event.data}
@@ -191,6 +216,7 @@ export namespace Timeline {
     render() {
       // Groups items by date
       // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
+      console.log(this.timelineItems);
       const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) => getRelativeDate(item.time));
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };

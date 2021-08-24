@@ -22,6 +22,7 @@ export namespace TimelineItem {
     @property() data: any = null;
     @property({ type: String }) person: string | null = null;
     @property({ type: Boolean, reflect: true }) expanded = false;
+    @property({ type: Boolean, reflect: true }) group = false;
 
     static get styles() {
       return styles;
@@ -69,7 +70,17 @@ export namespace TimelineItem {
     }
 
     expandDetails = () => {
-      this.expanded = !this.expanded;
+      console.log(this.group);
+      if (this.group) {
+        this.dispatchEvent(
+          new CustomEvent("ungroup", {
+            bubbles: true,
+            composed: true
+          })
+        );
+      } else {
+        this.expanded = !this.expanded;
+      }
     };
 
     render() {

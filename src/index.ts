@@ -10,6 +10,7 @@ export { Timeline } from "./components/timeline/Timeline";
 export { EventToggles } from "./components/event-toggles/EventToggles";
 export { ProfileView } from "./components/profile/Profile";
 export { TimelineItem } from "./components/timeline/TimelineItem";
+export { TimelineItemGroup } from "./components/timeline/TimelineItemGroup";
 export { WebexWalkin } from "./components/webexWalkin/WebexWalkin";
 export { Timer } from "./components/timer/Timer";
 export { Condition } from "./components/condition/Condition";
