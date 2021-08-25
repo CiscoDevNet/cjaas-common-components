@@ -153,6 +153,7 @@ export function getTimeStamp(date: DateTime) {
 }
 
 export function getRelativeDate(timestamp: string) {
+  // TODO Error Handling for variation of format that returns "NULL"
   const dt = DateTime.local();
   const nowIsoString = dt.toISO();
 

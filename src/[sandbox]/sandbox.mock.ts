@@ -298,7 +298,7 @@ export const contactDataMock: ProfileView.ContactData = {
   label: "Preferred customer"
 };
 
-export const mockedTimelineItems: Timeline.TimelineItem[] = [
+export const mockedTimelineItems: Timeline.CustomerEvent[] = [
   {
     data: {
       "Really Long Key name, like a survey question": "Jackson",
@@ -308,9 +308,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "jackson@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-0001",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-02-16T05:00:05.596Z"
+    time: "2021-02-16T05:00:05.596Z"
   },
   {
     data: {
@@ -319,9 +319,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "jackson@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-0001",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-02-16T05:00:05.596Z"
+    time: "2021-02-16T05:00:05.596Z"
   },
   {
     data: {
@@ -330,9 +330,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "zeppelin@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-2222",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-03-17T01:00:05.596Z"
+    time: "2021-03-17T01:00:05.596Z"
   },
   {
     data: {
@@ -341,9 +341,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "tom@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-1110",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-03-20T13:00:05.596Z"
+    time: "2021-03-20T13:00:05.596Z"
   },
   {
     data: {
@@ -352,9 +352,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "springsteen@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-8888",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-03-20T12:00:05.596Z"
+    time: "2021-03-20T12:00:05.596Z"
   },
   {
     data: {
@@ -363,9 +363,9 @@ export const mockedTimelineItems: Timeline.TimelineItem[] = [
       email: "joplin@gmail.com"
     },
     id: "mock22087-284d-46db-9e4e-4555",
-    title: "Add To Cart",
+    type: "Add To Cart",
     person: "560021-Venki",
-    timestamp: "2021-03-05T19:00:05.596Z"
+    time: "2021-03-05T19:00:05.596Z"
   }
 ];
 

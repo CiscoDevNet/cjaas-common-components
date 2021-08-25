@@ -19,56 +19,42 @@ import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
+import { nothing } from "lit-html";
+import { DateTime } from "luxon";
 
 export namespace Timeline {
-  export type TimelineItem = {
-    title: string;
-    text?: string;
-    person?: string;
-    subText?: string;
-    data?: any;
-    footer?: string;
-    timestamp?: any;
-    showMore?: boolean;
-    id: string;
-  };
-
   export interface CustomerEvent {
     data: Record<string, any>;
     firstName?: string;
     lastName?: string;
     email?: string;
     previously?: string;
-    datacontenttype: string;
+    datacontenttype?: string;
     id: string;
     person: string;
-    source: string;
-    specversion: string;
+    source?: string;
+    specversion?: string;
     time: string;
     type: string;
   }
 
   @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
-    @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
     @property({ type: Number, reflect: true }) limit = 5;
     @property({ type: Boolean }) loading = true;
-
-    // KPH : New Controls:
     @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
     @property({ type: Boolean, attribute: "live-stream" }) liveStream = false;
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
+    @property({ type: Boolean, attribute: "show-filters" }) showFilters = false;
 
+    // Data Properties Input by Application
+    @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
 
-    // @internalProperty() eventTypes: Array<string> = [];
-    // @internalProperty() activeTypes: Array<string> = [];
-    // Set to track unique clusters by DATE tag and EVENT cluster w/ unique ID
-    @internalProperty() collapsed: Set<string> = new Set(); // INCOMPLETE JUST TESTING
-
-    @internalProperty() testCollapse = false;
+    @internalProperty() collapsed: Set<string> = new Set();
 
     /*
     In order to standardize timeline behavior across the board, this interface needs to control the filtering and rendering based upon the event types and filter selection made in the consuming Widget
@@ -78,10 +64,7 @@ export namespace Timeline {
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-
-      if (changedProperties.has("timelineItems")) {
-        // console.log(`${this.timelineItems} events received from Widget`);
-      }
+      console.log("timeline update");
     }
 
     // Retrieves all used event types from current timelineItems.
@@ -113,7 +96,6 @@ export namespace Timeline {
     // Toggles a collapsed view of a single date's group of events
     collapseDate(clusterId: string) {
       !this.collapsed.has(clusterId) ? this.collapsed.add(clusterId) : this.collapsed.delete(clusterId);
-      console.log(this.collapsed);
       this.requestUpdate();
     }
 
@@ -175,13 +157,13 @@ export namespace Timeline {
             <cjaas-timeline-item-group
               id=${clusterId}
               title=${`${cluster.length} ${clusterType} events`}
+              type=${clusterType}
+              time=${cluster[0].time}
               class="has-line"
               .events=${cluster}
               ?grouped=${this.collapseView}
-              @ungroup=${() => {
-                console.log("ungroup");
-                this.collapseDate(clusterId);
-              }}
+              .activeDates=${this.activeDates}
+              .activeTypes=${this.activeTypes}
             ></cjaas-timeline-item-group>
           `
         : html`
@@ -194,17 +176,24 @@ export namespace Timeline {
           `;
     }
 
+    renderToggleButtons() {
+      return html`
+        <cjaas-event-toggles .eventTypes=${this.eventTypes} .activeTypes=${this.activeTypes}></cjaas-event-toggles>
+      `;
+    }
+
     renderEventBlock(event: CustomerEvent) {
+      const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
       return html`
         <cjaas-timeline-item
           .event=${event}
-          .title=${event.type}
-          .timestamp=${event.time}
+          title=${event.type}
+          time=${event.time}
           .data=${event.data}
-          .id=${event.id}
+          id=${event.id}
           .person=${event.person || null}
           ?expanded="${this.expandDetails}"
-          class="has-line"
+          class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>
       `;
     }
@@ -216,7 +205,6 @@ export namespace Timeline {
     render() {
       // Groups items by date
       // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
-      console.log(this.timelineItems);
       const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) => getRelativeDate(item.time));
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
@@ -225,6 +213,7 @@ export namespace Timeline {
 
       return Object.keys(groupedByDate).length > 0
         ? html`
+            ${(this.showFilters && this.renderToggleButtons()) || nothing}
             <div class="header">
               ${this.renderDetailsControl()}
             </div>

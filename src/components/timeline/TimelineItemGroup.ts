@@ -12,23 +12,22 @@ import { getIconData } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "@/components/timeline/Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
+import { DateTime } from "luxon";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
   export class ELEMENT extends LitElement {
     @property({ type: String }) id = "";
     @property({ type: String }) title = "";
-    @property({ type: String }) timestamp: any = "";
+    @property({ type: String }) type = "";
+    @property({ type: String }) time = "";
     @property({ type: Boolean, reflect: true }) grouped = true;
     @property({ type: Array, attribute: false }) events: Timeline.CustomerEvent[] = [];
+    @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
 
     static get styles() {
       return styles;
-    }
-
-    connectedCallback() {
-      super.connectedCallback();
-      console.log("FART");
     }
 
     renderId() {
@@ -51,6 +50,7 @@ export namespace TimelineItemGroup {
     };
 
     renderSingleton(event: Timeline.CustomerEvent) {
+      const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
       return html`
         <cjaas-timeline-item
           .event=${event}
@@ -59,18 +59,30 @@ export namespace TimelineItemGroup {
           .data=${event.data}
           .id=${event.id}
           .person=${event.person || null}
-          class="has-line"
+          group-item
+          class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>
       `;
     }
 
     render() {
+      const stringDate = DateTime.fromISO(this.time).toFormat("dd LLL yyyy");
       return this.grouped
         ? html`
-            <cjaas-timeline-item @click=${() => this.expandDetails()} title=${this.title}></cjaas-timeline-item>
+            <cjaas-timeline-item
+              @click=${() => this.expandDetails()}
+              title=${this.title}
+              class="has-line show-${this.activeTypes.includes(this.type) || this.activeDates.includes(stringDate)}"
+            ></cjaas-timeline-item>
           `
         : html`
-            <md-chip small value="collapse events" color="#c7c7c7" @click=${() => this.expandDetails()}></md-chip>
+            <md-chip
+              class="group-item"
+              small
+              value="collapse events"
+              color="#c7c7c7"
+              @click=${() => this.expandDetails()}
+            ></md-chip>
             ${this.events.map(event => {
               return this.renderSingleton(event);
             })}

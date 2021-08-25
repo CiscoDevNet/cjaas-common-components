@@ -1,6 +1,7 @@
 import { LitElement, html, property } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
+import { getCountryCallingCode } from "libphonenumber-js";
 
 /*
 Event Toggles Component
@@ -24,7 +25,7 @@ export namespace EventToggles {
       if (this.activeTypes && this.activeTypes.includes(type)) {
         this.activeTypes = this.activeTypes.filter(item => item !== type);
       } else {
-        this.activeTypes.push(type);
+        this.activeTypes = [...this.activeTypes, type];
       }
       this.dispatchEvent(
         new CustomEvent("active-type-update", {

@@ -80,3 +80,14 @@
     flex: 0 0 40px;
   }
 }
+
+.group-item {
+  margin: 0 0 0 .75rem;
+}
+
+.show-true {
+  display: inherit;
+}
+.show-false {
+  display: none;
+}

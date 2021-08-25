@@ -8,6 +8,7 @@
 
 import { LitElement, html, property } from "lit-element";
 import { nothing } from "lit-html";
+import { classMap } from "lit-html/directives/class-map";
 import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
 import { getIconData, getTimeStamp } from "./utils";
@@ -18,11 +19,11 @@ export namespace TimelineItem {
   export class ELEMENT extends LitElement {
     @property({ type: String }) id = "";
     @property({ type: String }) title = "";
-    @property({ type: String }) timestamp: any = "";
+    @property({ type: String }) time = "";
     @property() data: any = null;
     @property({ type: String }) person: string | null = null;
     @property({ type: Boolean, reflect: true }) expanded = false;
-    @property({ type: Boolean, reflect: true }) group = false;
+    @property({ type: Boolean, attribute: "group-item" }) groupItem = false;
 
     static get styles() {
       return styles;
@@ -70,25 +71,21 @@ export namespace TimelineItem {
     }
 
     expandDetails = () => {
-      console.log(this.group);
-      if (this.group) {
-        this.dispatchEvent(
-          new CustomEvent("ungroup", {
-            bubbles: true,
-            composed: true
-          })
-        );
-      } else {
-        this.expanded = !this.expanded;
-      }
+      this.expanded = !this.expanded;
     };
 
+    private get groupClassMap() {
+      return {
+        "group-item": this.groupItem
+      };
+    }
+
     render() {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.timestamp) || DateTime.local());
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
       const iconData = getIconData(this.title);
 
       return html`
-        <div class="timeline-item" @click="${() => this.expandDetails()}">
+        <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
           <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
             <md-icon .name=${iconData.name}></md-icon>
           </md-badge>
