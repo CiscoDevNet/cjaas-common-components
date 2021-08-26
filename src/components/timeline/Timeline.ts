@@ -61,9 +61,19 @@ export namespace Timeline {
 
     @query(".stream") stream: HTMLElement | undefined;
 
+    firstUpdated(changedProperties: PropertyValues) {
+      super.firstUpdated(changedProperties);
+      this.getEventTypes();
+      this.activeTypes = this.eventTypes;
+    }
+
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
       console.log("timeline update");
+      if (changedProperties.has("timelineItems")) {
+        this.getEventTypes();
+        this.requestUpdate();
+      }
     }
 
     // Retrieves all used event types from current timelineItems.
@@ -127,8 +137,6 @@ export namespace Timeline {
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
       const readableDate = DateTime.fromISO(date).toRelativeCalendar();
-
-      // debugger;
 
       // TO DO: Enhance the styling
       // TO DO: Select a relevant Icon for the clustered view
@@ -240,7 +248,14 @@ export namespace Timeline {
 
     renderToggleButtons() {
       return html`
-        <cjaas-event-toggles .eventTypes=${this.eventTypes} .activeTypes=${this.activeTypes}></cjaas-event-toggles>
+        <cjaas-event-toggles
+          .eventTypes=${this.eventTypes}
+          .activeTypes=${this.activeTypes}
+          @active-type-update=${(e: CustomEvent) => {
+            this.activeTypes = e.detail.activeTypes;
+            this.requestUpdate();
+          }}
+        ></cjaas-event-toggles>
       `;
     }
 
@@ -260,6 +275,20 @@ export namespace Timeline {
       `;
     }
 
+    renderLoadMoreAction() {
+      return this.timelineItems.length > this.limit && this.activeTypes.length > 0
+        ? html`
+            <md-link
+              @click=${(e: Event) => {
+                e.preventDefault();
+                this.limit += 5;
+              }}
+              >Load More</md-link
+            >
+          `
+        : nothing;
+    }
+
     static get styles() {
       return styles;
     }
@@ -267,9 +296,8 @@ export namespace Timeline {
     render() {
       // Groups items by date
       // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
-      const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) =>
-        getRelativeDate(item.time).toISODate()
-      );
+      const limitedList = this.timelineItems.slice(0, this.limit);
+      const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
@@ -288,7 +316,9 @@ export namespace Timeline {
                 singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
               )}
             </div>
-            <div class="footer"></div>
+            <div class="footer">
+              ${this.renderLoadMoreAction()}
+            </div>
           `
         : html`
             <div class="empty-state">
