@@ -55,7 +55,7 @@ export namespace TimelineItemGroup {
         <cjaas-timeline-item
           .event=${event}
           .title=${event.type}
-          .timestamp=${event.time}
+          .time=${event.time}
           .data=${event.data}
           .id=${event.id}
           .person=${event.person || null}
@@ -72,6 +72,7 @@ export namespace TimelineItemGroup {
             <cjaas-timeline-item
               @click=${() => this.expandDetails()}
               title=${this.title}
+              time=${this.time}
               class="has-line show-${this.activeTypes.includes(this.type) || this.activeDates.includes(stringDate)}"
             ></cjaas-timeline-item>
           `

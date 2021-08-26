@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
+import { LitElement, html, property, internalProperty, PropertyValues, query } from "lit-element";
 import groupBy from "lodash.groupby";
 
 import { getRelativeDate } from "./utils";
@@ -18,6 +18,7 @@ import styles from "./scss/module.scss";
 
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
+import { Button } from "@momentum-ui/web-components";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import { nothing } from "lit-html";
 import { DateTime } from "luxon";
@@ -55,12 +56,10 @@ export namespace Timeline {
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
 
     @internalProperty() collapsed: Set<string> = new Set();
-
-    /*
-    In order to standardize timeline behavior across the board, this interface needs to control the filtering and rendering based upon the event types and filter selection made in the consuming Widget
-    */
-
+    @internalProperty() activeDateRange!: string;
     @internalProperty() expandDetails = false;
+
+    @query(".stream") stream: HTMLElement | undefined;
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
@@ -99,26 +98,56 @@ export namespace Timeline {
       this.requestUpdate();
     }
 
+    toggleActive(e: Event) {
+      const button = e.target as Button.ELEMENT;
+      button.active = !button.active;
+      this.activeDateRange = button.id.substr(12, button.id.length - 1);
+      console.log(this.activeDateRange);
+      console.log(this.calculateOldestEntry());
+      this.requestUpdate();
+    }
+
+    calculateOldestEntry() {
+      switch (this.activeDateRange) {
+        case "day":
+          return DateTime.now().minus({ day: 1 });
+        case "week":
+          return DateTime.now().minus({ week: 1 });
+        case "month":
+          return DateTime.now().minus({ month: 1 });
+        default:
+          return DateTime.now().minus({ year: 1 });
+      }
+    }
+
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
       // Collapsable by date occurs in this rendering cycle
       const { date, events } = groupedItem;
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
+      const dateObject = DateTime.fromISO(date);
+      const readableDate = DateTime.fromISO(date).toRelativeCalendar();
+
+      // debugger;
 
       // TO DO: Enhance the styling
       // TO DO: Select a relevant Icon for the clustered view
-      return html`
-        <div class="timeline date-set has-line" id=${clusterId}>
-          <md-badge .outlined=${true} class="has-line block" @click=${() => this.collapseDate(clusterId)}>
-            <span class="badge-text">${groupedItem.date}</span>
-          </md-badge>
-          ${this.collapsed.has(clusterId)
-            ? html`
-                <cjaas-timeline-item title=${`${events.length} events from ${date}`}></cjaas-timeline-item>
-              `
-            : this.populateEvents(groupedItem.events)}
-        </div>
-      `;
+      return (
+        (dateObject > this.calculateOldestEntry() &&
+          html`
+            <div class="timeline date-set has-line" id=${clusterId}>
+              <md-badge .outlined=${true} class="has-line block" @click=${() => this.collapseDate(clusterId)}>
+                <span class="badge-text">${readableDate}</span>
+              </md-badge>
+              ${this.collapsed.has(clusterId)
+                ? html`
+                    <cjaas-timeline-item title=${`${events.length} events from ${readableDate}`}></cjaas-timeline-item>
+                  `
+                : this.populateEvents(groupedItem.events)}
+            </div>
+          `) ||
+        nothing
+      );
     }
 
     // Grouping/Collapsing by clusters of event types.
@@ -151,7 +180,6 @@ export namespace Timeline {
 
     renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
       const clusterId = this.getClusterId(clusterType, keyId);
-
       return this.collapsed.has(clusterId)
         ? html`
             <cjaas-timeline-item-group
@@ -174,6 +202,40 @@ export namespace Timeline {
               `;
             })}
           `;
+    }
+
+    renderDateRangeButtons() {
+      return html`
+        <md-button-group>
+          <button
+            slot="button"
+            id="filter-last-day"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Day"
+          >
+            Day
+          </button>
+          <button
+            slot="button"
+            id="filter-last-week"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Week"
+          >
+            Week
+          </button>
+          <button
+            slot="button"
+            id="filter-last-month"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Month"
+          >
+            Month
+          </button>
+        </md-button-group>
+      `;
     }
 
     renderToggleButtons() {
@@ -205,7 +267,9 @@ export namespace Timeline {
     render() {
       // Groups items by date
       // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
-      const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) => getRelativeDate(item.time));
+      const groupedByDate = groupBy(this.timelineItems, (item: CustomerEvent) =>
+        getRelativeDate(item.time).toISODate()
+      );
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
@@ -213,7 +277,7 @@ export namespace Timeline {
 
       return Object.keys(groupedByDate).length > 0
         ? html`
-            ${(this.showFilters && this.renderToggleButtons()) || nothing}
+            ${(this.showFilters && this.renderToggleButtons()) || nothing} ${this.renderDateRangeButtons()}
             <div class="header">
               ${this.renderDetailsControl()}
             </div>

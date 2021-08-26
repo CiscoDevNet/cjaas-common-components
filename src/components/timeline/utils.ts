@@ -157,6 +157,7 @@ export function getRelativeDate(timestamp: string) {
   const dt = DateTime.local();
   const nowIsoString = dt.toISO();
 
-  const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar();
+  // const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar(); // Previous Implementation
+  const relativeValue = DateTime.fromISO(timestamp || nowIsoString);
   return relativeValue;
 }
