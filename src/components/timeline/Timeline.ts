@@ -7,21 +7,19 @@
  */
 
 import { LitElement, html, property, internalProperty, PropertyValues, query } from "lit-element";
-import groupBy from "lodash.groupby";
-
-import { getRelativeDate } from "./utils";
+import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
+import groupBy from "lodash.groupby";
+import { DateTime } from "luxon";
+import { getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import "../timeline/TimelineItem";
 import "../timeline/TimelineItemGroup";
 import styles from "./scss/module.scss";
-
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
-import { Button } from "@momentum-ui/web-components";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
-import { nothing } from "lit-html";
-import { DateTime } from "luxon";
+import { Button } from "@momentum-ui/web-components";
 
 export namespace Timeline {
   export interface CustomerEvent {
@@ -45,21 +43,20 @@ export namespace Timeline {
     @property({ type: Boolean }) loading = true;
     @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
-    @property({ type: Boolean, attribute: "live-stream" }) liveStream = false;
+    @property({ type: Boolean, attribute: "live-stream", reflect: true }) liveStream = false; //  need to implement
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
     @property({ type: Boolean, attribute: "show-filters" }) showFilters = false;
 
-    // Data Properties Input by Application
+    // Data Property Input from Application
     @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
 
+    @internalProperty() newestEvents: Array<CustomerEvent> = [];
     @internalProperty() collapsed: Set<string> = new Set();
     @internalProperty() activeDateRange!: string;
     @internalProperty() expandDetails = false;
-
-    @query(".stream") stream: HTMLElement | undefined;
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
@@ -69,10 +66,12 @@ export namespace Timeline {
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-      console.log("timeline update");
       if (changedProperties.has("timelineItems")) {
         this.getEventTypes();
         this.requestUpdate();
+      }
+      if (changedProperties.has("newestEvents") && this.liveStream) {
+        this.showNewEvents();
       }
     }
 
@@ -112,9 +111,6 @@ export namespace Timeline {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
       this.activeDateRange = button.id.substr(12, button.id.length - 1);
-      console.log(this.activeDateRange);
-      console.log(this.calculateOldestEntry());
-      this.requestUpdate();
     }
 
     calculateOldestEntry() {
@@ -128,6 +124,51 @@ export namespace Timeline {
         default:
           return DateTime.now().minus({ year: 1 });
       }
+    }
+
+    showNewEvents() {
+      if (this.newestEvents.length > 0) {
+        this.timelineItems = [...this.newestEvents, ...this.timelineItems];
+        this.newestEvents = [];
+        this.dispatchEvent(
+          new CustomEvent("new-event-queue-cleared", {
+            bubbles: true,
+            composed: true
+          })
+        );
+      }
+    }
+
+    toggleLiveEvents() {
+      this.liveStream = !this.liveStream;
+      if (this.newestEvents.length > 0) {
+        this.showNewEvents();
+      }
+    }
+
+    renderNewEventQueueToggle() {
+      return html`
+        <md-toggle-switch smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
+          <span style="font-size:.75rem;">
+            Show live events
+          </span>
+        </md-toggle-switch>
+        ${this.renderNewEventCounter()}
+      `;
+    }
+
+    renderNewEventCounter() {
+      return this.newestEvents.length > 0
+        ? html`
+            <md-chip
+              class="event-counter"
+              small
+              color="blue"
+              @click=${this.showNewEvents}
+              value="Show ${this.newestEvents.length} new events"
+            ></md-chip>
+          `
+        : nothing;
     }
 
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
@@ -253,7 +294,6 @@ export namespace Timeline {
           .activeTypes=${this.activeTypes}
           @active-type-update=${(e: CustomEvent) => {
             this.activeTypes = e.detail.activeTypes;
-            this.requestUpdate();
           }}
         ></cjaas-event-toggles>
       `;
@@ -303,11 +343,16 @@ export namespace Timeline {
         return obj;
       });
 
+      // stashing this bit of UI for now
+      // <div class="header">
+      //   ${this.renderDetailsControl()}
+      // </div>
+
       return Object.keys(groupedByDate).length > 0
         ? html`
             ${(this.showFilters && this.renderToggleButtons()) || nothing} ${this.renderDateRangeButtons()}
-            <div class="header">
-              ${this.renderDetailsControl()}
+            <div class="new-events">
+              ${this.renderNewEventQueueToggle()}
             </div>
             <div class="stream">
               ${repeat(
