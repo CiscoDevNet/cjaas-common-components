@@ -150,7 +150,7 @@ export namespace Timeline {
       return html`
         <md-toggle-switch smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
           <span style="font-size:.75rem;">
-            Show live events
+            Livestream
           </span>
         </md-toggle-switch>
         ${this.renderNewEventCounter()}
@@ -172,7 +172,6 @@ export namespace Timeline {
     }
 
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
-      // Collapsable by date occurs in this rendering cycle
       const { date, events } = groupedItem;
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
@@ -350,19 +349,21 @@ export namespace Timeline {
 
       return Object.keys(groupedByDate).length > 0
         ? html`
-            ${(this.showFilters && this.renderToggleButtons()) || nothing} ${this.renderDateRangeButtons()}
-            <div class="new-events">
-              ${this.renderNewEventQueueToggle()}
-            </div>
-            <div class="stream">
-              ${repeat(
-                dateGroupArray,
-                singleDaysEvents => singleDaysEvents.date,
-                singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
-              )}
-            </div>
-            <div class="footer">
-              ${this.renderLoadMoreAction()}
+            <div class="wrapper">
+              ${(this.showFilters && this.renderToggleButtons()) || nothing}
+              <section class="controls">
+                ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
+              </section>
+              <section class="stream">
+                ${repeat(
+                  dateGroupArray,
+                  singleDaysEvents => singleDaysEvents.date,
+                  singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
+                )}
+              </section>
+              <div class="footer">
+                ${this.renderLoadMoreAction()}
+              </div>
             </div>
           `
         : html`

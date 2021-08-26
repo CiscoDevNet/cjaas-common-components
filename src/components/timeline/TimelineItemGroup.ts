@@ -74,6 +74,7 @@ export namespace TimelineItemGroup {
               title=${this.title}
               time=${this.time}
               class="has-line show-${this.activeTypes.includes(this.type) || this.activeDates.includes(stringDate)}"
+              .data=${{ "Event Group": this.title }}
             ></cjaas-timeline-item>
           `
         : html`

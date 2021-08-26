@@ -61,11 +61,37 @@ export namespace TimelineItem {
       `;
     };
 
-    renderId() {
+    renderSubTitle() {
+      let label;
+      let dataPoint;
+
+      if (this.data) {
+        const dataPoints = Object.keys(this.data);
+        let usableDataPointIndex = 0;
+        label = dataPoints[usableDataPointIndex];
+        dataPoint = this.data[label];
+        const dataPointIsString = false;
+
+        while (!dataPointIsString) {
+          if (typeof dataPoint === "string") {
+            break;
+          } else {
+            if (dataPoint === undefined) {
+              label = dataPoints[usableDataPointIndex - 1];
+              dataPoint = "Data Object";
+              break;
+            }
+            usableDataPointIndex++;
+            label = dataPoints[usableDataPointIndex];
+            dataPoint = this.data[label];
+          }
+        }
+      }
+
       return html`
         <div class="sub-title">
-          <span>ID:</span>
-          ${this.id || "NA"}
+          <span>${label || "NA"}: </span>
+          ${dataPoint || "NA"}
         </div>
       `;
     }
@@ -91,7 +117,7 @@ export namespace TimelineItem {
           </md-badge>
           <div class="info-section">
             <div class="title">${this.title}</div>
-            ${this.renderId()} ${this.expanded ? this.renderExpandedDetails() : nothing}
+            ${this.renderSubTitle()} ${this.expanded ? this.renderExpandedDetails() : nothing}
           </div>
           <div class="time-stamp">${timeStamp}</div>
         </div>

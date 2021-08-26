@@ -72,3 +72,15 @@
   align-items: center;
   justify-content: center;
 }
+.wrapper {
+  padding: .5rem;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: .5rem;
+  align-items: flex-end;
+  margin-bottom: .5rem;
+}
