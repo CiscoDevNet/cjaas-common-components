@@ -19,7 +19,6 @@ import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
-import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import { Button } from "@momentum-ui/web-components";
 
 export namespace Timeline {
