@@ -87,7 +87,13 @@
 
 .show-true {
   display: inherit;
+  &.has-line::after{
+    display: inherit;
+  }
 }
 .show-false {
   display: none;
+  &.has-line::after{
+    display: none;
+  }
 }

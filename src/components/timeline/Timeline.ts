@@ -19,6 +19,7 @@ import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
+import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import { Button } from "@momentum-ui/web-components";
 
 export namespace Timeline {
@@ -163,7 +164,6 @@ export namespace Timeline {
             <md-chip
               class="event-counter"
               small
-              color="blue"
               @click=${this.showNewEvents}
               value="Show ${this.newestEvents.length} new events"
             ></md-chip>
@@ -184,7 +184,7 @@ export namespace Timeline {
         (dateObject > this.calculateOldestEntry() &&
           html`
             <div class="timeline date-set has-line" id=${clusterId}>
-              <md-badge .outlined=${true} class="has-line block" @click=${() => this.collapseDate(clusterId)}>
+              <md-badge .outlined=${true} class="has-line block date" @click=${() => this.collapseDate(clusterId)}>
                 <span class="badge-text">${readableDate}</span>
               </md-badge>
               ${this.collapsed.has(clusterId)
@@ -235,7 +235,8 @@ export namespace Timeline {
               title=${`${cluster.length} ${clusterType} events`}
               type=${clusterType}
               time=${cluster[0].time}
-              class="has-line"
+              class="has-line show-${this.activeTypes.includes(clusterType) ||
+                this.activeDates.includes(cluster[0].time)}"
               .events=${cluster}
               ?grouped=${this.collapseView}
               .activeDates=${this.activeDates}

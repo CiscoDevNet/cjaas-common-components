@@ -116,10 +116,17 @@ export function getIconData(eventName: string) {
   });
 
   if (!result && !TEMP_ICON_MAP[eventName]) {
-    result = {
-      name: getRandomIcon(),
-      color: getRandomColor()
-    };
+    if (eventName.includes("events from")) {
+      result = {
+        name: "icon-activities_16",
+        color: "cobalt"
+      };
+    } else {
+      result = {
+        name: getRandomIcon(),
+        color: getRandomColor()
+      };
+    }
 
     TEMP_ICON_MAP[eventName] = result;
   } else if (!result && TEMP_ICON_MAP[eventName]) {

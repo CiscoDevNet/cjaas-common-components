@@ -78,13 +78,7 @@ export namespace TimelineItemGroup {
             ></cjaas-timeline-item>
           `
         : html`
-            <md-chip
-              class="group-item"
-              small
-              value="collapse events"
-              color="#c7c7c7"
-              @click=${() => this.expandDetails()}
-            ></md-chip>
+            <md-chip class="group-item" small value="collapse events" @click=${() => this.expandDetails()}></md-chip>
             ${this.events.map(event => {
               return this.renderSingleton(event);
             })}

@@ -1,5 +1,8 @@
 md-chip::part(chip){
-  border: 1px solid #c7c7c7;
+  border: 1px solid var(--md-secondary-bg-color, #c7c7c7);
   margin-bottom: .5rem;
-  color: #949494;
+  color: var(--md-highlight-text-color, #dedede);
+}
+md-chip.group-item::part(chip){
+  color: var(--md-primary-text-color, #dedede);
 }
