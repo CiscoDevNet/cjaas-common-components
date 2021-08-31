@@ -30,7 +30,7 @@ export namespace ProfileView {
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     @property() contactData: ContactData | undefined = undefined;
-    @property() profileData: any | undefined = undefined;
+    @property() profileData: any = undefined;
     @property({ type: Boolean }) snapshot = false;
     @property({ type: Boolean }) compact = false;
     @property({ type: Boolean }) loading = false;
@@ -111,7 +111,7 @@ export namespace ProfileView {
         : html`
             <table title="Profile Details">
               ${this.profileData
-                ?.filter((x: any) => x.query.type === "table")
+                ?.filter((x: any) => x.query.type === "table" || x.query?.attributes?.type === "table")
                 .map((x: any) => {
                   return html`
                     <tr>
