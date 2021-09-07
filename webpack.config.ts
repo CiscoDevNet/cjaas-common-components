@@ -124,7 +124,7 @@ export const commonDev = merge(common, {
       { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "css" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "css" },
       { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" },
-      { from: `${pCss}/*.css`, to: "css", flatten: true },
+      { from: `${pCss}/*.css`, to: "css", flatten: true }
     ])
   ]
 });
@@ -140,6 +140,7 @@ const commonDist = merge(common, {
   entry: {
     "index-entry": "./src/index.ts",
     "comp/cjaas-profile-entry": "./src/components/profile/Profile.ts",
+    "comp/cjaas-event-toggles-entry": "./src/components/event-toggles/EventToggles.ts",
     "comp/cjaas-timeline-entry": "./src/components/timeline/Timeline.ts",
     "comp/cjaas-timeline-item-entry": "./src/components/timeline/TimelineItem.ts",
     "comp/cjaas-webex-walkin-entry": "./src/components/webexWalkin/WebexWalkin.ts",

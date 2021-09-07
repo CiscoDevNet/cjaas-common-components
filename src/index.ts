@@ -7,6 +7,7 @@
  */
 
 export { Timeline } from "./components/timeline/Timeline";
+export { EventToggles } from "./components/event-toggles/EventToggles";
 export { ProfileView } from "./components/profile/Profile";
 export { TimelineItem } from "./components/timeline/TimelineItem";
 export { WebexWalkin } from "./components/webexWalkin/WebexWalkin";
