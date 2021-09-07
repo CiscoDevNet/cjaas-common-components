@@ -18,6 +18,8 @@ import "../timeline/TimelineItemGroup";
 import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
+import "@momentum-ui/web-components/dist/comp/md-button-group";
+import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import { Button } from "@momentum-ui/web-components";
 
@@ -45,7 +47,6 @@ export namespace Timeline {
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
     @property({ type: Boolean, attribute: "live-stream", reflect: true }) liveStream = false; //  need to implement
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
-    @property({ type: Boolean, attribute: "show-filters" }) showFilters = false;
 
     // Data Property Input from Application
     @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
@@ -350,7 +351,7 @@ export namespace Timeline {
       return Object.keys(groupedByDate).length > 0
         ? html`
             <div class="wrapper">
-              ${(this.showFilters && this.renderToggleButtons()) || nothing}
+              ${(this.eventFilters && this.renderToggleButtons()) || nothing}
               <section class="controls">
                 ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
               </section>
