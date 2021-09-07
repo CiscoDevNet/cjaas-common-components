@@ -116,10 +116,17 @@ export function getIconData(eventName: string) {
   });
 
   if (!result && !TEMP_ICON_MAP[eventName]) {
-    result = {
-      name: getRandomIcon(),
-      color: getRandomColor()
-    };
+    if (eventName.includes("events from")) {
+      result = {
+        name: "icon-activities_16",
+        color: "cobalt"
+      };
+    } else {
+      result = {
+        name: getRandomIcon(),
+        color: getRandomColor()
+      };
+    }
 
     TEMP_ICON_MAP[eventName] = result;
   } else if (!result && TEMP_ICON_MAP[eventName]) {
@@ -153,9 +160,11 @@ export function getTimeStamp(date: DateTime) {
 }
 
 export function getRelativeDate(timestamp: string) {
+  // TODO Error Handling for variation of format that returns "NULL"
   const dt = DateTime.local();
   const nowIsoString = dt.toISO();
 
-  const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar();
+  // const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar(); // Previous Implementation
+  const relativeValue = DateTime.fromISO(timestamp || nowIsoString);
   return relativeValue;
 }

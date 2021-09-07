@@ -72,3 +72,24 @@
   align-items: center;
   justify-content: center;
 }
+.wrapper {
+  padding: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+md-badge.date::part(badge) {
+  cursor: pointer;
+  transition: all 200ms ease-in;
+}
+
+md-badge.date::part(badge):hover {
+  background-color: var(--md-highlight-bg-color, #dedede);
+}
