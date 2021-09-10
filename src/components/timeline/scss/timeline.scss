@@ -44,6 +44,8 @@
   margin-bottom: 10px;
 }
 .stream {
+  height: calc(100% - 10rem);
+  overflow-y: scroll;
   position: relative;
   z-index: 1;
 }
@@ -74,6 +76,7 @@
 }
 .wrapper {
   padding: 0.5rem;
+  height: 100%;
 }
 
 .controls {
@@ -85,6 +88,10 @@
   margin-bottom: 0.5rem;
 }
 
+.events-list{
+  height: 85%
+}
+
 md-badge.date::part(badge) {
   cursor: pointer;
   transition: all 200ms ease-in;
@@ -92,4 +99,8 @@ md-badge.date::part(badge) {
 
 md-badge.date::part(badge):hover {
   background-color: var(--md-highlight-bg-color, #dedede);
+}
+
+md-spinner::part(spinner){
+  margin: 0;
 }

@@ -77,8 +77,8 @@ export namespace TimelineItem {
             break;
           } else {
             if (dataPoint === undefined) {
-              label = dataPoints[usableDataPointIndex - 1];
-              dataPoint = "Data Object";
+              label = "Id";
+              dataPoint = this.id;
               break;
             }
             usableDataPointIndex++;

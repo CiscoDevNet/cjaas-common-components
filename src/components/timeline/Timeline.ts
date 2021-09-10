@@ -13,8 +13,9 @@ import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
 import { getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
-import "../timeline/TimelineItem";
-import "../timeline/TimelineItemGroup";
+import "@/components/timeline/TimelineItem";
+import "@/components/timeline/TimelineItemGroup";
+import "@/components/event-toggles/EventToggles";
 import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
@@ -189,7 +190,10 @@ export namespace Timeline {
               </md-badge>
               ${this.collapsed.has(clusterId)
                 ? html`
-                    <cjaas-timeline-item title=${`${events.length} events from ${readableDate}`}></cjaas-timeline-item>
+                    <cjaas-timeline-item
+                      title=${`${events.length} events from ${readableDate}`}
+                      .data=${{ Date: date }}
+                    ></cjaas-timeline-item>
                   `
                 : this.populateEvents(groupedItem.events)}
             </div>
