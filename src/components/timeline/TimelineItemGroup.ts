@@ -8,9 +8,8 @@
 
 import { LitElement, html, property } from "lit-element";
 import styles from "./scss/module.scss";
-import { getIconData } from "./utils";
 import { customElementWithCheck } from "@/mixins";
-import { Timeline } from "@/components/timeline/Timeline";
+import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import { DateTime } from "luxon";
 

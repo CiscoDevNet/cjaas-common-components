@@ -4,5 +4,5 @@ import { mockedTimelineItems, bigTimeline } from "../sandbox.mock";
 
 export const timelineTemplate = html`
   <h3>Default</h3>
-  <cjaas-timeline limit=${3} .timelineItems=${bigTimeline}></cjaas-timeline>
+  <cjaas-timeline limit=${3} .timelineItems=${bigTimeline} event-filters .newestEvents=${bigTimeline}></cjaas-timeline>
 `;
