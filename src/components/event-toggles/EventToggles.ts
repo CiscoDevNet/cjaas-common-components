@@ -2,6 +2,7 @@ import { LitElement, html, property, PropertyValues } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import { getCountryCallingCode } from "libphonenumber-js";
+import { nothing } from "lit-html";
 
 /*
 Event Toggles Component
@@ -54,13 +55,20 @@ export namespace EventToggles {
         return html`
           <md-button
             id="filter-${item}"
-            ?active=${this.checkFilter(item)}
-            outline
-            color="blue"
+            ?outline=${!this.checkFilter(item)}
+            color="duck-egg"
             size="28"
             @click=${(e: Event) => this.toggleFilter(item, e)}
-            >${item}</md-button
           >
+            ${this.checkFilter(item)
+              ? html`
+                  <md-icon name="icon-check_12"></md-icon>
+                `
+              : html`
+                  <md-icon name="icon-blocked_12"></md-icon>
+                `}
+            ${item}
+          </md-button>
         `;
       });
     }

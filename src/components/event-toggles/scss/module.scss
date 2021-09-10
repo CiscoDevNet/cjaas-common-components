@@ -7,6 +7,15 @@
 }
 
 md-button {
-    display: inline-block;
-    margin-bottom: 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+md-button::part(button-children) {
+  align-items: flex-start;
+}
+
+md-icon::part(icon) {
+  top: 1px;
+  right: 3px;
 }
