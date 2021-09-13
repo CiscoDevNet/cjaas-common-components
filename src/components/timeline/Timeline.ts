@@ -178,8 +178,6 @@ export namespace Timeline {
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
       const readableDate = DateTime.fromISO(date).toRelativeCalendar();
-
-      // TO DO: Enhance the styling
       // TO DO: Select a relevant Icon for the clustered view
       return (
         (dateObject > this.calculateOldestEntry() &&
@@ -206,7 +204,7 @@ export namespace Timeline {
     populateEvents(events: CustomerEvent[]) {
       let index = 0; // Set index reference independent of Map function index ref
       return events.map(() => {
-        if (index >= events.length - 1) {
+        if (index > events.length - 1) {
           return;
         }
 

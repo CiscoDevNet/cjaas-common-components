@@ -61,7 +61,7 @@
       max-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      white-space: pre-wrap;
       &.label {
         color: var(--md-secondary-text-color, #545454);
       }
