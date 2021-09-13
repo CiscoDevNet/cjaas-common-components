@@ -80,6 +80,7 @@ export namespace WebexWalkin {
                 Customer Success, ${this.brandName?.toUpperCase()}
               </div>
             </div>
+            <!-- TODO: use generic profile for external systems with SIP -->
             ${this.profile?.avatar
               ? html`
                   <img class="profile-image" src="${this.profile?.avatar}" />
@@ -105,10 +106,18 @@ export namespace WebexWalkin {
         }
         this.getProfileFromEmail(this.agentId).then(
           (x: { items: Array<string> }) => {
-            resolve(true);
             if (x?.items?.length > 0) {
               const profile = x.items[0];
               this.profile = profile;
+              resolve(true);
+            } else {
+              this.profile = {
+                nickName: "Agent",
+                // SIP morphed as email
+                emails: [this.agentId]
+              };
+
+              resolve(false);
             }
           },
           (err: unknown) => reject(err)

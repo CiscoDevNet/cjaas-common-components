@@ -19,7 +19,7 @@ export const getWebexWalkinTemplate = function(shadowRoot: ShadowRoot | null) {
     </p>
     <md-button @click=${() => setAccessToken(shadowRoot)}>Set AccessToken</md-button>
     <div class="webex-walkin-sandbox-wrapper" style="margin-top: 1rem">
-      <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="v3nki@cisco.com">
+      <cjaas-webex-walkin access-token=${accessToken} brand-name="venki" agent-id="vinayp2@cisco.call.ciscospark.com">
       </cjaas-webex-walkin>
     </div>
     <div class="webex-walkin-sandbox-wrapper" style="margin-top: 1rem">
