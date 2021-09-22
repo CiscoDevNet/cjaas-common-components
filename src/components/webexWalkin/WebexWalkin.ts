@@ -13,6 +13,7 @@ import { customElementWithCheck } from "@/mixins";
 import "../timer/Timer";
 import styles from "./scss/module.scss";
 
+const AGENT_STOCK = "https://cjaas.cisco.com/assets/img/agent-stock.jpg";
 export namespace WebexWalkin {
   @customElementWithCheck("cjaas-webex-walkin")
   export class ELEMENT extends LitElement {
@@ -85,7 +86,9 @@ export namespace WebexWalkin {
               ? html`
                   <img class="profile-image" src="${this.profile?.avatar}" />
                 `
-              : nothing}
+              : html`
+                  <img class="profile-image" src="${AGENT_STOCK}" />
+                `}
           </div>
           <div class="invite">
             <div class="message">${this.welcomeMessage}</div>
