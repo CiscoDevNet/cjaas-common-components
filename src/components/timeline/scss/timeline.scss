@@ -76,7 +76,7 @@
 }
 .wrapper {
   padding: 0.5rem;
-  height: 100%;
+  height: calc(100% - 1rem);
 }
 
 .controls {
