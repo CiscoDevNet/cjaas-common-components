@@ -111,7 +111,7 @@ export namespace ProfileView {
         : html`
             <table title="Profile Details">
               ${this.profileData
-                ?.filter((x: any) => x.query.type === "table" || x.query?.attributes?.type === "table")
+                ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
                 .map((x: any) => {
                   return html`
                     <tr>
