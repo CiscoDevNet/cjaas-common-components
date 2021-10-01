@@ -187,7 +187,7 @@ export namespace ProfileView {
     }
 
     render() {
-      if (this.contactData) {
+      if (this.contactData && this.profileData.length > 0) {
         return this.compact
           ? this.getCompact()
           : this.snapshot
@@ -202,7 +202,7 @@ export namespace ProfileView {
       } else {
         return html`
           <slot name="l10n-no-data-message">
-            <p>No data provided</p>
+            <p class="no-profile-data">No profile data</p>
           </slot>
         `;
       }
