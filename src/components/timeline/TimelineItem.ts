@@ -24,6 +24,8 @@ export namespace TimelineItem {
     @property({ type: String }) person: string | null = null;
     @property({ type: Boolean, reflect: true }) expanded = false;
     @property({ type: Boolean, attribute: "group-item" }) groupItem = false;
+    @property({ attribute: false })
+    eventIconTemplate: any;
 
     static get styles() {
       return styles;
@@ -108,12 +110,18 @@ export namespace TimelineItem {
 
     render() {
       const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
-      const iconData = getIconData(this.title);
+      const iconData = getIconData(this.title, this.eventIconTemplate);
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
           <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
-            <md-icon .name=${iconData.name}></md-icon>
+            ${iconData.name
+              ? html`
+                  <md-icon .name=${iconData.name}></md-icon>
+                `
+              : html`
+                  <img src=${iconData.src} />
+                `}
           </md-badge>
           <div class="info-section">
             <div class="title">${this.title}</div>

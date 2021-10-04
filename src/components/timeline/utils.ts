@@ -25,48 +25,13 @@ export function getTimelineEventFromMessage(message: any) {
   return event;
 }
 
-export const EVENT_ICON_MAP: any = {
-  "Page Visit": {
-    name: "icon-mouse-cursor_16",
-    color: "slate"
-  },
-  "Entered ZipCode": {
-    name: "icon-location_16",
-    color: "cyan"
-  },
-  Identify: {
-    name: "icon-user_16",
-    color: "blue"
-  },
-  Quote: {
-    name: "icon-file-spreadsheet_16",
-    color: "cobalt"
-  },
-  "NPS.*": {
-    name: "icon-analysis_16",
-    color: "red"
-  },
-  "Initiated Walk In": {
-    name: "icon-audio-video_16",
-    color: "orange"
-  },
-  IMI_Inbound: {
-    name: "icon-call-incoming_16",
-    color: "green"
-  },
-  IMI_Outbound: {
-    name: "icon-call-outgoing_16",
-    color: "darkmint"
-  },
-  "Trigger Sent to Server": {
-    name: "icon-event_16",
-    color: "violet"
-  },
-  "Survey Response Collected": {
-    name: "icon-report_16",
-    color: "gold"
-  }
-};
+export interface IconMap {
+  [key: string]: {
+    name: string;
+    icon?: string;
+    src?: string;
+  };
+}
 
 const TEMP_ICON_MAP: any = {};
 
@@ -104,14 +69,14 @@ function getRandomIcon() {
 }
 
 // uses known event types and also generates random pairs for unknown events
-export function getIconData(eventName: string) {
+export function getIconData(eventName: string, iconMap: IconMap) {
   let result: any;
 
-  Object.keys(EVENT_ICON_MAP).forEach((x: string) => {
+  Object.keys(iconMap).forEach((x: string) => {
     const regex = new RegExp(x);
 
     if (regex.test(eventName)) {
-      result = EVENT_ICON_MAP[x];
+      result = iconMap[x];
     }
   });
 

@@ -24,6 +24,8 @@ export namespace TimelineItemGroup {
     @property({ type: Array, attribute: false }) events: Timeline.CustomerEvent[] = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
+    @property({ attribute: false })
+    eventIconTemplate: any;
 
     static get styles() {
       return styles;
@@ -59,6 +61,7 @@ export namespace TimelineItemGroup {
           .id=${event.id}
           .person=${event.person || null}
           group-item
+          .eventIconTemplate=${this.eventIconTemplate}
           class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>
       `;
@@ -74,6 +77,7 @@ export namespace TimelineItemGroup {
               time=${this.time}
               class="has-line show-${this.activeTypes.includes(this.type) || this.activeDates.includes(stringDate)}"
               .data=${{ "Event Group": this.title }}
+              .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>
           `
         : html`

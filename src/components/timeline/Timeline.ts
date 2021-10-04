@@ -30,7 +30,6 @@ export namespace Timeline {
     firstName?: string;
     lastName?: string;
     email?: string;
-    previously?: string;
     datacontenttype?: string;
     id: string;
     person: string;
@@ -54,6 +53,12 @@ export namespace Timeline {
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
+    /**
+     * Property to pass in data template to set color and icon settings
+     * @prop eventIconTemplate
+     */
+    @property({ attribute: false })
+    eventIconTemplate: any;
 
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
     @internalProperty() collapsed: Set<string> = new Set();
@@ -191,6 +196,7 @@ export namespace Timeline {
                     <cjaas-timeline-item
                       title=${`${events.length} events from ${readableDate}`}
                       .data=${{ Date: date }}
+                      .eventIconTemplate=${this.eventIconTemplate}
                     ></cjaas-timeline-item>
                   `
                 : this.populateEvents(groupedItem.events)}
@@ -243,6 +249,7 @@ export namespace Timeline {
               ?grouped=${this.collapseView}
               .activeDates=${this.activeDates}
               .activeTypes=${this.activeTypes}
+              .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item-group>
           `
         : html`
@@ -311,6 +318,7 @@ export namespace Timeline {
           .data=${event.data}
           id=${event.id}
           .person=${event.person || null}
+          .eventIconTemplate=${this.eventIconTemplate}
           ?expanded="${this.expandDetails}"
           class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>
