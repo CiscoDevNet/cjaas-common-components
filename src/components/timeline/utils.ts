@@ -6,6 +6,7 @@
  *
  */
 
+import { Timeline } from "@/index";
 import { DateTime } from "luxon";
 
 export function getTimelineEventFromMessage(message: any) {
@@ -27,9 +28,10 @@ export function getTimelineEventFromMessage(message: any) {
 
 export interface IconMap {
   [key: string]: {
-    name: string;
+    name?: string;
     icon?: string;
     src?: string;
+    showcase?: string;
   };
 }
 
@@ -69,7 +71,7 @@ function getRandomIcon() {
 }
 
 // uses known event types and also generates random pairs for unknown events
-export function getIconData(eventName: string, iconMap: IconMap) {
+export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
 
   Object.keys(iconMap).forEach((x: string) => {

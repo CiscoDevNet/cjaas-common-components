@@ -24,8 +24,12 @@ export namespace TimelineItemGroup {
     @property({ type: Array, attribute: false }) events: Timeline.CustomerEvent[] = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
+    /**
+     * Property to pass in data template to set color and icon settings and showcased data
+     * @prop eventIconTemplate
+     */
     @property({ attribute: false })
-    eventIconTemplate: any;
+    eventIconTemplate: Timeline.TimelineCustomizations | undefined;
 
     static get styles() {
       return styles;

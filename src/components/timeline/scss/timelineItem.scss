@@ -79,6 +79,18 @@
     padding-top: 3px;
     flex: 0 0 40px;
   }
+
+  .nps {
+    background-color: green;
+    color: white;
+    height: 90%;
+    border-radius: .25rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
 }
 
 .group-item {

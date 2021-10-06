@@ -13,19 +13,43 @@ import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
 import { getIconData, getTimeStamp } from "./utils";
 import { customElementWithCheck } from "@/mixins";
+import { Timeline } from "./Timeline";
 
 export namespace TimelineItem {
+  export type ShowcaseList = string[];
   @customElementWithCheck("cjaas-timeline-item")
   export class ELEMENT extends LitElement {
+    /**
+     * @attr id
+     */
     @property({ type: String }) id = "";
+    /**
+     * @attr title
+     */
     @property({ type: String }) title = "";
+    /**
+     * @attr time
+     */
     @property({ type: String }) time = "";
     @property() data: any = null;
+    /**
+     * @attr person
+     */
     @property({ type: String }) person: string | null = null;
+    /**
+     * @attr expanded
+     */
     @property({ type: Boolean, reflect: true }) expanded = false;
+    /**
+     * @attr groupItem
+     */
     @property({ type: Boolean, attribute: "group-item" }) groupItem = false;
+    /**
+     * Property to pass in data template to set color and icon settings and showcased data
+     * @prop eventIconTemplate
+     */
     @property({ attribute: false })
-    eventIconTemplate: any;
+    eventIconTemplate: Timeline.TimelineCustomizations | undefined;
 
     static get styles() {
       return styles;
@@ -98,6 +122,31 @@ export namespace TimelineItem {
       `;
     }
 
+    renderShowcase = () => {
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
+      if (this.title.toLowerCase().includes("survey")) {
+        console.log(this.title, "survey");
+        return html`
+          <div class="nps">
+            ${this.data.nps}
+          </div>
+        `;
+      }
+      try {
+        const { showcase } = this.eventIconTemplate![this.title];
+        if (showcase && this.data[showcase]) {
+          console.log(this.title, "showcase");
+          return this.data[showcase];
+        } else {
+          console.log(this.title, "time");
+          return timeStamp;
+        }
+      } catch {
+        console.log(this.title, "group");
+        if (this.title.includes("events")) return;
+      }
+    };
+
     expandDetails = () => {
       this.expanded = !this.expanded;
     };
@@ -109,8 +158,7 @@ export namespace TimelineItem {
     }
 
     render() {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
-      const iconData = getIconData(this.title, this.eventIconTemplate);
+      const iconData = getIconData(this.title, this.eventIconTemplate!);
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
@@ -127,7 +175,7 @@ export namespace TimelineItem {
             <div class="title">${this.title}</div>
             ${this.renderSubTitle()} ${this.expanded ? this.renderExpandedDetails() : nothing}
           </div>
-          <div class="time-stamp">${timeStamp}</div>
+          <div class="time-stamp">${this.renderShowcase()}</div>
         </div>
       `;
     }

@@ -39,6 +39,15 @@ export namespace Timeline {
     type: string;
   }
 
+  export interface TimelineCustomizations {
+    [key: string]: {
+      name?: string;
+      src?: string;
+      color?: string;
+      showcase?: string;
+    };
+  }
+
   @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
     @property({ type: Number, reflect: true }) limit = 5;
@@ -54,11 +63,11 @@ export namespace Timeline {
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
     /**
-     * Property to pass in data template to set color and icon settings
+     * Property to pass in data template to set color and icon settings and showcased data
      * @prop eventIconTemplate
      */
     @property({ attribute: false })
-    eventIconTemplate: any;
+    eventIconTemplate: TimelineCustomizations | undefined;
 
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
     @internalProperty() collapsed: Set<string> = new Set();
@@ -345,18 +354,13 @@ export namespace Timeline {
 
     render() {
       // Groups items by date
-      // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
       const limitedList = this.timelineItems.slice(0, this.limit);
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
       });
-
-      // stashing this bit of UI for now
-      // <div class="header">
-      //   ${this.renderDetailsControl()}
-      // </div>
+      console.log(dateGroupArray);
 
       return Object.keys(groupedByDate).length > 0
         ? html`
