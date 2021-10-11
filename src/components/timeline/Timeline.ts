@@ -312,6 +312,7 @@ export namespace Timeline {
           .activeTypes=${this.activeTypes}
           @active-type-update=${(e: CustomEvent) => {
             this.activeTypes = e.detail.activeTypes;
+            this.requestUpdate();
           }}
         ></cjaas-event-toggles>
       `;
@@ -360,7 +361,6 @@ export namespace Timeline {
         const obj = { date, events: groupedByDate[date] };
         return obj;
       });
-      console.log(dateGroupArray);
 
       return Object.keys(groupedByDate).length > 0
         ? html`

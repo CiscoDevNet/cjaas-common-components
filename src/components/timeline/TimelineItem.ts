@@ -55,6 +55,13 @@ export namespace TimelineItem {
       return styles;
     }
 
+    copyValue = (e: Event) => {
+      /* Get the text field */
+      const copyText = (e.target as HTMLElement).innerText as string;
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(copyText);
+    };
+
     createTableRecursive(data: any): any {
       if (!data) {
         return nothing;
@@ -63,10 +70,11 @@ export namespace TimelineItem {
           ${Object.keys(data).map((x: string) => {
             if (typeof data[x] === "string") {
               if (data[x]) {
+                /* eslint disable */
                 return html`
                   <tr class="row">
                     <td title=${x} class="label">${x}</td>
-                    <td title=${data[x]} class="value">${data[x] || "-"}</td>
+                    <td title=${data[x]} class="value" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</td>
                   </tr>
                 `;
               }
@@ -103,9 +111,7 @@ export namespace TimelineItem {
             break;
           } else {
             if (dataPoint === undefined) {
-              label = "Id";
-              dataPoint = this.id;
-              break;
+              return nothing;
             }
             usableDataPointIndex++;
             label = dataPoints[usableDataPointIndex];
@@ -124,25 +130,22 @@ export namespace TimelineItem {
 
     renderShowcase = () => {
       const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
+      const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
       if (this.title.toLowerCase().includes("survey")) {
-        console.log(this.title, "survey");
         return html`
           <div class="nps">
-            ${this.data.nps}
+            ${this.data["NPS"] || "-"}
           </div>
         `;
       }
       try {
-        const { showcase } = this.eventIconTemplate![this.title];
+        const { showcase } = parsedIconMap![this.title];
         if (showcase && this.data[showcase]) {
-          console.log(this.title, "showcase");
           return this.data[showcase];
         } else {
-          console.log(this.title, "time");
           return timeStamp;
         }
       } catch {
-        console.log(this.title, "group");
         if (this.title.includes("events")) return;
       }
     };
@@ -162,20 +165,23 @@ export namespace TimelineItem {
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
-          <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
-            ${iconData.name
-              ? html`
-                  <md-icon .name=${iconData.name}></md-icon>
-                `
-              : html`
-                  <img src=${iconData.src} />
-                `}
-          </md-badge>
-          <div class="info-section">
-            <div class="title">${this.title}</div>
-            ${this.renderSubTitle()} ${this.expanded ? this.renderExpandedDetails() : nothing}
+          <div class="top-content">
+            <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
+              ${iconData.name
+                ? html`
+                    <md-icon .name=${iconData.name}></md-icon>
+                  `
+                : html`
+                    <img src=${iconData.src} />
+                  `}
+            </md-badge>
+            <div class="info-section">
+              <div class="title">${this.title}</div>
+              ${this.renderSubTitle()}
+            </div>
+            <div class="time-stamp">${this.renderShowcase()}</div>
           </div>
-          <div class="time-stamp">${this.renderShowcase()}</div>
+          ${this.expanded ? this.renderExpandedDetails() : nothing}
         </div>
       `;
     }

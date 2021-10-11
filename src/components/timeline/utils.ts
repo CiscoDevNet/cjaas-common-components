@@ -73,12 +73,13 @@ function getRandomIcon() {
 // uses known event types and also generates random pairs for unknown events
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
+  const parsedIconMap = JSON.parse(JSON.stringify(iconMap)).default;
 
-  Object.keys(iconMap).forEach((x: string) => {
+  Object.keys(parsedIconMap).forEach((x: string) => {
     const regex = new RegExp(x);
 
     if (regex.test(eventName)) {
-      result = iconMap[x];
+      result = parsedIconMap[x];
     }
   });
 

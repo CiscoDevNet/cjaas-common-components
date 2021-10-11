@@ -1,8 +1,7 @@
 import { LitElement, html, property, PropertyValues } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
-import { getCountryCallingCode } from "libphonenumber-js";
-import { nothing } from "lit-html";
+import "@momentum-ui/web-components/dist/comp/md-combobox";
 
 /*
 Event Toggles Component
@@ -27,12 +26,8 @@ export namespace EventToggles {
       this.activeTypes = this.eventTypes;
     }
 
-    toggleFilter(type: string, e: Event) {
-      if (this.activeTypes && this.activeTypes.includes(type)) {
-        this.activeTypes = this.activeTypes.filter(item => item !== type);
-      } else {
-        this.activeTypes = [...this.activeTypes, type];
-      }
+    toggleFilter(e: CustomEvent) {
+      this.activeTypes = e.detail.selected;
       this.dispatchEvent(
         new CustomEvent("active-type-update", {
           bubbles: true,
@@ -42,35 +37,24 @@ export namespace EventToggles {
           }
         })
       );
-      (e.target! as HTMLElement).blur();
-      this.requestUpdate();
     }
 
     checkFilter(type: string) {
       return this.activeTypes.includes(type);
     }
 
-    renderFilterButtons() {
-      return this.eventTypes.map(item => {
-        return html`
-          <md-button
-            id="filter-${item}"
-            ?outline=${!this.checkFilter(item)}
-            color="duck-egg"
-            size="28"
-            @click=${(e: Event) => this.toggleFilter(item, e)}
-          >
-            ${this.checkFilter(item)
-              ? html`
-                  <md-icon name="icon-check_12"></md-icon>
-                `
-              : html`
-                  <md-icon name="icon-blocked_12"></md-icon>
-                `}
-            ${item}
-          </md-button>
-        `;
-      });
+    renderFilterSelector() {
+      return html`
+        <md-combobox
+          .options=${this.eventTypes}
+          option-value="event"
+          is-multi
+          .selectedOptions=${this.activeTypes}
+          shape="pill"
+          @change-selected=${(e: CustomEvent) => this.toggleFilter(e)}
+          @remove-all-selected=${() => (this.activeTypes = [])}
+        ></md-combobox>
+      `;
     }
 
     static get styles() {
@@ -80,7 +64,7 @@ export namespace EventToggles {
     render() {
       return html`
         <div class="filter-buttons">
-          ${this.renderFilterButtons()}
+          ${this.renderFilterSelector()}
         </div>
       `;
     }

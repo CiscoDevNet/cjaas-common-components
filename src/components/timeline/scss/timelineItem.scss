@@ -10,9 +10,12 @@
   background-color: var(--md-tertiary-bg-color, #ededed);
   border-radius: 8px;
   padding: 8px;
-  display: flex;
-  flex-direction: row;
-  cursor: pointer;
+
+  .top-content {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+  }
 
   &:hover {
     background-color: var(--md-quaternary-bg-color, #dedede);
@@ -57,17 +60,17 @@
     }
     td {
       vertical-align: top;
-      padding-right: 2rem;
       max-width: 0;
+      cursor: pointer;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: pre-wrap;
       &.label {
         color: var(--md-secondary-text-color, #545454);
+        padding-left: 2rem;
       }
       &.value {
         color: var(--md-primary-text-color, #121212);
-        padding-right: 0;
         width: 50%;
       }
     }
@@ -76,14 +79,17 @@
   .time-stamp {
     @include body-small-regular();
     @include secondary-text();
-    padding-top: 3px;
-    flex: 0 0 40px;
+    padding: .5rem;
+    flex: 0 0 5.25rem;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .nps {
     background-color: green;
     color: white;
-    height: 90%;
+    height: 2rem;
+    width: 2rem;
     border-radius: .25rem;
     align-items: center;
     justify-content: center;
