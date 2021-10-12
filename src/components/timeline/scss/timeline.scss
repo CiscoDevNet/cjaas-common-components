@@ -94,7 +94,7 @@
 
 md-badge.date::part(badge) {
   cursor: pointer;
-  background-color: var(--md-primary-background-color, #f7f7f7);
+  background-color: var(--md-primary-bg-color, #f7f7f7);
   transition: all 200ms ease-in;
   margin-top: .5rem;
 }

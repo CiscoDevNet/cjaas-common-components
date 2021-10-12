@@ -1,6 +1,6 @@
 .filter-buttons {
   width: 100%;
-  padding: 1rem 0;
+  padding: 0 0 1rem 0;
 
   md-combobox {
     width: 100%;
@@ -10,6 +10,7 @@
     overflow: scroll;
     min-height: 2rem;
     max-height: 4rem;
+    border-radius: .75rem;
   }
   md-combobox::part(multiwrap) {
     flex-wrap: wrap;
