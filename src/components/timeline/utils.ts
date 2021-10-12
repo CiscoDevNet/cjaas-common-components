@@ -112,15 +112,11 @@ export function getTimeStamp(date: DateTime) {
     return;
   } else {
     if (diff.days >= 30) {
-      return `${date.toFormat("dd")}/${date.toFormat("MM")}`;
+      return date.toFormat("D");
     } else if (diff.days >= 1 && diff.days < 30) {
-      return `${Math.floor(diff.days)}d`;
-    } else if (diff.hours >= 1) {
-      return `${Math.floor(diff.hours)}h`;
-    } else if (diff.minutes >= 1) {
-      return `${Math.floor(diff.minutes)}m`;
-    } else if (diff.seconds >= 1) {
-      return `${Math.floor(diff.seconds)}s`;
+      return date.toFormat("f");
+    } else if (diff.days <= 1) {
+      return date.toFormat("tt");
     } else {
       return "now";
     }

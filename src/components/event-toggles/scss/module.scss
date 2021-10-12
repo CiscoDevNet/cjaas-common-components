@@ -8,7 +8,7 @@
 
   md-combobox::part(group) {
     overflow: scroll;
-    min-height: 4rem;
+    min-height: 2rem;
     max-height: 4rem;
   }
   md-combobox::part(multiwrap) {

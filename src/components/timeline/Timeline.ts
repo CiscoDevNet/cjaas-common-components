@@ -186,20 +186,26 @@ export namespace Timeline {
         : nothing;
     }
 
+    renderTimeBadge(readableDate: any, clusterId: string) {
+      return html`
+        <md-badge .outlined=${true} class="block date" @click=${() => this.collapseDate(clusterId)}>
+          <span class="badge-text">${readableDate}</span>
+        </md-badge>
+      `;
+    }
+
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
       const { date, events } = groupedItem;
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
-      const readableDate = DateTime.fromISO(date).toRelativeCalendar();
+      const readableDate = DateTime.fromISO(date).toFormat("D");
       // TO DO: Select a relevant Icon for the clustered view
       return (
         (dateObject > this.calculateOldestEntry() &&
           html`
             <div class="timeline date-set has-line" id=${clusterId}>
-              <md-badge .outlined=${true} class="has-line block date" @click=${() => this.collapseDate(clusterId)}>
-                <span class="badge-text">${readableDate}</span>
-              </md-badge>
+              ${this.renderTimeBadge(readableDate, clusterId)}
               ${this.collapsed.has(clusterId)
                 ? html`
                     <cjaas-timeline-item
