@@ -131,10 +131,11 @@ export namespace TimelineItem {
     renderShowcase = () => {
       const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
       const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
+      const npsScore = this.data["NPS"];
       if (this.title.toLowerCase().includes("survey")) {
         return html`
-          <div class="nps">
-            ${this.data["NPS"] || "-"}
+          <div class="nps" style="background-color: var(--response-${npsScore});">
+            ${npsScore || "-"}
           </div>
         `;
       }
