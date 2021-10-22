@@ -23,6 +23,7 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import { Button } from "@momentum-ui/web-components";
+import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
   export interface CustomerEvent {
@@ -67,7 +68,7 @@ export namespace Timeline {
      * @prop eventIconTemplate
      */
     @property({ attribute: false })
-    eventIconTemplate: TimelineCustomizations | undefined;
+    eventIconTemplate: TimelineCustomizations = iconData;
 
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
     @internalProperty() collapsed: Set<string> = new Set();

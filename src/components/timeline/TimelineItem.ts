@@ -14,6 +14,7 @@ import styles from "./scss/module.scss";
 import { getIconData, getTimeStamp } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
+import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace TimelineItem {
   export type ShowcaseList = string[];
@@ -49,7 +50,7 @@ export namespace TimelineItem {
      * @prop eventIconTemplate
      */
     @property({ attribute: false })
-    eventIconTemplate: Timeline.TimelineCustomizations | undefined;
+    eventIconTemplate: Timeline.TimelineCustomizations = iconData;
 
     static get styles() {
       return styles;

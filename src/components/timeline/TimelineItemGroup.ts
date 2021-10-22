@@ -12,6 +12,7 @@ import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import { DateTime } from "luxon";
+import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
@@ -29,7 +30,7 @@ export namespace TimelineItemGroup {
      * @prop eventIconTemplate
      */
     @property({ attribute: false })
-    eventIconTemplate: Timeline.TimelineCustomizations | undefined;
+    eventIconTemplate: Timeline.TimelineCustomizations = iconData;
 
     static get styles() {
       return styles;
