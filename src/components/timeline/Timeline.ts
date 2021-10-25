@@ -139,7 +139,7 @@ export namespace Timeline {
         case "month":
           return DateTime.now().minus({ month: 1 });
         default:
-          return DateTime.now().minus({ year: 1 });
+          return DateTime.now().minus({ year: 10 });
       }
     }
 
@@ -280,7 +280,7 @@ export namespace Timeline {
 
     renderDateRangeButtons() {
       return html`
-        <md-button-group>
+        <md-button-group active="3">
           <button
             slot="button"
             id="filter-last-day"
@@ -307,6 +307,15 @@ export namespace Timeline {
             value="Month"
           >
             Month
+          </button>
+          <button
+            slot="button"
+            id="filter-last-all"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="All"
+          >
+            All
           </button>
         </md-button-group>
       `;
@@ -382,10 +391,10 @@ export namespace Timeline {
                   singleDaysEvents => singleDaysEvents.date,
                   singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
                 )}
+                <div class="footer">
+                  ${this.renderLoadMoreAction()}
+                </div>
               </section>
-              <div class="footer">
-                ${this.renderLoadMoreAction()}
-              </div>
             </div>
           `
         : html`
