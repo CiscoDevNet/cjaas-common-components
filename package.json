@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.0.0-dev2",
+  "version": "4.0.0-dev4",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -69,7 +69,7 @@
     "@momentum-ui/icons": "8.25.0",
     "@momentum-ui/tokens": "1.7.1",
     "@momentum-ui/utils": "6.2.15",
-    "@momentum-ui/web-components": "2.4.10",
+    "@momentum-ui/web-components": "2.4.11-dev1",
     "@open-wc/testing-helpers": "1.8.9",
     "@percy/storybook": "^3.3.0",
     "@storybook/addon-a11y": "^5.3.18",

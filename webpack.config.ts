@@ -161,7 +161,9 @@ const commonDist = merge(common, {
       maxInitialRequests: Infinity,
       maxAsyncRequests: Infinity,
       minSize: 0
-    }
+    },
+    minimize: true,
+    chunkIds: "size"
   },
   plugins: [
     new CleanWebpackPlugin(),
