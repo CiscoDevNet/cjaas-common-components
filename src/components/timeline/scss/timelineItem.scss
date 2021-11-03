@@ -51,7 +51,7 @@
     @include body-regular();
     @include primary-text();
     @include ellipsis-text();
-    line-height: 14px;
+    line-height: 1rem;
   }
 
   .sub-title {
