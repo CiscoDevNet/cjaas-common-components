@@ -13,21 +13,55 @@ import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
 import { getIconData, getTimeStamp } from "./utils";
 import { customElementWithCheck } from "@/mixins";
+import { Timeline } from "./Timeline";
+import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace TimelineItem {
+  export type ShowcaseList = string[];
   @customElementWithCheck("cjaas-timeline-item")
   export class ELEMENT extends LitElement {
+    /**
+     * @attr id
+     */
     @property({ type: String }) id = "";
+    /**
+     * @attr title
+     */
     @property({ type: String }) title = "";
+    /**
+     * @attr time
+     */
     @property({ type: String }) time = "";
     @property() data: any = null;
+    /**
+     * @attr person
+     */
     @property({ type: String }) person: string | null = null;
+    /**
+     * @attr expanded
+     */
     @property({ type: Boolean, reflect: true }) expanded = false;
+    /**
+     * @attr groupItem
+     */
     @property({ type: Boolean, attribute: "group-item" }) groupItem = false;
+    /**
+     * Property to pass in data template to set color and icon settings and showcased data
+     * @prop eventIconTemplate
+     */
+    @property({ attribute: false })
+    eventIconTemplate: Timeline.TimelineCustomizations = iconData;
 
     static get styles() {
       return styles;
     }
+
+    copyValue = (e: Event) => {
+      /* Get the text field */
+      const copyText = (e.target as HTMLElement).innerText as string;
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(copyText);
+    };
 
     createTableRecursive(data: any): any {
       if (!data) {
@@ -37,10 +71,11 @@ export namespace TimelineItem {
           ${Object.keys(data).map((x: string) => {
             if (typeof data[x] === "string") {
               if (data[x]) {
+                /* eslint disable */
                 return html`
                   <tr class="row">
                     <td title=${x} class="label">${x}</td>
-                    <td title=${data[x]} class="value">${data[x] || "-"}</td>
+                    <td title=${data[x]} class="value" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</td>
                   </tr>
                 `;
               }
@@ -77,9 +112,7 @@ export namespace TimelineItem {
             break;
           } else {
             if (dataPoint === undefined) {
-              label = "Id";
-              dataPoint = this.id;
-              break;
+              return nothing;
             }
             usableDataPointIndex++;
             label = dataPoints[usableDataPointIndex];
@@ -96,6 +129,29 @@ export namespace TimelineItem {
       `;
     }
 
+    renderShowcase = () => {
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
+      const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
+      const npsScore = this.data["NPS"];
+      if (this.title.toLowerCase().includes("survey")) {
+        return html`
+          <div class="nps" style="background-color: var(--response-${npsScore});">
+            ${npsScore || "-"}
+          </div>
+        `;
+      }
+      try {
+        const { showcase } = parsedIconMap![this.title];
+        if (showcase && this.data[showcase]) {
+          return this.data[showcase];
+        } else {
+          return timeStamp;
+        }
+      } catch {
+        if (this.title.includes("events")) return;
+      }
+    };
+
     expandDetails = () => {
       this.expanded = !this.expanded;
     };
@@ -107,19 +163,27 @@ export namespace TimelineItem {
     }
 
     render() {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
-      const iconData = getIconData(this.title);
+      const iconData = getIconData(this.title, this.eventIconTemplate!);
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
-          <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
-            <md-icon .name=${iconData.name}></md-icon>
-          </md-badge>
-          <div class="info-section">
-            <div class="title">${this.title}</div>
-            ${this.renderSubTitle()} ${this.expanded ? this.renderExpandedDetails() : nothing}
+          <div class="top-content">
+            <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
+              ${iconData.name
+                ? html`
+                    <md-icon .name=${iconData.name}></md-icon>
+                  `
+                : html`
+                    <img src=${iconData.src} />
+                  `}
+            </md-badge>
+            <div class="info-section">
+              <div class="title">${this.title}</div>
+              ${this.renderSubTitle()}
+            </div>
+            <div class="time-stamp">${this.renderShowcase()}</div>
           </div>
-          <div class="time-stamp">${timeStamp}</div>
+          ${this.expanded ? this.renderExpandedDetails() : nothing}
         </div>
       `;
     }

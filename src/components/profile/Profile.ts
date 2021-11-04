@@ -63,7 +63,7 @@ export namespace ProfileView {
 
     dataPointFilter(dataPoint: string) {
       // Usage agnostic, simply retrieves the usable data. Specific to CJaaS API
-      const dataAttribute = this.profileData?.filter((x: any) => x.query.Metadata === dataPoint);
+      const dataAttribute = this.profileData?.filter((x: any) => x.query.metadata === dataPoint);
       return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
     }
 
@@ -115,7 +115,7 @@ export namespace ProfileView {
                 .map((x: any) => {
                   return html`
                     <tr>
-                      <td class="title">${x.query.DisplayName}</td>
+                      <td class="title">${x.query.displayName}</td>
                       <td class="value">${this.getValue(x)}</td>
                     </tr>
                   `;

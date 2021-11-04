@@ -1,8 +1,23 @@
 .filter-buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0 0.5rem;
+  width: 100%;
+  padding: 0 0 1rem 0;
+
+  md-combobox {
+    width: 100%;
+  }
+
+  md-combobox::part(group) {
+    overflow: scroll;
+    min-height: 2rem;
+    max-height: 4rem;
+    border-radius: .75rem;
+  }
+  md-combobox::part(multiwrap) {
+    flex-wrap: wrap;
+  }
+  md-combobox::part(combobox-options) {
+    z-index: 1000;
+  }
 }
 
 md-button {

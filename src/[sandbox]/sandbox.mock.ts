@@ -836,7 +836,6 @@ export const bigTimeline: Timeline.CustomerEvent[] = [
     specversion: "1.0",
     datacontenttype: "application/json",
     person: "30313-Zubinq",
-    previously: "84000-Zubin",
     time: "2021-08-23T22:01:50.48Z",
     data: {}
   },
@@ -895,7 +894,6 @@ export const bigTimeline: Timeline.CustomerEvent[] = [
     specversion: "1.0",
     datacontenttype: "application/json",
     person: "John  Smith",
-    previously: "John Doe",
     time: "2021-08-23T21:48:26.038Z",
     data: {}
   },

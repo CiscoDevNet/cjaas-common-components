@@ -23,6 +23,7 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import { Button } from "@momentum-ui/web-components";
+import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
   export interface CustomerEvent {
@@ -30,7 +31,6 @@ export namespace Timeline {
     firstName?: string;
     lastName?: string;
     email?: string;
-    previously?: string;
     datacontenttype?: string;
     id: string;
     person: string;
@@ -38,6 +38,15 @@ export namespace Timeline {
     specversion?: string;
     time: string;
     type: string;
+  }
+
+  export interface TimelineCustomizations {
+    [key: string]: {
+      name?: string;
+      src?: string;
+      color?: string;
+      showcase?: string;
+    };
   }
 
   @customElementWithCheck("cjaas-timeline")
@@ -54,6 +63,12 @@ export namespace Timeline {
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
+    /**
+     * Property to pass in data template to set color and icon settings and showcased data
+     * @prop eventIconTemplate
+     */
+    @property({ attribute: false })
+    eventIconTemplate: TimelineCustomizations = iconData;
 
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
     @internalProperty() collapsed: Set<string> = new Set();
@@ -124,7 +139,7 @@ export namespace Timeline {
         case "month":
           return DateTime.now().minus({ month: 1 });
         default:
-          return DateTime.now().minus({ year: 1 });
+          return DateTime.now().minus({ year: 10 });
       }
     }
 
@@ -172,25 +187,32 @@ export namespace Timeline {
         : nothing;
     }
 
+    renderTimeBadge(readableDate: any, clusterId: string) {
+      return html`
+        <md-badge .outlined=${true} class="block date" @click=${() => this.collapseDate(clusterId)}>
+          <span class="badge-text">${readableDate}</span>
+        </md-badge>
+      `;
+    }
+
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
       const { date, events } = groupedItem;
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
-      const readableDate = DateTime.fromISO(date).toRelativeCalendar();
+      const readableDate = DateTime.fromISO(date).toFormat("D");
       // TO DO: Select a relevant Icon for the clustered view
       return (
         (dateObject > this.calculateOldestEntry() &&
           html`
             <div class="timeline date-set has-line" id=${clusterId}>
-              <md-badge .outlined=${true} class="has-line block date" @click=${() => this.collapseDate(clusterId)}>
-                <span class="badge-text">${readableDate}</span>
-              </md-badge>
+              ${this.renderTimeBadge(readableDate, clusterId)}
               ${this.collapsed.has(clusterId)
                 ? html`
                     <cjaas-timeline-item
                       title=${`${events.length} events from ${readableDate}`}
                       .data=${{ Date: date }}
+                      .eventIconTemplate=${this.eventIconTemplate}
                     ></cjaas-timeline-item>
                   `
                 : this.populateEvents(groupedItem.events)}
@@ -243,6 +265,7 @@ export namespace Timeline {
               ?grouped=${this.collapseView}
               .activeDates=${this.activeDates}
               .activeTypes=${this.activeTypes}
+              .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item-group>
           `
         : html`
@@ -257,7 +280,7 @@ export namespace Timeline {
 
     renderDateRangeButtons() {
       return html`
-        <md-button-group>
+        <md-button-group active="3">
           <button
             slot="button"
             id="filter-last-day"
@@ -285,6 +308,15 @@ export namespace Timeline {
           >
             Month
           </button>
+          <button
+            slot="button"
+            id="filter-last-all"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="All"
+          >
+            All
+          </button>
         </md-button-group>
       `;
     }
@@ -296,6 +328,7 @@ export namespace Timeline {
           .activeTypes=${this.activeTypes}
           @active-type-update=${(e: CustomEvent) => {
             this.activeTypes = e.detail.activeTypes;
+            this.requestUpdate();
           }}
         ></cjaas-event-toggles>
       `;
@@ -311,6 +344,7 @@ export namespace Timeline {
           .data=${event.data}
           id=${event.id}
           .person=${event.person || null}
+          .eventIconTemplate=${this.eventIconTemplate}
           ?expanded="${this.expandDetails}"
           class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>
@@ -337,18 +371,12 @@ export namespace Timeline {
 
     render() {
       // Groups items by date
-      // NOTE: If seeing 'NULL' again, loo into the getRelativeDate(item.time) function
       const limitedList = this.timelineItems.slice(0, this.limit);
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
       });
-
-      // stashing this bit of UI for now
-      // <div class="header">
-      //   ${this.renderDetailsControl()}
-      // </div>
 
       return Object.keys(groupedByDate).length > 0
         ? html`
@@ -363,10 +391,10 @@ export namespace Timeline {
                   singleDaysEvents => singleDaysEvents.date,
                   singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
                 )}
+                <div class="footer">
+                  ${this.renderLoadMoreAction()}
+                </div>
               </section>
-              <div class="footer">
-                ${this.renderLoadMoreAction()}
-              </div>
             </div>
           `
         : html`
