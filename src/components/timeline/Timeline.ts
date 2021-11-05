@@ -380,12 +380,12 @@ export namespace Timeline {
 
       return Object.keys(groupedByDate).length > 0
         ? html`
-            <div class="wrapper">
+            <div class="wrapper" part="timeline-wrapper">
               ${(this.eventFilters && this.renderToggleButtons()) || nothing}
-              <section class="controls">
+              <section class="controls" part="controls">
                 ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
               </section>
-              <section class="stream">
+              <section class="stream" part="stream">
                 ${repeat(
                   dateGroupArray,
                   singleDaysEvents => singleDaysEvents.date,
