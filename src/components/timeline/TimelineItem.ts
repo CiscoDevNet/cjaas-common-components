@@ -59,6 +59,11 @@ export namespace TimelineItem {
       return styles;
     }
 
+    /**
+     * @method copyValue
+     * @param {Event} e
+     * Copies text to clipboard
+     */
     copyValue = (e: Event) => {
       /* Get the text field */
       const copyText = (e.target as HTMLElement).innerText as string;
@@ -66,6 +71,12 @@ export namespace TimelineItem {
       navigator.clipboard.writeText(copyText);
     };
 
+    /**
+     * @method createTableRecursive
+     * @param data
+     * @returns Template
+     * Builds the timeline item's data table
+     */
     createTableRecursive(data: any): any {
       if (!data) {
         return nothing;

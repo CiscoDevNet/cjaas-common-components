@@ -69,6 +69,11 @@ export namespace TimelineItemGroup {
       `;
     }
 
+    /**
+     * @method expandDetails
+     * @fires toggle-group
+     * Toggles a grouped view for like events
+     */
     expandDetails = () => {
       this.grouped = !this.grouped;
       this.dispatchEvent(
