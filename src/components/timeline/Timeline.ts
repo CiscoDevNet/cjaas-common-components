@@ -51,17 +51,57 @@ export namespace Timeline {
 
   @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
+    /**
+     * @attr limit
+     * Set number of events to render
+     */
     @property({ type: Number, reflect: true }) limit = 5;
+    /**
+     * @attr loading
+     * Toggle Loading state
+     */
     @property({ type: Boolean }) loading = true;
+    /**
+     * @attr event-filters
+     * Show/hide event filters UI
+     */
     @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
+    /**
+     * @attr date-filters
+     * Show/hide date filters UI
+     */
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
+    /**
+     * @attr live-stream
+     * Toggle adding latest live events being added directly to timeline (instead of queue)
+     */
     @property({ type: Boolean, attribute: "live-stream", reflect: true }) liveStream = false; //  need to implement
+    /**
+     * @attr collapse-view
+     * Set default event groups to collapsed
+     */
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
 
     // Data Property Input from Application
+    /**
+     * @prop timelineItems
+     * Dataset of events
+     */
     @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
+    /**
+     * @prop eventTypes
+     * Dataset of all unique event types
+     */
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    /**
+     * @prop activeTypes
+     * Dataset tracking all visible event types (in event filter)
+     */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    /**
+     * @prop activeDates
+     * Dataset tracking all visible dates (in date filter)
+     */
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
     /**
      * Property to pass in data template to set color and icon settings and showcased data
@@ -70,9 +110,25 @@ export namespace Timeline {
     @property({ attribute: false })
     eventIconTemplate: TimelineCustomizations = iconData;
 
+    /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
+    /**
+     * @prop collapsed
+     * Dataset tracking event clusters that are renderd in collapsed view
+     */
     @internalProperty() collapsed: Set<string> = new Set();
+    /**
+     * @prop activeDateRange
+     * Store for visible dates
+     */
     @internalProperty() activeDateRange!: string;
+    /**
+     * @prop expandDetails
+     * Toggle expanded event details
+     */
     @internalProperty() expandDetails = false;
 
     firstUpdated(changedProperties: PropertyValues) {

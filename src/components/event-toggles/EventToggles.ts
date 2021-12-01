@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) Cisco Systems, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
 import { LitElement, html, property, PropertyValues } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
@@ -18,7 +26,15 @@ Listen for the @active-type-update custom event in order to reflect and control 
 export namespace EventToggles {
   @customElementWithCheck("cjaas-event-toggles")
   export class ELEMENT extends LitElement {
+    /**
+     * @prop eventTypes
+     * Dataset of unique event types
+     */
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    /**
+     * @prop activeTypes
+     * Dataset of selected event types showing in timeline
+     */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
 
     firstUpdated(changedProperties: PropertyValues) {

@@ -32,6 +32,9 @@ export namespace TimelineItem {
      * @attr time
      */
     @property({ type: String }) time = "";
+    /**
+     * @prop data
+     */
     @property() data: any = null;
     /**
      * @attr person
