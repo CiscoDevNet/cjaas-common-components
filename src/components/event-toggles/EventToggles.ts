@@ -55,10 +55,6 @@ export namespace EventToggles {
       );
     }
 
-    checkFilter(type: string) {
-      return this.activeTypes.includes(type);
-    }
-
     renderFilterSelector() {
       return html`
         <md-combobox

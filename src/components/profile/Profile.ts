@@ -86,6 +86,12 @@ export namespace ProfileView {
       return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
     }
 
+    /**
+     * @method extractDataPoints
+     * @param update
+     * @returns void
+     * Method to parse and set the contact data from the template return
+     */
     extractDataPoints(update?: boolean) {
       if ((!this.contactData && this.profileData) || update) {
         // TODO: Pending more API development, populate the contactChannels her as well
