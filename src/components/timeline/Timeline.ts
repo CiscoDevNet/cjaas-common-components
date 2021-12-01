@@ -148,8 +148,12 @@ export namespace Timeline {
       }
     }
 
-    // Retrieves all used event types from current timelineItems.
-    // Widget passes the results of first event fetch into TimelineItems, which is parsed to a unique set.
+    /**
+     * @method getEventTypes
+     * @returns void
+     * Sets `eventTypes` property to a unique set of event types from current timelineItems.
+     */
+
     getEventTypes() {
       const eventArray: Set<string> = new Set();
       this.timelineItems.forEach(event => {
@@ -158,34 +162,46 @@ export namespace Timeline {
       this.eventTypes = Array.from(eventArray);
     }
 
-    toggleDetailView = () => {
-      this.expandDetails = !this.expandDetails;
-    };
+    // toggleDetailView = () => {
+    //   this.expandDetails = !this.expandDetails;
+    // };
 
-    renderDetailsControl = () => {
-      return html`
-        <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
-          ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
-        >
-      `;
-    };
+    // renderDetailsControl = () => {
+    //   return html`
+    //     <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
+    //       ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
+    //     >
+    //   `;
+    // };
 
     getClusterId(text: string, key: number) {
       return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
     }
 
-    // Toggles a collapsed view of a single date's group of events
+    /**
+     * @method collapseDate
+     * @param {string} clusterId
+     * Toggles a collapsed view of a single date's group of events
+     */
     collapseDate(clusterId: string) {
       !this.collapsed.has(clusterId) ? this.collapsed.add(clusterId) : this.collapsed.delete(clusterId);
       this.requestUpdate();
     }
 
+    /**
+     * @method toggleActive
+     * @param {Event} e
+     */
     toggleActive(e: Event) {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
       this.activeDateRange = button.id.substr(12, button.id.length - 1);
     }
 
+    /**
+     * @method calculateOldestEntry
+     * @returns {DateTime}
+     */
     calculateOldestEntry() {
       switch (this.activeDateRange) {
         case "day":
@@ -199,6 +215,12 @@ export namespace Timeline {
       }
     }
 
+    /**
+     * @method showNewEvents
+     * @returns void
+     * @fires new-event-queue-cleared
+     * Updates the visible timeline events with queued new events
+     */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
         this.timelineItems = [...this.newestEvents, ...this.timelineItems];
@@ -212,6 +234,10 @@ export namespace Timeline {
       }
     }
 
+    /**
+     * @method toggleLiveEvents
+     * Toggles live event stream to queue setting
+     */
     toggleLiveEvents() {
       this.liveStream = !this.liveStream;
       if (this.newestEvents.length > 0) {
@@ -278,7 +304,12 @@ export namespace Timeline {
       );
     }
 
-    // Grouping/Collapsing by clusters of event types.
+    /**
+     * Grouping/Collapsing by clusters of event types.
+     * @method populateEvents
+     * @param {CustomerEvent[]} events
+     * @returns map
+     */
     populateEvents(events: CustomerEvent[]) {
       let index = 0; // Set index reference independent of Map function index ref
       return events.map(() => {
