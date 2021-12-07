@@ -10,7 +10,6 @@ import { customElementWithCheck } from "@/mixins";
 import { LitElement, html, property, PropertyValues } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
-
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-avatar";
@@ -29,10 +28,30 @@ export namespace ProfileView {
   }
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
+    /**
+     * @prop contactData
+     * Data object specific to contact details
+     */
     @property() contactData: ContactData | undefined = undefined;
+    /**
+     * @prop profileData
+     * The profile Data provided from the template fetch, populated in the table view
+     */
     @property() profileData: any = undefined;
+    /**
+     * @prop snapshot
+     * Toggle snapshot view render (a small preview UI)
+     */
     @property({ type: Boolean }) snapshot = false;
+    /**
+     * @prop compact
+     * Toggle compact view render (smaller UI for Lists)
+     */
     @property({ type: Boolean }) compact = false;
+    /**
+     * @prop loading
+     * Toggle loading state render
+     */
     @property({ type: Boolean }) loading = false;
 
     connectedCallback() {
@@ -67,6 +86,12 @@ export namespace ProfileView {
       return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
     }
 
+    /**
+     * @method extractDataPoints
+     * @param update
+     * @returns void
+     * Method to parse and set the contact data from the template return
+     */
     extractDataPoints(update?: boolean) {
       if ((!this.contactData && this.profileData) || update) {
         // TODO: Pending more API development, populate the contactChannels her as well

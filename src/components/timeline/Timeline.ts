@@ -51,17 +51,57 @@ export namespace Timeline {
 
   @customElementWithCheck("cjaas-timeline")
   export class ELEMENT extends LitElement {
+    /**
+     * @attr limit
+     * Set number of events to render
+     */
     @property({ type: Number, reflect: true }) limit = 5;
+    /**
+     * @attr loading
+     * Toggle Loading state
+     */
     @property({ type: Boolean }) loading = true;
+    /**
+     * @attr event-filters
+     * Show/hide event filters UI
+     */
     @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
+    /**
+     * @attr date-filters
+     * Show/hide date filters UI
+     */
     @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
+    /**
+     * @attr live-stream
+     * Toggle adding latest live events being added directly to timeline (instead of queue)
+     */
     @property({ type: Boolean, attribute: "live-stream", reflect: true }) liveStream = false; //  need to implement
+    /**
+     * @attr collapse-view
+     * Set default event groups to collapsed
+     */
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
 
     // Data Property Input from Application
+    /**
+     * @prop timelineItems
+     * Dataset of events
+     */
     @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
+    /**
+     * @prop eventTypes
+     * Dataset of all unique event types
+     */
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    /**
+     * @prop activeTypes
+     * Dataset tracking all visible event types (in event filter)
+     */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    /**
+     * @prop activeDates
+     * Dataset tracking all visible dates (in date filter)
+     */
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
     /**
      * Property to pass in data template to set color and icon settings and showcased data
@@ -70,9 +110,25 @@ export namespace Timeline {
     @property({ attribute: false })
     eventIconTemplate: TimelineCustomizations = iconData;
 
+    /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
     @internalProperty() newestEvents: Array<CustomerEvent> = [];
+    /**
+     * @prop collapsed
+     * Dataset tracking event clusters that are renderd in collapsed view
+     */
     @internalProperty() collapsed: Set<string> = new Set();
+    /**
+     * @prop activeDateRange
+     * Store for visible dates
+     */
     @internalProperty() activeDateRange!: string;
+    /**
+     * @prop expandDetails
+     * Toggle expanded event details
+     */
     @internalProperty() expandDetails = false;
 
     firstUpdated(changedProperties: PropertyValues) {
@@ -92,8 +148,12 @@ export namespace Timeline {
       }
     }
 
-    // Retrieves all used event types from current timelineItems.
-    // Widget passes the results of first event fetch into TimelineItems, which is parsed to a unique set.
+    /**
+     * @method getEventTypes
+     * @returns void
+     * Sets `eventTypes` property to a unique set of event types from current timelineItems.
+     */
+
     getEventTypes() {
       const eventArray: Set<string> = new Set();
       this.timelineItems.forEach(event => {
@@ -102,34 +162,46 @@ export namespace Timeline {
       this.eventTypes = Array.from(eventArray);
     }
 
-    toggleDetailView = () => {
-      this.expandDetails = !this.expandDetails;
-    };
+    // toggleDetailView = () => {
+    //   this.expandDetails = !this.expandDetails;
+    // };
 
-    renderDetailsControl = () => {
-      return html`
-        <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
-          ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
-        >
-      `;
-    };
+    // renderDetailsControl = () => {
+    //   return html`
+    //     <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
+    //       ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
+    //     >
+    //   `;
+    // };
 
     getClusterId(text: string, key: number) {
       return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
     }
 
-    // Toggles a collapsed view of a single date's group of events
+    /**
+     * @method collapseDate
+     * @param {string} clusterId
+     * Toggles a collapsed view of a single date's group of events
+     */
     collapseDate(clusterId: string) {
       !this.collapsed.has(clusterId) ? this.collapsed.add(clusterId) : this.collapsed.delete(clusterId);
       this.requestUpdate();
     }
 
+    /**
+     * @method toggleActive
+     * @param {Event} e
+     */
     toggleActive(e: Event) {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
       this.activeDateRange = button.id.substr(12, button.id.length - 1);
     }
 
+    /**
+     * @method calculateOldestEntry
+     * @returns {DateTime}
+     */
     calculateOldestEntry() {
       switch (this.activeDateRange) {
         case "day":
@@ -143,6 +215,12 @@ export namespace Timeline {
       }
     }
 
+    /**
+     * @method showNewEvents
+     * @returns void
+     * @fires new-event-queue-cleared
+     * Updates the visible timeline events with queued new events
+     */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
         this.timelineItems = [...this.newestEvents, ...this.timelineItems];
@@ -156,6 +234,10 @@ export namespace Timeline {
       }
     }
 
+    /**
+     * @method toggleLiveEvents
+     * Toggles live event stream to queue setting
+     */
     toggleLiveEvents() {
       this.liveStream = !this.liveStream;
       if (this.newestEvents.length > 0) {
@@ -222,7 +304,12 @@ export namespace Timeline {
       );
     }
 
-    // Grouping/Collapsing by clusters of event types.
+    /**
+     * Grouping/Collapsing by clusters of event types.
+     * @method populateEvents
+     * @param {CustomerEvent[]} events
+     * @returns map
+     */
     populateEvents(events: CustomerEvent[]) {
       let index = 0; // Set index reference independent of Map function index ref
       return events.map(() => {
