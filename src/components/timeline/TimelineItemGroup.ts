@@ -17,13 +17,37 @@ import * as iconData from "@/assets/defaultIcons.json";
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
   export class ELEMENT extends LitElement {
+    /**
+     * @attr id
+     */
     @property({ type: String }) id = "";
+    /**
+     * @attr title
+     */
     @property({ type: String }) title = "";
+    /**
+     * @attr type
+     */
     @property({ type: String }) type = "";
+    /**
+     * @attr time
+     */
     @property({ type: String }) time = "";
+    /**
+     * @attr grouped
+     */
     @property({ type: Boolean, reflect: true }) grouped = true;
+    /**
+     * @prop events
+     */
     @property({ type: Array, attribute: false }) events: Timeline.CustomerEvent[] = [];
+    /**
+     * @prop activeTypes
+     */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    /**
+     * @prop activeDates
+     */
     @property({ type: Array, attribute: false }) activeDates: Array<string> = [];
     /**
      * Property to pass in data template to set color and icon settings and showcased data
@@ -45,6 +69,11 @@ export namespace TimelineItemGroup {
       `;
     }
 
+    /**
+     * @method expandDetails
+     * @fires toggle-group
+     * Toggles a grouped view for like events
+     */
     expandDetails = () => {
       this.grouped = !this.grouped;
       this.dispatchEvent(
