@@ -10,13 +10,13 @@ export const profileTemplate = html`
   <h4>Default display, Loading</h4>
   <cjaas-profile loading .contactData=${contactDataMock} .profileData=${profileMock}> </cjaas-profile>
   <h4>Snapshot display, contactData provided</h4>
-  <cjaas-profile .contactData=${contactDataMock} snapshot> </cjaas-profile>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot> </cjaas-profile>
   <h4>Snapshot display, Loading</h4>
-  <cjaas-profile .contactData=${contactDataMock} snapshot loading> </cjaas-profile>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot loading> </cjaas-profile>
   <h4>Compact display, contactData provided</h4>
-  <cjaas-profile .contactData=${contactDataMock} compact> </cjaas-profile>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact> </cjaas-profile>
   <h4>Compact display, Loading</h4>
-  <cjaas-profile .contactData=${contactDataMock} compact loading> </cjaas-profile>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact loading> </cjaas-profile>
   <h4>With "No Data" Localized Message passed in</h4>
   <cjaas-profile>
     <p slot="l10n-no-data-message">No se han proporcionado datos</p>

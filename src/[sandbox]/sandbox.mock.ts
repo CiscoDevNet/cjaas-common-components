@@ -209,7 +209,7 @@ export const profileMock = [
     query: {
       version: "0.1",
       event: "Quote",
-      metadata: "firstName",
+      metadata: "name",
       displayName: "First Name",
       limit: 1,
       aggregationMode: "Value",
