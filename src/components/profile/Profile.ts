@@ -10,9 +10,9 @@ import { customElementWithCheck } from "@/mixins";
 import { LitElement, html, property, PropertyValues } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
+import "@momentum-ui/web-components/dist/comp/md-avatar";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-icon";
-import "@momentum-ui/web-components/dist/comp/md-avatar";
 import "@momentum-ui/web-components/dist/comp/md-loading";
 
 export namespace ProfileView {
@@ -96,7 +96,7 @@ export namespace ProfileView {
       if ((!this.contactData && this.profileData) || update) {
         // TODO: Pending more API development, populate the contactChannels her as well
         const contactDetails = {
-          name: this.dataPointFilter("firstName"),
+          name: this.dataPointFilter("name"),
           email: this.dataPointFilter("email"),
           label: this.dataPointFilter("label"),
           imgSrc: this.dataPointFilter("imgSrc")
@@ -106,20 +106,19 @@ export namespace ProfileView {
     }
 
     getTopContent() {
-      const name = this.contactData?.name || "";
       return html`
         <section class="top-content">
           ${this.loading
             ? this.getLoading()
             : html`
                 <md-avatar
-                  .title="${name}"
-                  alt=${name}
-                  src=${ifDefined(this.contactData?.imgSrc || undefined)}
+                  title=${ifDefined(this.contactData?.name)}
+                  alt=${ifDefined(this.contactData?.name)}
+                  src=${ifDefined(this.contactData?.imgSrc)}
                   .size=${48}
                 ></md-avatar>
                 <h5 title="Name" class="customer-name">
-                  ${name}
+                  ${this.contactData?.name}
                 </h5>
                 <h5 title="Label" class="customer-label">
                   ${this.contactData?.label}
