@@ -7,6 +7,7 @@ import { getWebexWalkinTemplate } from "./examples/webexWalkin";
 import { timerTemplate } from "./examples/timer";
 import { conditionTemplate } from "./examples/condition";
 import { conditionBlockTemplate } from "./examples/condition-block";
+import { identityTemplate } from "./examples/identity";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
 
@@ -77,7 +78,7 @@ export class Sandbox extends LitElement {
       <md-theme class="theme-toggle" id="app-theme" ?darkTheme=${this.darkTheme} ?lumos=${this.lumos}>
         ${this.themeToggle()}
         <elix-list-explorer class="explorer">
-          <div class="container" aria-label="cjaas-timeline">
+          <!-- <div class="container" aria-label="cjaas-timeline">
             <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
@@ -96,10 +97,14 @@ export class Sandbox extends LitElement {
           <div class="container" aria-label="cjaas-condition">
             <h2>cjaas-condition</h2>
             ${conditionTemplate}
-          </div>
-          <div class="container" aria-label="cjaas-condition-block">
+          </div> -->
+          <!-- <div class="container" aria-label="cjaas-condition-block">
             <h2>cjaas-condition-block</h2>
             ${conditionBlockTemplate}
+          </div> -->
+          <div class="container" aria-label="cjaas-identity">
+            <h2>cjaas-Identity</h2>
+            ${identityTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>

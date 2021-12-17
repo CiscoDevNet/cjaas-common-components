@@ -15,4 +15,5 @@ export { WebexWalkin } from "./components/webexWalkin/WebexWalkin";
 export { Timer } from "./components/timer/Timer";
 export { Condition } from "./components/condition/Condition";
 export { ConditionBlock } from "./components/condition-block/ConditionBlock";
+export { Identity } from "./components/identity/Identity";
 // eslint-disable-next-line prettier/prettier
