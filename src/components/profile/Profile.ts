@@ -99,7 +99,7 @@ export namespace ProfileView {
           name: this.dataPointFilter("name"),
           email: this.dataPointFilter("email"),
           label: this.dataPointFilter("label"),
-          imgSrc: this.dataPointFilter("imgSrc")
+          imgSrc: this.dataPointFilter("imgSrc"),
         };
         this.contactData = contactDetails;
       }
@@ -168,7 +168,7 @@ export namespace ProfileView {
 
     getLoading() {
       return html`
-        <md-loading></md-loading>
+        <md-spinner></md-spinner>
       `;
     }
 

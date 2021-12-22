@@ -6,10 +6,11 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues } from "lit-element";
+import { LitElement, html, property, PropertyValues, internalProperty } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import "@momentum-ui/web-components/dist/comp/md-combobox";
+import { classMap } from "lit-html/directives/class-map";
 
 /*
 Event Toggles Component
@@ -37,9 +38,30 @@ export namespace EventToggles {
      */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
 
+    @internalProperty() expandFilter = false;
+
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
       this.activeTypes = this.eventTypes;
+    }
+
+    updated(changedProperties: PropertyValues) {
+      if (changedProperties.has("eventTypes")) {
+        // new incoming eventTypes needs to be added to active types be default
+        const oldValue = changedProperties.get("eventTypes");
+        const differences = this.eventTypes?.filter(x => (oldValue as string[]).includes(x));
+        this.activeTypes = this.activeTypes.concat(differences);
+
+        this.dispatchEvent(
+          new CustomEvent("active-type-update", {
+            bubbles: true,
+            composed: true,
+            detail: {
+              activeTypes: this.activeTypes,
+            },
+          })
+        );
+      }
     }
 
     toggleFilter(e: CustomEvent) {
@@ -49,23 +71,42 @@ export namespace EventToggles {
           bubbles: true,
           composed: true,
           detail: {
-            activeTypes: this.activeTypes
-          }
+            activeTypes: this.activeTypes,
+          },
         })
       );
     }
 
     renderFilterSelector() {
+      // animate combo box with translateX
+      const classList = { expanded: this.expandFilter };
+      const tooltipMesage =
+        this.activeTypes.length > 0 ? `Filter Event Types (${this.activeTypes.length} applied)` : `Filter Event Types`;
+
       return html`
         <md-combobox
+          class=${classMap(classList)}
           .options=${this.eventTypes}
           option-value="event"
           is-multi
           .selectedOptions=${this.activeTypes}
+          .noClearIcon=${true}
+          .visibleOptions=${3}
           shape="pill"
           @change-selected=${(e: CustomEvent) => this.toggleFilter(e)}
           @remove-all-selected=${() => (this.activeTypes = [])}
         ></md-combobox>
+        <md-tooltip .message=${tooltipMesage} placement="bottom" slot="menu-trigger">
+          <md-button
+            variant="green"
+            circle
+            @click=${() => {
+              this.expandFilter = !this.expandFilter;
+            }}
+          >
+            <md-icon slot="icon" name="icon-filter-adr_16"></md-icon>
+          </md-button>
+        </md-tooltip>
       `;
     }
 
@@ -75,9 +116,7 @@ export namespace EventToggles {
 
     render() {
       return html`
-        <div class="filter-buttons">
-          ${this.renderFilterSelector()}
-        </div>
+        ${this.renderFilterSelector()}
       `;
     }
   }
