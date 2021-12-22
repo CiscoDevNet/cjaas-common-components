@@ -82,21 +82,27 @@
 .controls {
   display: flex;
   flex-direction: row;
+  position: relative;
   justify-content: flex-start;
   gap: 0.5rem;
   align-items: flex-end;
   margin-bottom: 0.5rem;
+
+  md-toggle-switch {
+    margin: 0 4px;
+    height: 20px;
+  }
 }
 
-.events-list{
-  height: 85%
+.events-list {
+  height: 85%;
 }
 
 md-badge.date::part(badge) {
   cursor: pointer;
   background-color: var(--md-primary-bg-color, #f7f7f7);
   transition: all 200ms ease-in;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 md-badge.date::part(badge):hover {
@@ -108,7 +114,7 @@ md-badge.date {
   top: 0;
   z-index: 1000;
 
-  &::after{
+  &::after {
     height: 16px;
     content: " ";
     width: 1px;
@@ -119,10 +125,24 @@ md-badge.date {
   }
 }
 
-md-spinner::part(spinner){
+md-spinner::part(spinner) {
   margin: 0;
 }
 
 .footer {
-  padding: .5rem 0;
+  padding: 0.5rem 0;
+}
+
+.flex-apart {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+cjaas-event-toggles {
+  position: absolute;
+  right: 0;
+  height: 36px;
 }

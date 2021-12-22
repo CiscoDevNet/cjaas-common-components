@@ -87,7 +87,7 @@ export namespace Timeline {
      * @prop timelineItems
      * Dataset of events
      */
-    @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] = [];
+    @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] | null = null;
     /**
      * @prop eventTypes
      * Dataset of all unique event types
@@ -131,6 +131,8 @@ export namespace Timeline {
      */
     @internalProperty() expandDetails = false;
 
+    @internalProperty() apiInProgress = true;
+
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
       this.getEventTypes();
@@ -146,6 +148,10 @@ export namespace Timeline {
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.showNewEvents();
       }
+
+      if (changedProperties.has("eventTypes")) {
+        this.activeTypes = this.eventTypes;
+      }
     }
 
     /**
@@ -156,7 +162,7 @@ export namespace Timeline {
 
     getEventTypes() {
       const eventArray: Set<string> = new Set();
-      this.timelineItems.forEach(event => {
+      (this.timelineItems || []).forEach(event => {
         eventArray.add(event.type);
       });
       this.eventTypes = Array.from(eventArray);
@@ -223,12 +229,12 @@ export namespace Timeline {
      */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
-        this.timelineItems = [...this.newestEvents, ...this.timelineItems];
+        this.timelineItems = [...this.newestEvents, ...(this.timelineItems || [])];
         this.newestEvents = [];
         this.dispatchEvent(
           new CustomEvent("new-event-queue-cleared", {
             bubbles: true,
-            composed: true
+            composed: true,
           })
         );
       }
@@ -439,7 +445,7 @@ export namespace Timeline {
     }
 
     renderLoadMoreAction() {
-      return this.timelineItems.length > this.limit && this.activeTypes.length > 0
+      return (this.timelineItems || []).length > this.limit && this.activeTypes.length > 0
         ? html`
             <md-link
               @click=${(e: Event) => {
@@ -456,9 +462,25 @@ export namespace Timeline {
       return styles;
     }
 
+    renderEmptyState() {
+      if (this.apiInProgress) {
+        return html`
+          <div class="empty-state">
+            <md-spinner size="32"></md-spinner>
+          </div>
+        `;
+      } else if (!this.timelineItems || this.timelineItems.length === 0) {
+        return html`
+          <div class="empty-state">
+            No historic events to show. Listening for new events..
+          </div>
+        `;
+      }
+    }
+
     render() {
       // Groups items by date
-      const limitedList = this.timelineItems.slice(0, this.limit);
+      const limitedList = (this.timelineItems || []).slice(0, this.limit);
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
@@ -468,9 +490,10 @@ export namespace Timeline {
       return Object.keys(groupedByDate).length > 0
         ? html`
             <div class="wrapper" part="timeline-wrapper">
-              ${(this.eventFilters && this.renderToggleButtons()) || nothing}
               <section class="controls" part="controls">
-                ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
+                <div class="flex-apart">
+                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()} ${this.renderToggleButtons()}
+                </div>
               </section>
               <section class="stream" part="stream">
                 ${repeat(
@@ -484,11 +507,7 @@ export namespace Timeline {
               </section>
             </div>
           `
-        : html`
-            <div class="empty-state">
-              <md-spinner size="32"></md-spinner>
-            </div>
-          `;
+        : this.renderEmptyState();
     }
   }
 }

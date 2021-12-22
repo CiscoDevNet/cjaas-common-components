@@ -78,11 +78,11 @@ export class Sandbox extends LitElement {
       <md-theme class="theme-toggle" id="app-theme" ?darkTheme=${this.darkTheme} ?lumos=${this.lumos}>
         ${this.themeToggle()}
         <elix-list-explorer class="explorer">
-          <!-- <div class="container" aria-label="cjaas-timeline">
+          <div class="container" aria-label="cjaas-timeline">
             <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
-          <div class="container" aria-label="cjaas-profile">
+          <!-- <div class="container" aria-label="cjaas-profile">
             <h2>cjaas-profile</h2>
             ${profileTemplate}
           </div>
@@ -102,10 +102,10 @@ export class Sandbox extends LitElement {
             <h2>cjaas-condition-block</h2>
             ${conditionBlockTemplate}
           </div> -->
-          <div class="container" aria-label="cjaas-identity">
+          <!-- <div class="container" aria-label="cjaas-identity">
             <h2>cjaas-Identity</h2>
             ${identityTemplate}
-          </div>
+          </div> -->
         </elix-list-explorer>
       </md-theme>
     `;

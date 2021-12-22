@@ -9,14 +9,16 @@ export namespace Identity {
   @customElementWithCheck("cjaas-identity")
   export class ELEMENT extends LitElement {
     @property() aliasDeleteInProgress: { [key: string]: boolean } = {};
-    @property() customer: string | undefined;
+    @property() customer: string | null = null;
     @property({ type: Boolean }) isAPIInProgress = false;
     @property({ type: Boolean }) getAPIInProgress = false;
     @property({ attribute: false }) alias:
       | undefined
       | {
+          namespace: string;
+          id: string;
           aliases: string[];
-          lastSeen: any;
+          lastSeen: JourneyEvent;
         };
 
     @query("#alias-input") aliasInput: HTMLInputElement | undefined;
@@ -31,21 +33,21 @@ export namespace Identity {
     }
 
     deleteAlias(alias: string) {
-      const event = new CustomEvent("delete-alias", {
+      const event = new CustomEvent("deleteAlias", {
         detail: {
-          alias
-        }
+          alias,
+        },
       });
 
       this.dispatchEvent(event);
     }
 
     addAlias() {
-      const alias = this.alias;
-      const event = new CustomEvent("add-alias", {
+      const alias = this.aliasInput?.value?.trim();
+      const event = new CustomEvent("addAlias", {
         detail: {
-          alias
-        }
+          alias,
+        },
       });
 
       this.dispatchEvent(event);
@@ -137,4 +139,17 @@ declare global {
   interface HTMLElementTagNameMap {
     "cjaas-identity": Identity.ELEMENT;
   }
+}
+
+export interface JourneyEvent {
+  data: {
+    [key: string]: string;
+  };
+  dataContentType: string;
+  id: string;
+  person: string;
+  source: string;
+  specVersion: string;
+  time: string;
+  type: string;
 }

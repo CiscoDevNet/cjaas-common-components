@@ -17,19 +17,19 @@ export default {
   decorators: [withKnobs, withA11y],
   parameters: {
     a11y: {
-      element: "cjaas-timer"
-    }
-  }
+      element: "cjaas-timer",
+    },
+  },
 };
 
 export const Timer = () => {
   const alias = {
     aliases: ["Alex", "Bob"],
-    lastSeen: null
-  };
+    lastSeen: null,
+  } as any;
 
   const aliasDeleteInProgress = {
-    Alex: true
+    Alex: true,
   };
 
   return html`
