@@ -1,8 +1,13 @@
 import "@/components/timeline/Timeline";
 import { html } from "lit-element";
-import { mockedTimelineItems, bigTimeline } from "../sandbox.mock";
+import { mockedTimelineItems, bigTimeline, newSampleMock } from "../sandbox.mock";
 
 export const timelineTemplate = html`
   <h3>Default</h3>
-  <cjaas-timeline limit=${30} .timelineItems=${bigTimeline} event-filters .newestEvents=${bigTimeline}></cjaas-timeline>
+  <cjaas-timeline
+    limit=${30}
+    .timelineItems=${newSampleMock}
+    event-filters
+    .newestEvents=${newSampleMock}
+  ></cjaas-timeline>
 `;
