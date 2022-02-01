@@ -49,7 +49,6 @@ export namespace EventToggles {
       if (changedProperties.has("eventTypes")) {
         // new incoming eventTypes needs to be added to active types be default
         const oldValue = changedProperties.get("eventTypes") as string[];
-        console.log("JDS-Timeline-component", oldValue.slice(), this.eventTypes.slice());
         const differences = this.eventTypes?.filter(x => (oldValue as string[]).includes(x));
         this.activeTypes = this.activeTypes.concat(differences);
 
