@@ -31,11 +31,12 @@ export namespace Timeline {
     firstName?: string;
     lastName?: string;
     email?: string;
-    datacontenttype?: string;
+    dataContentType?: string;
+    previously?: string;
     id: string;
     person: string;
     source?: string;
-    specversion?: string;
+    specVersion?: string;
     time: string;
     type: string;
   }
