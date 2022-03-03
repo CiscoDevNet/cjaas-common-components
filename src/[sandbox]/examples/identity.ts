@@ -6,7 +6,7 @@ const alias = {
   namespace: "random",
   id: "123",
   aliases: ["Alex", "Bob"],
-  lastSeen: {} as JourneyEvent
+  lastSeen: {} as JourneyEvent,
 };
 
 const aliasDeleteInProgress = {
