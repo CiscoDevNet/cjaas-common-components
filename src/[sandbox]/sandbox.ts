@@ -102,10 +102,10 @@ export class Sandbox extends LitElement {
             <h2>cjaas-condition-block</h2>
             ${conditionBlockTemplate}
           </div> -->
-          <!-- <div class="container" aria-label="cjaas-identity">
+          <div class="container" aria-label="cjaas-identity">
             <h2>cjaas-Identity</h2>
             ${identityTemplate}
-          </div> -->
+          </div>
         </elix-list-explorer>
       </md-theme>
     `;
