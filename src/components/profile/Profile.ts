@@ -110,47 +110,43 @@ export namespace ProfileView {
     getTopContent() {
       return html`
         <section class="top-content">
-          ${this.loading
-            ? this.getLoading()
-            : html`
-                <md-avatar
-                  title=${ifDefined(this.contactData?.name)}
-                  alt=${ifDefined(this.contactData?.name)}
-                  src=${ifDefined(this.contactData?.imgSrc)}
-                  .size=${48}
-                ></md-avatar>
-                <h5 title="Name" class="customer-name">
-                  ${this.contactData?.name}
-                </h5>
-                <h5 title="Label" class="customer-label">
-                  ${this.contactData?.label}
-                </h5>
-                ${this.emailContactItem()}
-              `}
+          ${html`
+            <md-avatar
+              title=${ifDefined(this.contactData?.name)}
+              alt=${ifDefined(this.contactData?.name)}
+              src=${ifDefined(this.contactData?.imgSrc)}
+              .size=${48}
+            ></md-avatar>
+            <h5 title="Name" class="customer-name">
+              ${this.contactData?.name}
+            </h5>
+            <h5 title="Label" class="customer-label">
+              ${this.contactData?.label}
+            </h5>
+            ${this.emailContactItem()}
+          `}
         </section>
       `;
     }
 
     getTable() {
-      return this.loading
-        ? this.getLoading()
-        : html`
-            <table title="Profile Details">
-              ${this.profileData
-                ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
-                .map((x: any) => {
-                  console.log("get profile value: ", this.getValue(x));
-                  if (this.getValue(x) !== "-") {
-                    return html`
-                      <tr>
-                        <td class="title">${x.query.displayName}</td>
-                        <td class="value">${this.getValue(x)}</td>
-                      </tr>
-                    `;
-                  }
-                })}
-            </table>
-          `;
+      return html`
+        <table title="Profile Details">
+          ${this.profileData
+            ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
+            .map((x: any) => {
+              console.log("get profile value: ", this.getValue(x));
+              if (this.getValue(x) !== "-") {
+                return html`
+                  <tr>
+                    <td class="title">${x.query.displayName}</td>
+                    <td class="value">${this.getValue(x)}</td>
+                  </tr>
+                `;
+              }
+            })}
+        </table>
+      `;
     }
 
     getValue(x: any) {
@@ -171,15 +167,15 @@ export namespace ProfileView {
       return result;
     }
 
-    getLoading() {
+    getLoading(size = 56) {
       return html`
-        <md-spinner></md-spinner>
+        <md-spinner size=${size}></md-spinner>
       `;
     }
 
     getSnapshot() {
       return html`
-        <section class="snapshot" part="profile-snapshot" title="Customer Profile">
+        <section class=${`snapshot ${this.loading ? "loading" : ""}`} part="profile-snapshot" title="Customer Profile">
           ${this.loading ? this.getLoading() : this.getTopContent()}
         </section>
       `;
@@ -190,7 +186,7 @@ export namespace ProfileView {
       return html`
         <section class="compact" part="profile-compact" title="Customer Profile">
           ${this.loading
-            ? this.getLoading()
+            ? this.getLoading(34)
             : html`
                 <md-avatar
                   .title="${name}"
@@ -215,19 +211,25 @@ export namespace ProfileView {
       return styles;
     }
 
+    renderFullProfileView() {
+      if (this.loading) {
+        return html`
+          <div class="loading-wrapper">${this.getLoading()}</div>
+        `;
+      } else {
+        return html`
+          <section class="profile" part="profile" title="Customer Profile">
+            ${this.getTopContent()}
+            <hr />
+            ${this.getTable()}
+          </section>
+        `;
+      }
+    }
+
     render() {
       if (this.contactData && this.profileData.length > 0) {
-        return this.compact
-          ? this.getCompact()
-          : this.snapshot
-          ? this.getSnapshot()
-          : html`
-              <section class="profile" part="profile" title="Customer Profile">
-                ${this.getTopContent()}
-                <hr />
-                ${this.getTable()}
-              </section>
-            `;
+        return this.compact ? this.getCompact() : this.snapshot ? this.getSnapshot() : this.renderFullProfileView();
       } else {
         return html`
           <slot name="l10n-no-data-message">

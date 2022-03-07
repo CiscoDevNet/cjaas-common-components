@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, internalProperty, PropertyValues, query } from "lit-element";
+import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";

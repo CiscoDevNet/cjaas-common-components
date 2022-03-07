@@ -81,6 +81,10 @@ md-avatar {
   border: 1px solid var(--md-quaternary-bg-color, #dedede);
   border-radius: .5rem;
   padding: 1.25rem 1.5rem 0.75rem;
+
+  &.loading {
+    padding: 1.25rem 1.5rem;
+  }
 }
 
 .compact {
@@ -92,10 +96,9 @@ md-avatar {
   justify-content: flex-start;
   align-items: center;
   height: 5rem;
-  padding: 1.25rem .75rem;
+  padding: 1.25rem;
 
   .customer-titles {
-    height: 3rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -125,8 +128,16 @@ md-avatar {
 
 .no-profile-data {
   color: var(--md-disabled-text-color, #545454);
+  margin: 2rem;
+  text-align: center;
 }
 
 md-loading {
   margin: auto;
+}
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
 }

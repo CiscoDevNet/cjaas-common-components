@@ -21,4 +21,6 @@ export const profileTemplate = html`
   <cjaas-profile>
     <p slot="l10n-no-data-message">No se han proporcionado datos</p>
   </cjaas-profile>
+  <h4>Empty Contact Data & Profile Data</h4>
+  <cjaas-profile .contactData=${{}} .profileData=${{}}></cjaas-profile>
 `;
