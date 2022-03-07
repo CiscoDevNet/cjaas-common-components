@@ -8,6 +8,7 @@
 
 import { Timeline } from "@/index";
 import { DateTime } from "luxon";
+import { querySelectorAllDeep } from "query-selector-shadow-dom";
 
 export function getTimelineEventFromMessage(message: any) {
   const event: any = {};
@@ -132,3 +133,10 @@ export function getRelativeDate(timestamp: string) {
   const relativeValue = DateTime.fromISO(timestamp || nowIsoString);
   return relativeValue;
 }
+
+export const destroyTooltip = () => {
+  const tooltips = querySelectorAllDeep(".md-tooltip__popper");
+  for (let index = 0; index < tooltips.length; index++) {
+    tooltips[index].remove();
+  }
+};

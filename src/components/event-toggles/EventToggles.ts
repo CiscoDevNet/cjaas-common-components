@@ -11,6 +11,7 @@ import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import "@momentum-ui/web-components/dist/comp/md-combobox";
 import { classMap } from "lit-html/directives/class-map";
+import { Key } from "@/constants";
 
 /*
 Event Toggles Component
@@ -38,7 +39,49 @@ export namespace EventToggles {
      */
     @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
 
-    @internalProperty() expandFilter = false;
+    @internalProperty() isFilterOpen = false;
+
+    connectedCallback() {
+      super.connectedCallback();
+      document.addEventListener("click", this.handleOutsideOverlayClick);
+      document.addEventListener("keydown", this.handleOutsideOverlayKeydown);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      document.removeEventListener("click", this.handleOutsideOverlayClick);
+      document.removeEventListener("keydown", this.handleOutsideOverlayKeydown);
+    }
+
+    handleOutsideOverlayKeydown = async (event: KeyboardEvent) => {
+      let insideMenuKeyDown = false;
+      const path = event.composedPath();
+      if (path.length) {
+        insideMenuKeyDown = !!path.find(element => element === this);
+        if (!insideMenuKeyDown) {
+          return;
+        }
+      }
+
+      if (event.code === Key.Escape) {
+        event.preventDefault();
+        if (this.isFilterOpen) {
+          this.isFilterOpen = false;
+          await this.updateComplete;
+        }
+      }
+    };
+
+    handleOutsideOverlayClick = (event: MouseEvent) => {
+      let insideMenuClick = false;
+      const path = event.composedPath();
+      if (path.length) {
+        insideMenuClick = !!path.find(element => element === this);
+        if (!insideMenuClick) {
+          this.isFilterOpen = false;
+        }
+      }
+    };
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
@@ -79,12 +122,13 @@ export namespace EventToggles {
 
     renderFilterSelector() {
       // animate combo box with translateX
-      const classList = { expanded: this.expandFilter };
-      const tooltipMesage =
+      const classList = { expanded: this.isFilterOpen };
+      const tooltipMessage =
         this.activeTypes.length > 0 ? `Filter Event Types (${this.activeTypes.length} applied)` : `Filter Event Types`;
 
       return html`
         <md-combobox
+          aria-expanded=${this.isFilterOpen}
           class=${classMap(classList)}
           .options=${this.eventTypes}
           option-value="event"
@@ -96,12 +140,12 @@ export namespace EventToggles {
           @change-selected=${(e: CustomEvent) => this.toggleFilter(e)}
           @remove-all-selected=${() => (this.activeTypes = [])}
         ></md-combobox>
-        <md-tooltip .message=${tooltipMesage} placement="bottom" slot="menu-trigger">
+        <md-tooltip class="filter-tooltip" .message=${tooltipMessage} placement="bottom">
           <md-button
             variant="green"
             circle
             @click=${() => {
-              this.expandFilter = !this.expandFilter;
+              this.isFilterOpen = !this.isFilterOpen;
             }}
           >
             <md-icon slot="icon" name="icon-filter-adr_16"></md-icon>
