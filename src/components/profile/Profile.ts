@@ -66,18 +66,20 @@ export namespace ProfileView {
       }
     }
 
-    contactItem() {
+    emailContactItem() {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
       // Accept a type parameter to render phone / email / etc.
       // See the "contactData.contactChannels" property, parse an array of objects.
-      return html`
-        <div class="contact-item">
-          <md-badge circle color="violet">
-            <md-icon name="icon-email-active_12" size="8"></md-icon>
-          </md-badge>
-          <span>${this.contactData?.email}</span>
-        </div>
-      `;
+      if (this.contactData?.email) {
+        return html`
+          <div class="contact-item">
+            <md-badge circle color="violet">
+              <md-icon name="icon-email-active_12" size="8"></md-icon>
+            </md-badge>
+            <span>${this.contactData?.email}</span>
+          </div>
+        `;
+      }
     }
 
     dataPointFilter(dataPoint: string) {
@@ -123,7 +125,7 @@ export namespace ProfileView {
                 <h5 title="Label" class="customer-label">
                   ${this.contactData?.label}
                 </h5>
-                ${this.contactItem()}
+                ${this.emailContactItem()}
               `}
         </section>
       `;
@@ -137,12 +139,15 @@ export namespace ProfileView {
               ${this.profileData
                 ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
                 .map((x: any) => {
-                  return html`
-                    <tr>
-                      <td class="title">${x.query.displayName}</td>
-                      <td class="value">${this.getValue(x)}</td>
-                    </tr>
-                  `;
+                  console.log("get profile value: ", this.getValue(x));
+                  if (this.getValue(x) !== "-") {
+                    return html`
+                      <tr>
+                        <td class="title">${x.query.displayName}</td>
+                        <td class="value">${this.getValue(x)}</td>
+                      </tr>
+                    `;
+                  }
                 })}
             </table>
           `;
