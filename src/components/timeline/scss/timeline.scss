@@ -47,6 +47,7 @@
   height: calc(100% - 10rem);
   overflow-y: scroll;
   position: relative;
+  padding-right: 1rem;
   z-index: 1;
 }
 .block {
@@ -60,10 +61,10 @@
   left: 28px;
   position: relative;
   top: 100%;
-  background: var(--badge-outline-color, #b2b2b2);
+  background-color: var(--md-quaternary-bg-color, #DEDEDE);
 }
 .badge-text {
-  color: var(--md-secondary-text-color);
+  color: var(--md-secondary-text-color, #545454);
   text-transform: capitalize;
 }
 .empty-state {
@@ -83,8 +84,8 @@
   }
 }
 .wrapper {
-  padding: 0.5rem;
   height: calc(100% - 1rem);
+  font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .controls {
@@ -97,7 +98,7 @@
   margin-bottom: 0.5rem;
 
   md-toggle-switch {
-    margin: 0 4px;
+    margin: 0;
     height: 20px;
   }
 }
@@ -108,13 +109,14 @@
 
 md-badge.date::part(badge) {
   cursor: pointer;
-  background-color: var(--md-primary-bg-color, #f7f7f7);
+  background-color: var(--md-primary-bg-color, #ffffff);
+  border-color: var(--md-quaternary-bg-color, #DEDEDE);
   transition: all 200ms ease-in;
   margin-top: 0.5rem;
 }
 
 md-badge.date::part(badge):hover {
-  background-color: var(--md-highlight-bg-color, #dedede);
+  background-color: var(--md-tertiary-bg-color, #EDEDED);
 }
 
 md-badge.date {
@@ -143,8 +145,10 @@ md-spinner::part(spinner) {
 
 .flex-apart {
   display: flex;
-  width: 100%;
+  min-height: 36px;
+  width: calc(100% - 40px);
   flex-wrap: wrap;
+  gap: 0.75rem;
   align-items: center;
   justify-content: flex-start;
 }
@@ -153,6 +157,7 @@ cjaas-event-toggles {
   position: absolute;
   right: 0;
   height: 36px;
+  top: 0;
 }
 
 ::-webkit-scrollbar {
@@ -175,4 +180,13 @@ cjaas-event-toggles {
 
 md-link {
   cursor: pointer;
+}
+
+.load-more-text {
+  font-size: 14px;
+  color: var(--md-primary-text-color, #121212);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1rem;
 }

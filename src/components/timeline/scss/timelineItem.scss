@@ -20,18 +20,19 @@
  }
 
 .timeline-item {
-  background-color: var(--md-tertiary-bg-color, #ededed);
+  background-color: var(--md-secondary-one-bg-color, #F7F7F7);
   border-radius: 8px;
   padding: 8px;
 
   .top-content {
+    align-items: center;
     display: flex;
     flex-direction: row;
     cursor: pointer;
   }
 
   &:hover {
-    background-color: var(--md-quaternary-bg-color, #dedede);
+    background-color: var(--md-tertiary-bg-color, #EDEDED);
   }
 
   .badge {

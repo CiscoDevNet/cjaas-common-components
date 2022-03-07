@@ -985,6 +985,8 @@ export const bigTimeline: Timeline.CustomerEvent[] = [
   },
 ];
 
+export const emptyMock: Timeline.CustomerEvent[] = [];
+
 export const newSampleMock: Timeline.CustomerEvent[] = [
   {
     data: {

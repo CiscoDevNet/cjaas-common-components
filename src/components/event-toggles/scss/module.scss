@@ -18,8 +18,8 @@ md-combobox::part(combobox) {
 md-combobox::part(group) {
   overflow: auto;
   min-height: 2rem;
-  max-height: 3.25rem;
   border-radius: 0.75rem;
+  padding: 0.3rem 0.5rem;
 }
 md-combobox::part(multiwrap) {
   flex-wrap: wrap;
@@ -46,7 +46,6 @@ md-icon::part(icon) {
 }
 
 md-combobox {
-  display: block;
   overflow: hidden;
   position: relative;
   border-radius: 0.75rem;
@@ -55,9 +54,11 @@ md-combobox {
   z-index: 2;
   margin: 0 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0px 1px rgba(0, 0, 0, 0.18);
+  display: none;
 
   &.expanded {
     overflow: visible;
     transform: translateX(0);
+    display: inline-block;
   }
 }

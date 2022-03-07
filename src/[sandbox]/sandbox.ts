@@ -8,6 +8,7 @@ import { timerTemplate } from "./examples/timer";
 import { conditionTemplate } from "./examples/condition";
 import { conditionBlockTemplate } from "./examples/condition-block";
 import { identityTemplate } from "./examples/identity";
+import { eventTogglesTemplate } from "./examples/eventToggles";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
 
@@ -82,7 +83,7 @@ export class Sandbox extends LitElement {
             <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
-          <!-- <div class="container" aria-label="cjaas-profile">
+          <div class="container" aria-label="cjaas-profile">
             <h2>cjaas-profile</h2>
             ${profileTemplate}
           </div>
@@ -97,14 +98,18 @@ export class Sandbox extends LitElement {
           <div class="container" aria-label="cjaas-condition">
             <h2>cjaas-condition</h2>
             ${conditionTemplate}
-          </div> -->
-          <!-- <div class="container" aria-label="cjaas-condition-block">
+          </div>
+          <div class="container" aria-label="cjaas-condition-block">
             <h2>cjaas-condition-block</h2>
             ${conditionBlockTemplate}
-          </div> -->
+          </div>
           <div class="container" aria-label="cjaas-identity">
             <h2>cjaas-Identity</h2>
             ${identityTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-event-toggles">
+            <h2>cjaas-event-toggles</h2>
+            ${eventTogglesTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>

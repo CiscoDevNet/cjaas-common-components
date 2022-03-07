@@ -453,7 +453,7 @@ export namespace Timeline {
                 e.preventDefault();
                 this.limit += 5;
               }}
-              >Load More</md-link
+              ><span class="load-more-text">Load More</span></md-link
             >
           `
         : nothing;
@@ -476,7 +476,7 @@ export namespace Timeline {
             <div>
               <md-icon name="icon-people-insight_24"></md-icon>
             </div>
-            No historic events to show. Listening for new events..
+            No historic events to show. Listening for new events...
           </div>
         `;
       }
