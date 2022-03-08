@@ -61,7 +61,7 @@ const staticIcons = [
   "icon-breakout-session_16",
   "icon-commenting_16",
   "icon-explore_16",
-  "icon-filter-circle_16"
+  "icon-filter-circle_16",
 ];
 
 function getRandomColor() {
@@ -88,12 +88,12 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
     if (eventName.includes("events from")) {
       result = {
         name: "icon-activities_16",
-        color: "cobalt"
+        color: "cobalt",
       };
     } else {
       result = {
         name: getRandomIcon(),
-        color: getRandomColor()
+        color: getRandomColor(),
       };
     }
 

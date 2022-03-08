@@ -76,11 +76,17 @@
   justify-content: center;
   flex-direction: column;
   font-size: 19px;
-  md-icon {
-    transform: scale(5);
-    margin-bottom: 3rem;
-    display: block;
+
+  .empty-state-icon::part(icon) {
+    font-size: 5rem;
     color: var(--md-blue-50);
+  }
+
+  .empty-state-text {
+    text-align: center;
+    width: 100%;
+    font-weight: 100;
+    font-size: 14px;
   }
 }
 .wrapper {
@@ -184,9 +190,13 @@ md-link {
 
 .load-more-text {
   font-size: 14px;
-  color: var(--md-primary-text-color, #121212);
+  color: var(--md-hyperlink-text-color, #005E7D);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1rem;
+
+  &:hover {
+    color: var(--md-hyperlink-hover-text-color, #092D3B);
+  }
 }

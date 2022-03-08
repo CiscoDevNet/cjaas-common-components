@@ -474,9 +474,9 @@ export namespace Timeline {
         return html`
           <div class="empty-state">
             <div>
-              <md-icon name="icon-people-insight_24"></md-icon>
+              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
             </div>
-            No historic events to show. Listening for new events...
+            <span class="empty-state-text">No historic events to show. Listening for new events...</span>
           </div>
         `;
       }
