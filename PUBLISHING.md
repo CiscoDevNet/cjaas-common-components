@@ -1,6 +1,6 @@
 # How to Publish Commmon Components Library
 
-1. In `root` bump version with `npm version <major || minor || patch>
+1. In `root` bump version with `npm version <major || minor || patch>`
 2. Run `npm login` to ensure you have credentials to publish on NPMjs
 3. Run `yarn npm:publish`
 4. Copy README.md into `publish` dir: `cp README.md publish`
