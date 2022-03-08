@@ -264,21 +264,20 @@ export namespace Timeline {
     }
 
     renderNewEventCounter() {
-      return this.newestEvents.length > 0
-        ? html`
-            <md-chip
-              class="event-counter"
-              small
-              @click=${this.showNewEvents}
-              value="Show ${this.newestEvents.length} new events"
-            ></md-chip>
-          `
-        : nothing;
+      return html`
+        <md-chip
+          class=${`event-counter ${this.newestEvents.length > 0 ? "" : "hidden"}`}
+          class="event-counter"
+          small
+          @click=${this.showNewEvents}
+          value="Show ${this.newestEvents.length} new events"
+        ></md-chip>
+      `;
     }
 
     renderTimeBadge(readableDate: any, clusterId: string) {
       return html`
-        <md-badge .outlined=${true} class="block date" @click=${() => this.collapseDate(clusterId)}>
+        <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
           <span class="badge-text">${readableDate}</span>
         </md-badge>
       `;
@@ -496,8 +495,9 @@ export namespace Timeline {
             <div class="wrapper" part="timeline-wrapper">
               <section class="controls" part="controls">
                 <div class="flex-apart">
-                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()} ${this.renderToggleButtons()}
+                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
                 </div>
+                ${this.renderToggleButtons()}
               </section>
               <section class="stream" part="stream">
                 ${repeat(

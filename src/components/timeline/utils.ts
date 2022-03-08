@@ -52,7 +52,7 @@ const staticColors = [
   "violet",
   "cyan",
   "cobalt",
-  "pink"
+  "pink",
 ];
 
 const staticIcons = [

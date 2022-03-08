@@ -92,6 +92,7 @@
 .wrapper {
   height: calc(100% - 1rem);
   font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding: 0.3rem 0.3rem 0 0;
 }
 
 .controls {
@@ -100,7 +101,6 @@
   position: relative;
   justify-content: flex-start;
   gap: 0.5rem;
-  align-items: flex-end;
   margin-bottom: 0.5rem;
 
   md-toggle-switch {
@@ -126,6 +126,7 @@ md-badge.date::part(badge):hover {
 }
 
 md-badge.date {
+  display: inline-block;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -199,4 +200,8 @@ md-link {
   &:hover {
     color: var(--md-hyperlink-hover-text-color, #092D3B);
   }
+}
+
+.event-counter.hidden {
+  display: none;
 }
