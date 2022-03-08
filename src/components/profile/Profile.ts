@@ -136,14 +136,14 @@ export namespace ProfileView {
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               console.log("get profile value: ", this.getValue(x));
-              if (this.getValue(x) !== "-") {
-                return html`
-                  <tr>
-                    <td class="title">${x.query.displayName}</td>
-                    <td class="value">${this.getValue(x)}</td>
-                  </tr>
-                `;
-              }
+              // if (this.getValue(x) !== "-") {
+              return html`
+                <tr>
+                  <td class="title">${x.query.displayName}</td>
+                  <td class="value">${this.getValue(x)}</td>
+                </tr>
+              `;
+              // }
             })}
         </table>
       `;
