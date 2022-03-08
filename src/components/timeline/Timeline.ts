@@ -473,6 +473,9 @@ export namespace Timeline {
       } else if (!this.timelineItems || this.timelineItems.length === 0) {
         return html`
           <div class="empty-state">
+            <div>
+              <md-icon name="icon-people-insight_24"></md-icon>
+            </div>
             No historic events to show. Listening for new events..
           </div>
         `;
