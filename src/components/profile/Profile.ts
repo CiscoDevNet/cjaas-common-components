@@ -107,16 +107,23 @@ export namespace ProfileView {
       }
     }
 
+    renderAvatar() {
+      return html`
+        <md-avatar
+          class="profile-avatar"
+          title=${ifDefined(this.contactData?.name)}
+          alt=${ifDefined(this.contactData?.name)}
+          src=${ifDefined(this.contactData?.imgSrc)}
+          .size=${48}
+        ></md-avatar>
+      `;
+    }
+
     getTopContent() {
       return html`
-        <section class="top-content">
+        <section part="top-content" class="top-content">
           ${html`
-            <md-avatar
-              title=${ifDefined(this.contactData?.name)}
-              alt=${ifDefined(this.contactData?.name)}
-              src=${ifDefined(this.contactData?.imgSrc)}
-              .size=${48}
-            ></md-avatar>
+            ${this.renderAvatar()}
             <h5 title="Name" class="customer-name">
               ${this.contactData?.name}
             </h5>
@@ -188,12 +195,7 @@ export namespace ProfileView {
           ${this.loading
             ? this.getLoading(34)
             : html`
-                <md-avatar
-                  .title="${name}"
-                  alt=${name}
-                  src=${ifDefined(this.contactData?.imgSrc || undefined)}
-                  .size=${48}
-                ></md-avatar>
+                ${this.renderAvatar()}
                 <div class="customer-titles">
                   <h5 title="Name" class="customer-name">
                     ${name}
@@ -220,7 +222,7 @@ export namespace ProfileView {
         return html`
           <section class="profile" part="profile" title="Customer Profile">
             ${this.getTopContent()}
-            <hr />
+            <hr part="separator" />
             ${this.getTable()}
           </section>
         `;

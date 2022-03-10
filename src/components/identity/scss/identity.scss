@@ -26,6 +26,10 @@
   }
 }
 
+.alias-input-row {
+  margin-top: 0.5rem;
+}
+
 .aliases {
   padding: 0 0.5rem;
 }
@@ -102,6 +106,5 @@ ul {
 
 .no-alias-wrapper {
   color: var(--md-disabled-text-color, #545454);
-  padding: 1rem;
-  text-align: center;
+  margin-top: 0.5rem;
 }

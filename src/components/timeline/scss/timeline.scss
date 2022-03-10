@@ -47,7 +47,7 @@
   height: calc(100% - 10rem);
   overflow-y: scroll;
   position: relative;
-  padding-right: 1rem;
+  // padding-right: 1rem;
   z-index: 1;
 }
 .block {
@@ -78,6 +78,7 @@
   font-size: 19px;
 
   .empty-state-icon::part(icon) {
+    height: 5rem;
     font-size: 5rem;
     color: var(--md-blue-50);
   }

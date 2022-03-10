@@ -98,7 +98,7 @@ export namespace Identity {
       const buttonText = this.isAPIInProgress ? spinnerInline : "Add";
 
       let consolidatedAliases = html`
-        <div class="alt-consolidated-aliases-wrapper">
+        <div class="no-alias-wrapper">
           <span class="alias-text">${NO_ALIAS_TEXT}</span>
         </div>
       `;
@@ -116,14 +116,14 @@ export namespace Identity {
       }
 
       return html`
-        <div class="flex">
+        <div class="flex alias-input-row">
           <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
           <md-button .disabled=${this.isAPIInProgress} variant="secondary" @click=${async () => this.addAlias()}>
             ${buttonText}
           </md-button>
         </div>
         <div class="aliases">
-          <div class="header-container">
+          <div part="alias-header-container" class="header-container">
             <h3 class="aliases-header">Aliases</h3>
             <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
               <md-icon class="alias-info-icon" name="info_14"></md-icon>
