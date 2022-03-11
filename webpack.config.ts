@@ -25,15 +25,15 @@ if (!pMomentum) {
 
 const common: webpack.Configuration = {
   output: {
-    publicPath: "/"
+    publicPath: "/",
   },
   resolve: {
     extensions: [".ts", ".js", ".scss"],
     alias: {
       "@": pSrc,
       "@css": pCss,
-      "@img": pImg
-    }
+      "@img": pImg,
+    },
   },
   module: {
     rules: [
@@ -43,13 +43,13 @@ const common: webpack.Configuration = {
           loader: "file-loader",
           options: {
             name: "images-cjaas-common/[name].[hash:8].[ext]",
-            esModule: false
-          }
+            esModule: false,
+          },
         },
-        include: pSrc
-      }
-    ]
-  }
+        include: pSrc,
+      },
+    ],
+  },
 };
 
 function ruleTS({ isDev }: { isDev: boolean }) {
@@ -60,9 +60,9 @@ function ruleTS({ isDev }: { isDev: boolean }) {
     options: {
       compilerOptions: {
         declarationMap: isDev,
-        sourceMap: isDev
-      }
-    }
+        sourceMap: isDev,
+      },
+    },
   };
 }
 
@@ -79,21 +79,21 @@ function ruleCSS({ isDev }: { isDev: boolean }) {
         options: {
           sourceMap: isDev,
           sassOptions: {
-            outputStyle: "compressed"
-          }
-        }
+            outputStyle: "compressed",
+          },
+        },
       },
       {
         loader: "alias-resolve-loader",
         options: {
           alias: {
             "@css": pCss,
-            "@img": pImg
-          }
-        }
-      }
+            "@img": pImg,
+          },
+        },
+      },
     ],
-    include: pSrc
+    include: pSrc,
   };
 }
 
@@ -106,15 +106,15 @@ export const commonDev = merge(common, {
   devtool: "source-map",
   entry: "./src/[sandbox]/sandbox.ts",
   output: {
-    path: pBuild
+    path: pBuild,
   },
   module: {
-    rules: [ruleTS({ isDev: true }), ruleCSS({ isDev: true })]
+    rules: [ruleTS({ isDev: true }), ruleCSS({ isDev: true })],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/[sandbox]/index.html",
-      favicon: "./src/[sandbox]/favicon.ico"
+      favicon: "./src/[sandbox]/favicon.ico",
     }),
     new CopyWebpackPlugin([
       { from: `${pMomentum}/core/fonts`, to: "fonts" },
@@ -124,13 +124,13 @@ export const commonDev = merge(common, {
       { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "css" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "css" },
       { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "css" },
-      { from: `${pCss}/*.css`, to: "css", flatten: true }
-    ])
-  ]
+      { from: `${pCss}/*.css`, to: "css", flatten: true },
+    ]),
+  ],
 });
 
 const dev = merge(commonDev, {
-  plugins: [new CleanWebpackPlugin()]
+  plugins: [new CleanWebpackPlugin()],
 });
 
 // DIST
@@ -139,6 +139,8 @@ const dev = merge(commonDev, {
 const commonDist = merge(common, {
   entry: {
     "index-entry": "./src/index.ts",
+    "comp/cjaas-condition": "./src/components/condition/Condition.ts",
+    "comp/cjaas-condition-block": "./src/components/condition-block/ConditionBlock.ts",
     "comp/cjaas-profile-entry": "./src/components/profile/Profile.ts",
     "comp/cjaas-event-toggles-entry": "./src/components/event-toggles/EventToggles.ts",
     "comp/cjaas-timeline-entry": "./src/components/timeline/Timeline.ts",
@@ -146,7 +148,7 @@ const commonDist = merge(common, {
     "comp/cjaas-timeline-item-group-entry": "./src/components/timeline/TimelineItemGroup.ts",
     "comp/cjaas-webex-walkin-entry": "./src/components/webexWalkin/WebexWalkin.ts",
     "comp/cjaas-identity-entry": "./src/components/identity/Identity.ts",
-    "comp/cjaas-timer-entry": "./src/components/timer/Timer.ts"
+    "comp/cjaas-timer-entry": "./src/components/timer/Timer.ts",
   },
   output: {
     path: pDist,
@@ -154,22 +156,22 @@ const commonDist = merge(common, {
     filename: "[name].js",
     chunkFilename: "chunks/cjaas-[id].js",
     libraryTarget: "umd",
-    jsonpFunction: "common-components-[id]"
+    jsonpFunction: "common-components-[id]",
   },
   optimization: {
     splitChunks: {
       chunks: "all",
       maxInitialRequests: Infinity,
       maxAsyncRequests: Infinity,
-      minSize: 0
+      minSize: 0,
     },
     minimize: true,
-    chunkIds: "size"
+    chunkIds: "size",
   },
   plugins: [
     new CleanWebpackPlugin(),
     new WebpackLoadChunksPlugin({
-      trimNameEnd: 6
+      trimNameEnd: 6,
     }),
     new CopyWebpackPlugin([
       { from: `${pMomentum}/core/fonts`, to: "assets/fonts" },
@@ -179,7 +181,7 @@ const commonDist = merge(common, {
       { from: `${pMomentum}/core/css/momentum-ui.min.css`, to: "assets/styles" },
       { from: `${pMomentum}/core/css/momentum-ui.min.css.map`, to: "assets/styles" },
       { from: `${pMomentum}/icons/css/momentum-ui-icons.min.css`, to: "assets/styles" },
-      { from: `${pCss}/*.css`, to: "assets/styles", flatten: true }
+      { from: `${pCss}/*.css`, to: "assets/styles", flatten: true },
     ]),
     new RemovePlugin({
       after: {
@@ -189,17 +191,17 @@ const commonDist = merge(common, {
           {
             folder: "./dist/types",
             method: p => new RegExp(/\.test\.d\.ts(\.map)*$/).test(p),
-            recursive: true
+            recursive: true,
           },
           {
             folder: "./dist/types",
             method: p => new RegExp(/\.stories\.d\.ts(\.map)*$/).test(p),
-            recursive: true
-          }
-        ]
-      }
-    }) as any
-  ]
+            recursive: true,
+          },
+        ],
+      },
+    }) as any,
+  ],
 });
 
 const distDev = merge(commonDist, {
@@ -207,21 +209,21 @@ const distDev = merge(commonDist, {
   mode: "development",
   devtool: "source-map",
   module: {
-    rules: [ruleTS({ isDev: true }), ruleCSS({ isDev: true })]
-  }
+    rules: [ruleTS({ isDev: true }), ruleCSS({ isDev: true })],
+  },
 });
 
 const distDevWatch = merge(distDev, {
   name: "distDevWatch",
-  watch: true
+  watch: true,
 });
 
 const distProd = merge(commonDist, {
   name: "distProd",
   mode: "production",
   module: {
-    rules: [ruleTS({ isDev: false }), ruleCSS({ isDev: false })]
-  }
+    rules: [ruleTS({ isDev: false }), ruleCSS({ isDev: false })],
+  },
 });
 
 export default [dev, distDev, distDevWatch, distProd];

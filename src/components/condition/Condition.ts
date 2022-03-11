@@ -12,8 +12,6 @@ import styles from "./scss/module.scss";
 
 import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-dropdown";
-import "@momentum-ui/web-components/dist/comp/md-menu-overlay";
-import "@momentum-ui/web-components/dist/comp/md-menu";
 import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import "@momentum-ui/web-components/dist/comp/md-input";
 import "@momentum-ui/web-components/dist/comp/md-loading";
@@ -82,8 +80,8 @@ export namespace Condition {
       this.dispatchEvent(
         new CustomEvent("relation-updated", {
           detail: {
-            relation: this.relation
-          }
+            relation: this.relation,
+          },
         })
       );
     }
@@ -213,8 +211,8 @@ export namespace Condition {
       this.dispatchEvent(
         new CustomEvent("updated-condition", {
           detail: {
-            fromIndex: this.index
-          }
+            fromIndex: this.index,
+          },
         })
       );
     }
@@ -223,8 +221,8 @@ export namespace Condition {
       this.dispatchEvent(
         new CustomEvent("add-condition-block", {
           detail: {
-            fromIndex: this.index
-          }
+            fromIndex: this.index,
+          },
         })
       );
     }
@@ -234,8 +232,8 @@ export namespace Condition {
       this.dispatchEvent(
         new CustomEvent("add-condition", {
           detail: {
-            fromIndex: this.index
-          }
+            fromIndex: this.index,
+          },
         })
       );
     }

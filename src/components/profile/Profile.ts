@@ -63,6 +63,7 @@ export namespace ProfileView {
       super.updated(changedProperties);
       if (changedProperties.has("profileData")) {
         this.extractDataPoints(true);
+        this.requestUpdate();
       }
     }
 
