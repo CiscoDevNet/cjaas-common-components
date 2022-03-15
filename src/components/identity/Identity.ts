@@ -80,7 +80,7 @@ export namespace Identity {
       });
 
       const aliasList = html`
-        <ul>
+        <ul class="alias-list" part="list">
           ${aliases}
         </ul>
       `;
@@ -122,7 +122,7 @@ export namespace Identity {
             ${buttonText}
           </md-button>
         </div>
-        <div class="aliases">
+        <div part="aliases-container" class="aliases">
           <div part="alias-header-container" class="header-container">
             <h3 class="aliases-header">Aliases</h3>
             <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>

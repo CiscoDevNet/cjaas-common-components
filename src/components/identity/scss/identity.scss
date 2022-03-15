@@ -32,6 +32,7 @@
 
 .aliases {
   padding: 0 0.5rem;
+  height: calc(100% - 56px);
 }
 
 .header-container {
@@ -57,9 +58,10 @@
   font-size: 14px;
 }
 
-ul {
+.alias-list {
   padding: 0;
   margin: 0;
+  height: 100%;
 
   .delete-icon-tooltip {
     visibility: hidden;

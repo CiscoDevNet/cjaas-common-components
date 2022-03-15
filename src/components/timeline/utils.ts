@@ -57,17 +57,16 @@ const staticIcons = [
   "icon-apps_16",
   "icon-activities_16",
   "icon-breakout-session_16",
-  "icon-commenting_16",
   "icon-explore_16",
   "icon-filter-circle_16",
 ];
 
-function getRandomColor() {
-  return staticColors[Math.floor(Math.random() * staticColors.length)];
-}
-function getRandomIcon() {
-  return staticIcons[Math.floor(Math.random() * staticIcons.length)];
-}
+// function getRandomColor() {
+//   return staticColors[Math.floor(Math.random() * staticColors.length)];
+// }
+// function getRandomIcon() {
+//   return staticIcons[Math.floor(Math.random() * staticIcons.length)];
+// }
 
 // uses known event types and also generates random pairs for unknown events
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
@@ -90,8 +89,10 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
       };
     } else {
       result = {
-        name: getRandomIcon(),
-        color: getRandomColor(),
+        name: "icon-event_16",
+        color: "pink",
+        // name: getRandomIcon(),
+        // color: getRandomColor(),
       };
     }
 

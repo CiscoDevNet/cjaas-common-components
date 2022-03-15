@@ -39,6 +39,10 @@
     flex: 0 0 40px;
   }
 
+  .badge-icon::part(icon) {
+    font-size: 16px;
+  }
+
   .info-section {
     margin-left: 12px;
     margin-right: 2rem;
