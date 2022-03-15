@@ -16,7 +16,8 @@
       margin-top: 8px;
   
       .title {
-        width: 7rem;
+        min-width: 7rem;
+        width: 40%;
         color: var(--md-secondary-text-color, #545454);
       }
   
