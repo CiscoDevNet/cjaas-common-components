@@ -127,9 +127,8 @@ md-avatar {
 }
 
 .no-profile-data {
-  color: var(--md-disabled-text-color, #545454);
-  margin: 2rem;
-  text-align: center;
+  color: var(--md-secondary-text-color, #545454);
+  margin: 0.5rem 0 0;
 }
 
 md-loading {
