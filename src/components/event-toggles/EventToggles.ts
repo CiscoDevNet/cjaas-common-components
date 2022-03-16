@@ -52,7 +52,7 @@ export namespace EventToggles {
         if ((oldValue as Array<string>)?.length == 0) {
           this.activeTypes = this.eventTypes.slice();
         } else {
-          const differences = this.eventTypes?.filter(x => (oldValue as string[]).includes(x));
+          const differences = this.eventTypes?.filter(x => !((oldValue as string[]) || []).includes(x));
           this.activeTypes = this.activeTypes.concat(differences);
         }
 
