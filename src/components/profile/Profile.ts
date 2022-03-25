@@ -108,15 +108,28 @@ export namespace ProfileView {
     }
 
     renderAvatar() {
-      return html`
-        <md-avatar
-          class="profile-avatar"
-          title=${ifDefined(this.contactData?.name)}
-          alt=${ifDefined(this.contactData?.name)}
-          src=${ifDefined(this.contactData?.imgSrc)}
-          .size=${48}
-        ></md-avatar>
-      `;
+      if (this.contactData?.imgSrc || this.contactData?.name) {
+        return html`
+          <md-avatar
+            class="profile-avatar"
+            part="avatar"
+            title=${ifDefined(this.contactData?.name)}
+            alt=${ifDefined(this.contactData?.name)}
+            src=${ifDefined(this.contactData?.imgSrc)}
+            .size=${48}
+          ></md-avatar>
+        `;
+      }
+    }
+
+    renderCustomerLabel() {
+      if (this.contactData?.label) {
+        return html`
+          <h5 title="Label" class="customer-label" part="label">
+            ${this.contactData?.label}
+          </h5>
+        `;
+      }
     }
 
     getTopContent() {
@@ -127,14 +140,13 @@ export namespace ProfileView {
             <h5 title="Name" class="customer-name">
               ${this.contactData?.name}
             </h5>
-            <h5 title="Label" class="customer-label">
-              ${this.contactData?.label}
-            </h5>
-            ${this.emailContactItem()}
+            ${this.renderCustomerLabel()} ${this.emailContactItem()}
           `}
         </section>
       `;
     }
+
+    basicProfileProperties = ["First Name", "Last Name", "Email", "Phone"];
 
     getTable() {
       return html`
@@ -143,14 +155,21 @@ export namespace ProfileView {
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               console.log("get profile value: ", this.getValue(x));
-              // if (this.getValue(x) !== "-") {
-              return html`
-                <tr>
-                  <td class="title">${x.query.displayName}</td>
-                  <td class="value">${this.getValue(x)}</td>
-                </tr>
-              `;
-              // }
+              if (this.basicProfileProperties.includes(x.query.displayName)) {
+                return html`
+                  <tr>
+                    <td class="title">${x.query.displayName}</td>
+                    <td class="value">${this.getValue(x)}</td>
+                  </tr>
+                `;
+              } else if (this.getValue(x) !== "-") {
+                return html`
+                  <tr>
+                    <td class="title">${x.query.displayName}</td>
+                    <td class="value">${this.getValue(x)}</td>
+                  </tr>
+                `;
+              }
             })}
         </table>
       `;
@@ -200,9 +219,7 @@ export namespace ProfileView {
                   <h5 title="Name" class="customer-name">
                     ${name}
                   </h5>
-                  <h5 title="Label" class="customer-label">
-                    ${this.contactData?.label}
-                  </h5>
+                  ${this.renderCustomerLabel()}
                 </div>
               `}
         </section>

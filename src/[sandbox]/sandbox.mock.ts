@@ -122,6 +122,80 @@ export const profileViewMockTemplate = {
   ],
 };
 
+export const limitedProfileMock = [
+  {
+    query: {
+      version: "0.1",
+      event: "Quote",
+      metadata: "email",
+      displayName: "Email",
+      aggregationMode: "Value",
+      type: "table",
+      tag: "email",
+      limit: 1,
+      Verbose: true,
+    },
+    result: ["bruce@gmail.com"],
+    journeyevents: [
+      {
+        data: {
+          firstName: "Bruce",
+          lastName: "Springsteen",
+          email: "bruce@gmail.com",
+        },
+        dataContentType: "application/json",
+        id: "9cc22087-284d-46db-9e4e-fa7ed9723976",
+        person: "560021-Venki",
+        source: "Website",
+        specVersion: "1.0",
+        time: "2021-03-05T19:00:05.596Z",
+        type: "Quote",
+      },
+    ],
+  },
+  {
+    query: {
+      version: "0.1",
+      event: "Quote",
+      metadata: "name",
+      displayName: "First Name",
+      limit: 1,
+      aggregationMode: "Value",
+      tag: "name",
+      type: "table",
+    },
+    result: [""],
+    journeyevents: null,
+  },
+  {
+    query: {
+      version: "0.1",
+      event: "Quote",
+      metadata: "name",
+      displayName: "Last Name",
+      limit: 1,
+      aggregationMode: "Value",
+      tag: "name",
+      type: "table",
+    },
+    result: [""],
+    journeyevents: null,
+  },
+  {
+    query: {
+      version: "0.1",
+      event: "Quote",
+      metadata: "Phone",
+      displayName: "Phone",
+      aggregationMode: "Value",
+      limit: 1,
+      type: "table",
+    },
+    result: [""],
+    journeyevents: null,
+  },
+];
+
 export const profileMock = [
   {
     query: {
