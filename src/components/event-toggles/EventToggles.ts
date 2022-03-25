@@ -91,9 +91,13 @@ export namespace EventToggles {
     updated(changedProperties: PropertyValues) {
       if (changedProperties.has("eventTypes")) {
         // new incoming eventTypes needs to be added to active types be default
-        const oldValue = changedProperties.get("eventTypes") as string[];
-        const differences = this.eventTypes?.filter(x => (oldValue as string[]).includes(x));
-        this.activeTypes = this.activeTypes.concat(differences);
+        const oldValue = changedProperties.get("eventTypes") || [];
+        if ((oldValue as Array<string>)?.length == 0) {
+          this.activeTypes = this.eventTypes.slice();
+        } else {
+          const differences = this.eventTypes?.filter(x => !((oldValue as string[]) || []).includes(x));
+          this.activeTypes = this.activeTypes.concat(differences);
+        }
 
         this.dispatchEvent(
           new CustomEvent("active-type-update", {

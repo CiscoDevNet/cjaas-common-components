@@ -25,7 +25,7 @@ md-dropdown {
 
 .disabled-picker {
   padding: 2px;
-  background: #c3c3c3;
+  color: var(--md-hyperlink-text-color, #005e7d);
   margin-right: 8px;
   font-weight: 600;
 }

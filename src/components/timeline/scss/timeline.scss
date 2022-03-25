@@ -6,6 +6,10 @@
  *
  */
 
+:host {
+  overflow-x: hidden;
+  display: block;
+}
 .connection {
   margin-left: auto;
   width: 10px;
@@ -44,7 +48,7 @@
   margin-bottom: 10px;
 }
 .stream {
-  height: calc(100% - 10rem);
+  height: calc(100% - 12px);
   overflow-y: scroll;
   position: relative;
   z-index: 1;
