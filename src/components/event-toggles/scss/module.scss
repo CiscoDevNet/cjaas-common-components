@@ -8,12 +8,8 @@
 }
 
 md-combobox {
-  width: 50%;
+  width: 100%;
   pointer-events: all;
-
-  @media only screen and (max-width: 650px) {
-    width: 100%;
-  }
 }
 
 md-combobox::part(combobox) {

@@ -164,7 +164,7 @@ export const limitedProfileMock = [
       tag: "name",
       type: "table",
     },
-    result: [""],
+    result: ["Bruce"],
     journeyevents: null,
   },
   {
@@ -178,7 +178,7 @@ export const limitedProfileMock = [
       tag: "name",
       type: "table",
     },
-    result: [""],
+    result: ["Springsteen"],
     journeyevents: null,
   },
   {
@@ -192,6 +192,22 @@ export const limitedProfileMock = [
       type: "table",
     },
     result: [""],
+    journeyevents: null,
+  },
+  {
+    query: {
+      version: "0.1",
+      event: "Quote",
+      metadata: "imgSrc",
+      displayName: "imgSrc",
+      limit: 1,
+      aggregationMode: "Value",
+      tag: "imgSrc",
+      type: "table",
+    },
+    result: [
+      "https://packagingnewsonline.com/wp-content/uploads/2021/06/Bruce-Springsteen-the-story-behind-the-iconic-cover-of-Born.jpg",
+    ],
     journeyevents: null,
   },
 ];

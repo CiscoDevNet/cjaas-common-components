@@ -132,6 +132,7 @@ export namespace EventToggles {
 
       return html`
         <md-combobox
+          part="combobox"
           aria-expanded=${this.isFilterOpen}
           class=${classMap(classList)}
           .options=${this.eventTypes}

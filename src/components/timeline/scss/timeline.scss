@@ -128,6 +128,10 @@ md-badge.date::part(badge):hover {
   background-color: var(--md-tertiary-bg-color, #EDEDED);
 }
 
+md-badge.date::part(badge):active {
+  background-color: var(--md-quaternary-bg-color);
+}
+
 md-badge.date {
   display: inline-block;
   position: sticky;
