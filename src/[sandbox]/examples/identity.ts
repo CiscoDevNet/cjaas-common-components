@@ -1,13 +1,16 @@
 import "@/components/identity/Identity";
+import { JourneyEvent } from "@/components/identity/Identity";
 import { html } from "lit-element";
 
 const alias = {
+  namespace: "random",
+  id: "123",
   aliases: ["Alex", "Bob"],
-  lastSeen: null
+  lastSeen: {} as JourneyEvent,
 };
 
 const aliasDeleteInProgress = {
-  Alex: true
+  Alex: true,
 };
 
 export const identityTemplate = html`

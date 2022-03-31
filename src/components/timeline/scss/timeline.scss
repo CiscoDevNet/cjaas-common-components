@@ -64,31 +64,38 @@
   left: 28px;
   position: relative;
   top: 100%;
-  background: var(--badge-outline-color, #b2b2b2);
+  background-color: var(--md-quaternary-bg-color, #DEDEDE);
 }
 .badge-text {
-  color: var(--md-secondary-text-color);
+  color: var(--md-secondary-text-color, #545454);
   text-transform: capitalize;
 }
 .empty-state {
-  min-height: 120px;
-  height: 100%;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   font-size: 19px;
-  md-icon {
-    transform: scale(5);
-    margin-bottom: 3rem;
-    display: block;
+  margin-top: 2rem;
+
+  .empty-state-icon::part(icon) {
+    height: 5rem;
+    font-size: 5rem;
     color: var(--md-blue-50);
+  }
+
+  .empty-state-text {
+    color: var(--md-secondary-text-color, #545454);
+    text-align: center;
+    width: 100%;
+    font-weight: 100;
+    font-size: 14px;
   }
 }
 .wrapper {
-  padding: 0.5rem;
   height: calc(100% - 1rem);
+  font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding: 0.3rem 0.3rem 0 0;
 }
 
 .controls {
@@ -97,11 +104,10 @@
   position: relative;
   justify-content: flex-start;
   gap: 0.5rem;
-  align-items: flex-end;
   margin-bottom: 0.5rem;
 
   md-toggle-switch {
-    margin: 0 4px;
+    margin: 0;
     height: 20px;
   }
 }
@@ -112,16 +118,22 @@
 
 md-badge.date::part(badge) {
   cursor: pointer;
-  background-color: var(--md-primary-bg-color, #f7f7f7);
+  background-color: var(--md-primary-bg-color, #ffffff);
+  border-color: var(--md-quaternary-bg-color, #DEDEDE);
   transition: all 200ms ease-in;
   margin-top: 0.5rem;
 }
 
 md-badge.date::part(badge):hover {
-  background-color: var(--md-highlight-bg-color, #dedede);
+  background-color: var(--md-tertiary-bg-color, #EDEDED);
+}
+
+md-badge.date::part(badge):active {
+  background-color: var(--md-quaternary-bg-color);
 }
 
 md-badge.date {
+  display: inline-block;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -147,8 +159,10 @@ md-spinner::part(spinner) {
 
 .flex-apart {
   display: flex;
-  width: 100%;
+  min-height: 36px;
+  width: calc(100% - 40px);
   flex-wrap: wrap;
+  gap: 0.75rem;
   align-items: center;
   justify-content: flex-start;
 }
@@ -157,6 +171,7 @@ cjaas-event-toggles {
   position: absolute;
   right: 0;
   height: 36px;
+  top: 0;
 }
 
 ::-webkit-scrollbar {
@@ -179,4 +194,21 @@ cjaas-event-toggles {
 
 md-link {
   cursor: pointer;
+}
+
+.load-more-text {
+  font-size: 14px;
+  color: var(--md-hyperlink-text-color, #005E7D);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1rem;
+
+  &:hover {
+    color: var(--md-hyperlink-hover-text-color, #092D3B);
+  }
+}
+
+.event-counter.hidden {
+  display: none;
 }

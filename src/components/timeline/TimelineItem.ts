@@ -172,7 +172,8 @@ export namespace TimelineItem {
 
     private get groupClassMap() {
       return {
-        "group-item": this.groupItem
+        "group-item": this.groupItem,
+        expanded: this.expanded,
       };
     }
 
@@ -185,7 +186,7 @@ export namespace TimelineItem {
             <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
               ${iconData.name
                 ? html`
-                    <md-icon .name=${iconData.name}></md-icon>
+                    <md-icon class="badge-icon" .name=${iconData.name}></md-icon>
                   `
                 : html`
                     <img src=${iconData.src} />

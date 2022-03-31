@@ -5,6 +5,8 @@ import { html } from "lit-html";
 import "@momentum-ui/web-components/dist/comp/md-progress-bar";
 import styles from "./scss/identity.scss";
 
+const NO_ALIAS_TEXT = "Currently, no aliases exist.";
+
 export namespace Identity {
   @customElementWithCheck("cjaas-identity")
   export class ELEMENT extends LitElement {
@@ -63,19 +65,14 @@ export namespace Identity {
       `;
 
       const deleteIcon = (alias: string) => html`
-        <md-tooltip message="Delete Alias"
-          ><md-icon
-            color="red"
-            class="alias-delete"
-            name="icon-delete_14"
-            @click=${() => this.deleteAlias(alias)}
-          ></md-icon
+        <md-tooltip class="delete-icon-tooltip" message="Delete Alias">
+          <md-icon class="alias-delete-icon" name="icon-delete_14" @click=${() => this.deleteAlias(alias)}></md-icon
         ></md-tooltip>
       `;
 
       const aliases = (this.alias?.aliases?.slice().reverse() || []).map(alias => {
         return html`
-          <li>
+          <li class="alias-item">
             <span class="alias-text">${alias}</span>
             ${this.aliasDeleteInProgress[alias] ? spinnerInline : deleteIcon(alias)}
           </li>
@@ -83,7 +80,7 @@ export namespace Identity {
       });
 
       const aliasList = html`
-        <ul>
+        <ul class="alias-list" part="list">
           ${aliases}
         </ul>
       `;
@@ -101,7 +98,9 @@ export namespace Identity {
       const buttonText = this.isAPIInProgress ? spinnerInline : "Add";
 
       let consolidatedAliases = html`
-        <span class="alias-text">No Alias Found</span>
+        <div class="no-alias-wrapper">
+          <span class="alias-text">${NO_ALIAS_TEXT}</span>
+        </div>
       `;
 
       if (this.getAPIInProgress) {
@@ -110,22 +109,24 @@ export namespace Identity {
         consolidatedAliases = aliasList;
       } else if (this.alias && !this.alias?.aliases) {
         consolidatedAliases = html`
-          <span class="alias-text">No Alias Found</span>
+          <div class="no-alias-wrapper">
+            <span class="alias-text">${NO_ALIAS_TEXT}</span>
+          </div>
         `;
       }
 
       return html`
-        <div class="flex">
-          <md-input .placeholder=${inputPlaceholder} id="alias-input"></md-input>
-          <md-button .disabled=${this.isAPIInProgress} variant="green" @click=${async () => this.addAlias()}>
+        <div class="flex alias-input-row">
+          <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
+          <md-button .disabled=${this.isAPIInProgress} variant="secondary" @click=${async () => this.addAlias()}>
             ${buttonText}
           </md-button>
         </div>
-        <div class="aliases">
-          <div>
-            <b>Aliases</b>
-            <md-tooltip .message=${tooltipMessage}>
-              <md-icon name="info_14"></md-icon>
+        <div part="aliases-container" class="aliases">
+          <div part="alias-header-container" class="header-container">
+            <h3 class="aliases-header">Aliases</h3>
+            <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
+              <md-icon class="alias-info-icon" name="info_14"></md-icon>
             </md-tooltip>
           </div>
           ${consolidatedAliases}

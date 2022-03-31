@@ -8,8 +8,7 @@
 
 :host {
   display: block;
-  background-color: var(--md-secondary-bg-color);
-  border-radius: 4px;
+  font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .flex {
@@ -23,45 +22,91 @@
     flex-shrink: 1;
   }
   md-button {
-    margin: 0 4px;
-    &::part(button) {
-      border-radius: 4px;
-      &:focus::after {
-        border-radius: 4px;
-      }
-    }
+    margin-left: 0.5rem;
+  }
+}
+
+.alias-input-row {
+  margin-top: 0.5rem;
+}
+
+.aliases {
+  padding: 0 0.5rem;
+  height: calc(100% - 56px);
+}
+
+.header-container {
+  margin-bottom: 0.2rem;
+
+  .aliases-header {
+    color: var(--md-primary-text-color, #121212);
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    display: inline-block;
+  }
+
+  .alias-info-icon {
+    margin-left: 0.1rem;
+    vertical-align: middle;
   }
 }
 
 .alias-text {
-  font-weight: 300;
-  font-size: 21px;
+  font-weight: 100;
+  font-size: 14px;
 }
 
-ul {
-  padding: 4px 12px;
+.alias-list {
+  padding: 0;
   margin: 0;
+  height: 100%;
 
-  md-icon {
-    display: none;
+  .delete-icon-tooltip {
+    visibility: hidden;
   }
 
-  li {
+  .alias-delete-icon {
+    display: inline;
+    cursor: pointer;
+  }
+
+  .alias-item {
+    color: var(--md-secondary-text-color, #545454);
+    padding: 0.3rem 1rem;
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    md-spinner {
-      margin: 4px;
-    }
   }
 
   li:hover {
     background-color: var(--md-tertiary-bg-color);
 
-    md-icon {
-      display: inline;
-      cursor: pointer;
-      margin: 4px 4px 12px 4px;
+    .delete-icon-tooltip {
+      visibility: visible;
     }
   }
+}
+
+.alias-input::part(input) {
+  height: 2rem;
+  font-size: 14px;
+}
+
+.alt-consolidated-aliases-wrapper {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.no-alias-wrapper {
+  color: var(--md-secondary-text-color, #545454);
+  margin-top: 0.5rem;
 }

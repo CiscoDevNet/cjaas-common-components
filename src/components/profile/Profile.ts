@@ -67,18 +67,20 @@ export namespace ProfileView {
       }
     }
 
-    contactItem() {
+    emailContactItem() {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
       // Accept a type parameter to render phone / email / etc.
       // See the "contactData.contactChannels" property, parse an array of objects.
-      return html`
-        <div class="contact-item">
-          <md-badge circle color="violet">
-            <md-icon name="icon-email-active_12" size="8"></md-icon>
-          </md-badge>
-          <span>${this.contactData?.email}</span>
-        </div>
-      `;
+      if (this.contactData?.email) {
+        return html`
+          <div class="contact-item">
+            <md-badge circle color="violet">
+              <md-icon name="icon-email-active_12" size="8"></md-icon>
+            </md-badge>
+            <span>${this.contactData?.email}</span>
+          </div>
+        `;
+      }
     }
 
     dataPointFilter(dataPoint: string) {
@@ -106,47 +108,73 @@ export namespace ProfileView {
       }
     }
 
+    renderAvatar() {
+      if (this.contactData?.imgSrc || this.contactData?.name) {
+        return html`
+          <md-avatar
+            class="profile-avatar"
+            part="avatar"
+            title=${ifDefined(this.contactData?.name)}
+            alt=${ifDefined(this.contactData?.name)}
+            src=${ifDefined(this.contactData?.imgSrc)}
+            .size=${48}
+          ></md-avatar>
+        `;
+      }
+    }
+
+    renderCustomerLabel() {
+      if (this.contactData?.label) {
+        return html`
+          <h5 title="Label" class="customer-label" part="label">
+            ${this.contactData?.label}
+          </h5>
+        `;
+      }
+    }
+
     getTopContent() {
       return html`
-        <section class="top-content">
-          ${this.loading
-            ? this.getLoading()
-            : html`
-                <md-avatar
-                  title=${ifDefined(this.contactData?.name)}
-                  alt=${ifDefined(this.contactData?.name)}
-                  src=${ifDefined(this.contactData?.imgSrc)}
-                  .size=${48}
-                ></md-avatar>
-                <h5 title="Name" class="customer-name">
-                  ${this.contactData?.name}
-                </h5>
-                <h5 title="Label" class="customer-label">
-                  ${this.contactData?.label}
-                </h5>
-                ${this.contactItem()}
-              `}
+        <section part="top-content" class="top-content">
+          ${html`
+            ${this.renderAvatar()}
+            <h5 title="Name" class="customer-name">
+              ${this.contactData?.name}
+            </h5>
+            ${this.renderCustomerLabel()} ${this.emailContactItem()}
+          `}
         </section>
       `;
     }
 
+    basicProfileProperties = ["First Name", "Last Name", "Email", "Phone"];
+
     getTable() {
-      return this.loading
-        ? this.getLoading()
-        : html`
-            <table title="Profile Details">
-              ${this.profileData
-                ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
-                .map((x: any) => {
-                  return html`
-                    <tr>
-                      <td class="title">${x.query.displayName}</td>
-                      <td class="value">${this.getValue(x)}</td>
-                    </tr>
-                  `;
-                })}
-            </table>
-          `;
+      return html`
+        <table title="Profile Details">
+          ${this.profileData
+            ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
+            .map((x: any) => {
+              const { displayName } = x?.query;
+              console.log("displayName: ", displayName);
+              if (this.basicProfileProperties.includes(displayName)) {
+                return html`
+                  <tr>
+                    <td class="title">${displayName}</td>
+                    <td class="value">${this.getValue(x)}</td>
+                  </tr>
+                `;
+              } else if (this.getValue(x) !== "-" && displayName !== "imgSrc") {
+                return html`
+                  <tr>
+                    <td class="title">${displayName}</td>
+                    <td class="value">${this.getValue(x)}</td>
+                  </tr>
+                `;
+              }
+            })}
+        </table>
+      `;
     }
 
     getValue(x: any) {
@@ -167,15 +195,15 @@ export namespace ProfileView {
       return result;
     }
 
-    getLoading() {
+    getLoading(size = 56) {
       return html`
-        <md-spinner></md-spinner>
+        <md-spinner size=${size}></md-spinner>
       `;
     }
 
     getSnapshot() {
       return html`
-        <section class="snapshot" part="profile-snapshot" title="Customer Profile">
+        <section class=${`snapshot ${this.loading ? "loading" : ""}`} part="profile-snapshot" title="Customer Profile">
           ${this.loading ? this.getLoading() : this.getTopContent()}
         </section>
       `;
@@ -186,21 +214,14 @@ export namespace ProfileView {
       return html`
         <section class="compact" part="profile-compact" title="Customer Profile">
           ${this.loading
-            ? this.getLoading()
+            ? this.getLoading(34)
             : html`
-                <md-avatar
-                  .title="${name}"
-                  alt=${name}
-                  src=${ifDefined(this.contactData?.imgSrc || undefined)}
-                  .size=${48}
-                ></md-avatar>
+                ${this.renderAvatar()}
                 <div class="customer-titles">
                   <h5 title="Name" class="customer-name">
                     ${name}
                   </h5>
-                  <h5 title="Label" class="customer-label">
-                    ${this.contactData?.label}
-                  </h5>
+                  ${this.renderCustomerLabel()}
                 </div>
               `}
         </section>
@@ -211,19 +232,25 @@ export namespace ProfileView {
       return styles;
     }
 
+    renderFullProfileView() {
+      if (this.loading) {
+        return html`
+          <div class="loading-wrapper">${this.getLoading()}</div>
+        `;
+      } else {
+        return html`
+          <section class="profile" part="profile" title="Customer Profile">
+            ${this.getTopContent()}
+            <hr part="separator" />
+            ${this.getTable()}
+          </section>
+        `;
+      }
+    }
+
     render() {
       if (this.contactData && this.profileData.length > 0) {
-        return this.compact
-          ? this.getCompact()
-          : this.snapshot
-          ? this.getSnapshot()
-          : html`
-              <section class="profile" part="profile" title="Customer Profile">
-                ${this.getTopContent()}
-                <hr />
-                ${this.getTable()}
-              </section>
-            `;
+        return this.compact ? this.getCompact() : this.snapshot ? this.getSnapshot() : this.renderFullProfileView();
       } else {
         return html`
           <slot name="l10n-no-data-message">

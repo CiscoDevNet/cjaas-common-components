@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, internalProperty, PropertyValues, query } from "lit-element";
+import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
@@ -264,21 +264,20 @@ export namespace Timeline {
     }
 
     renderNewEventCounter() {
-      return this.newestEvents.length > 0
-        ? html`
-            <md-chip
-              class="event-counter"
-              small
-              @click=${this.showNewEvents}
-              value="Show ${this.newestEvents.length} new events"
-            ></md-chip>
-          `
-        : nothing;
+      return html`
+        <md-chip
+          class=${`event-counter ${this.newestEvents.length > 0 ? "" : "hidden"}`}
+          class="event-counter"
+          small
+          @click=${this.showNewEvents}
+          value="Show ${this.newestEvents.length} new events"
+        ></md-chip>
+      `;
     }
 
     renderTimeBadge(readableDate: any, clusterId: string) {
       return html`
-        <md-badge .outlined=${true} class="block date" @click=${() => this.collapseDate(clusterId)}>
+        <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
           <span class="badge-text">${readableDate}</span>
         </md-badge>
       `;
@@ -453,7 +452,7 @@ export namespace Timeline {
                 e.preventDefault();
                 this.limit += 5;
               }}
-              >Load More</md-link
+              ><span class="load-more-text">Load More</span></md-link
             >
           `
         : nothing;
@@ -474,9 +473,9 @@ export namespace Timeline {
         return html`
           <div class="empty-state">
             <div>
-              <md-icon name="icon-people-insight_24"></md-icon>
+              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
             </div>
-            No historic events to show. Listening for new events..
+            <span class="empty-state-text">No historic events to show. Listening for new events...</span>
           </div>
         `;
       }
@@ -496,8 +495,9 @@ export namespace Timeline {
             <div class="wrapper" part="timeline-wrapper">
               <section class="controls" part="controls">
                 <div class="flex-apart">
-                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()} ${this.renderToggleButtons()}
+                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
                 </div>
+                ${this.renderToggleButtons()}
               </section>
               <section class="stream" part="stream">
                 ${repeat(

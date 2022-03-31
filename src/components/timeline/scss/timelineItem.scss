@@ -20,22 +20,27 @@
  }
 
 .timeline-item {
-  background-color: var(--md-tertiary-bg-color, #ededed);
+  background-color: var(--md-secondary-one-bg-color, #F7F7F7);
   border-radius: 8px;
   padding: 8px;
 
   .top-content {
+    align-items: center;
     display: flex;
     flex-direction: row;
     cursor: pointer;
   }
 
   &:hover {
-    background-color: var(--md-quaternary-bg-color, #dedede);
+    background-color: var(--md-tertiary-bg-color, #EDEDED);
   }
 
   .badge {
     flex: 0 0 40px;
+  }
+
+  .badge-icon::part(icon) {
+    font-size: 16px;
   }
 
   .info-section {
@@ -81,6 +86,7 @@
       &.label {
         color: var(--md-secondary-text-color, #545454);
         padding-left: 2rem;
+        padding-right: 0.5rem;
       }
       &.value {
         color: var(--md-primary-text-color, #121212);

@@ -1,5 +1,5 @@
 import "@/components/profile/Profile";
-import { profileMock, contactDataMock } from "../sandbox.mock";
+import { profileMock, contactDataMock, limitedProfileMock } from "../sandbox.mock";
 import { html } from "lit-element";
 
 export const profileTemplate = html`
@@ -7,6 +7,8 @@ export const profileTemplate = html`
   <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock}> </cjaas-profile>
   <h4>Default display, Only Profile data w/ contactData inferred from profileData</h4>
   <cjaas-profile .profileData=${profileMock}> </cjaas-profile>
+  <h4>Default display, with limited data</h4>
+  <cjaas-profile .profileData=${limitedProfileMock}> </cjaas-profile>
   <h4>Default display, Loading</h4>
   <cjaas-profile loading .contactData=${contactDataMock} .profileData=${profileMock}> </cjaas-profile>
   <h4>Snapshot display, contactData provided</h4>
@@ -21,4 +23,6 @@ export const profileTemplate = html`
   <cjaas-profile>
     <p slot="l10n-no-data-message">No se han proporcionado datos</p>
   </cjaas-profile>
+  <h4>Empty Contact Data & Profile Data</h4>
+  <cjaas-profile .contactData=${{}} .profileData=${{}}></cjaas-profile>
 `;

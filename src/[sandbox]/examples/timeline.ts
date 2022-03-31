@@ -1,6 +1,6 @@
 import "@/components/timeline/Timeline";
 import { html } from "lit-element";
-import { mockedTimelineItems, bigTimeline, newSampleMock } from "../sandbox.mock";
+import { mockedTimelineItems, bigTimeline, newSampleMock, emptyMock } from "../sandbox.mock";
 
 export const timelineTemplate = html`
   <h3>Default</h3>

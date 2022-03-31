@@ -19,12 +19,11 @@
 }
 
 .profile {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   hr {
     margin: 0 0 1rem 0;
-    border-bottom: 1px solid var(--color-gray-30);
+    border-bottom: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
     border-top: 0;
   }
 }
@@ -39,14 +38,14 @@ table {
 
 .top-content {
   max-height: 50%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 
   h5 {
-    margin: 0.5rem 0 0 0;
+    margin: 0.75rem 0 0 0;
     font-size: 0.875rem;
 
     &.customer-label {
-      color: var(--md-secondary-text-color, var(--color-gray-70));
+      color: var(--md-secondary-text-color, #545454);
       margin: 0;
       font-weight: normal;
       font-size: 0.75rem;
@@ -61,7 +60,7 @@ md-avatar {
     width: 3rem;
     height: 3rem;
     box-sizing: border-box;
-    border: 2px solid var(--color-gray-10);
+    border: 2px solid var(--md-quaternary-bg-color, #DEDEDE);
   }
 }
 
@@ -81,7 +80,11 @@ md-avatar {
 .snapshot {
   border: 1px solid var(--md-quaternary-bg-color, #dedede);
   border-radius: .5rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem 0.75rem;
+
+  &.loading {
+    padding: 1.25rem 1.5rem;
+  }
 }
 
 .compact {
@@ -93,10 +96,9 @@ md-avatar {
   justify-content: flex-start;
   align-items: center;
   height: 5rem;
-  padding: 1.25rem .75rem;
+  padding: 1.25rem;
 
   .customer-titles {
-    height: 3rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -125,9 +127,16 @@ md-avatar {
 }
 
 .no-profile-data {
-  color: var(--md-disabled-text-color, #545454);
+  color: var(--md-secondary-text-color, #545454);
+  margin: 0.5rem 0 0;
 }
 
 md-loading {
   margin: auto;
+}
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
 }

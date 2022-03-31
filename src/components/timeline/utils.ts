@@ -8,6 +8,7 @@
 
 import { Timeline } from "@/index";
 import { DateTime } from "luxon";
+import { querySelectorAllDeep } from "query-selector-shadow-dom";
 
 export function getTimelineEventFromMessage(message: any) {
   const event: any = {};
@@ -40,35 +41,32 @@ const TEMP_ICON_MAP: any = {};
 const staticColors = [
   "purple",
   "mint",
-  "slate",
   "gold",
   "lime",
   "darkmint",
   "green",
   "yellow",
   "red",
-  "orange",
   "violet",
   "cyan",
   "cobalt",
-  "pink"
+  "pink",
 ];
 
 const staticIcons = [
   "icon-apps_16",
   "icon-activities_16",
   "icon-breakout-session_16",
-  "icon-commenting_16",
   "icon-explore_16",
-  "icon-filter-circle_16"
+  "icon-filter-circle_16",
 ];
 
-function getRandomColor() {
-  return staticColors[Math.floor(Math.random() * staticColors.length)];
-}
-function getRandomIcon() {
-  return staticIcons[Math.floor(Math.random() * staticIcons.length)];
-}
+// function getRandomColor() {
+//   return staticColors[Math.floor(Math.random() * staticColors.length)];
+// }
+// function getRandomIcon() {
+//   return staticIcons[Math.floor(Math.random() * staticIcons.length)];
+// }
 
 // uses known event types and also generates random pairs for unknown events
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
@@ -87,12 +85,14 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
     if (eventName.includes("events from")) {
       result = {
         name: "icon-activities_16",
-        color: "cobalt"
+        color: "cobalt",
       };
     } else {
       result = {
-        name: getRandomIcon(),
-        color: getRandomColor()
+        name: "icon-event_16",
+        color: "pink",
+        // name: getRandomIcon(),
+        // color: getRandomColor(),
       };
     }
 
@@ -132,3 +132,10 @@ export function getRelativeDate(timestamp: string) {
   const relativeValue = DateTime.fromISO(timestamp || nowIsoString);
   return relativeValue;
 }
+
+export const destroyTooltip = () => {
+  const tooltips = querySelectorAllDeep(".md-tooltip__popper");
+  for (let index = 0; index < tooltips.length; index++) {
+    tooltips[index].remove();
+  }
+};
