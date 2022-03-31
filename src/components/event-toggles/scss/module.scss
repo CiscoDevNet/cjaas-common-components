@@ -8,8 +8,12 @@
 }
 
 md-combobox {
-  width: 100%;
+  width: 50%;
   pointer-events: all;
+
+  @media only screen and (max-width: 650px) {
+    width: 100%;
+  }
 }
 
 md-combobox::part(combobox) {
@@ -17,7 +21,6 @@ md-combobox::part(combobox) {
 }
 md-combobox::part(group) {
   overflow: auto;
-  max-width: 40rem;
   min-height: 2rem;
   border-radius: 0.75rem;
   padding: 0.4rem 0.6rem;
@@ -51,8 +54,6 @@ md-combobox {
   overflow: hidden;
   position: relative;
   border-radius: 0.75rem;
-  transform: translateX(200%);
-  transition: all ease-out 250ms;
   z-index: 2;
   margin: 0 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16), 0px 1px rgba(0, 0, 0, 0.18);
@@ -60,7 +61,6 @@ md-combobox {
 
   &.expanded {
     overflow: visible;
-    transform: translateX(0);
     display: inline-block;
   }
 }
