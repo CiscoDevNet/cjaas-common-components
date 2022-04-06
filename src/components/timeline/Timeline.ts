@@ -83,6 +83,12 @@ export namespace Timeline {
      */
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
 
+    /**
+     * @prop badgeKeyword
+     * set badge icon based on declared keyword from dataset
+     */
+    @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
+
     // Data Property Input from Application
     /**
      * @prop timelineItems
@@ -108,8 +114,7 @@ export namespace Timeline {
      * Property to pass in data template to set color and icon settings and showcased data
      * @prop eventIconTemplate
      */
-    @property({ attribute: false })
-    eventIconTemplate: TimelineCustomizations = iconData;
+    @property({ attribute: false }) eventIconTemplate: TimelineCustomizations = iconData;
 
     /**
      * @prop newestEvents
@@ -285,6 +290,7 @@ export namespace Timeline {
 
     renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
       const { date, events } = groupedItem;
+      const eventsKeyword = events.length === 1 ? "event" : "events";
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
@@ -298,9 +304,10 @@ export namespace Timeline {
               ${this.collapsed.has(clusterId)
                 ? html`
                     <cjaas-timeline-item
-                      title=${`${events.length} events from ${readableDate}`}
+                      title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
                       .data=${{ Date: date }}
                       .eventIconTemplate=${this.eventIconTemplate}
+                      .badgeKeyword=${this.badgeKeyword}
                     ></cjaas-timeline-item>
                   `
                 : this.populateEvents(groupedItem.events)}
@@ -438,6 +445,7 @@ export namespace Timeline {
           id=${event.id}
           .person=${event.person || null}
           .eventIconTemplate=${this.eventIconTemplate}
+          .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"
           class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
         ></cjaas-timeline-item>

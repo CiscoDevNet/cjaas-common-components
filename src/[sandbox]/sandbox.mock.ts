@@ -1080,6 +1080,29 @@ export const emptyMock: Timeline.CustomerEvent[] = [];
 export const newSampleMock: Timeline.CustomerEvent[] = [
   {
     data: {
+      channelType: "chat",
+      createdTime: 1646086335593,
+      destination: "+13333334444",
+      direction: "INBOUND",
+      origin: "egiere@cisco.com",
+      outboundType: null,
+      queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
+      reason: "Agent Left",
+      taskId: "cb2690b6-98d9-11ec-817a-17ab9a26689d",
+      terminatingParty: "Agent",
+      workflowManager: null,
+    },
+    dataContentType: "string",
+    id: "40ff7b0d-a660-415c-b8d8-f59b80064fea",
+    person: "egiere@cisco.com",
+    previously: "",
+    source: "wxcc",
+    specVersion: "1.0",
+    time: "2022-04-06T15:12:15.593Z",
+    type: "task:ended",
+  },
+  {
+    data: {
       message: "SMS",
     },
     dataContentType: "application/json",
@@ -1087,7 +1110,7 @@ export const newSampleMock: Timeline.CustomerEvent[] = [
     person: "+14695886412",
     source: "SMS",
     specVersion: "1.0",
-    time: "2021-12-16T22:26:00Z",
+    time: "2022-04-05T22:26:00Z",
     type: "Doug",
   },
   {
@@ -1099,7 +1122,7 @@ export const newSampleMock: Timeline.CustomerEvent[] = [
     person: "+14695886412",
     source: "SMS",
     specVersion: "1.0",
-    time: "2021-12-16T22:26:00Z",
+    time: "2022-04-01T22:26:00Z",
     type: "Doug",
   },
   {
@@ -1111,7 +1134,7 @@ export const newSampleMock: Timeline.CustomerEvent[] = [
     person: "+14695886412",
     source: "SMS",
     specVersion: "1.0",
-    time: "2021-12-16T22:26:00Z",
+    time: "2022-03-24T22:26:00Z",
     type: "Daniel",
   },
   {
@@ -1123,7 +1146,7 @@ export const newSampleMock: Timeline.CustomerEvent[] = [
     person: "+14695886412",
     source: "SMS",
     specVersion: "1.0",
-    time: "2021-12-09T22:26:00Z",
+    time: "2022-03-08T22:26:00Z",
     type: "SMS",
   },
   {

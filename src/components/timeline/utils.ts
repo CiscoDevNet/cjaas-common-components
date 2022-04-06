@@ -74,7 +74,7 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap)).default;
 
   Object.keys(parsedIconMap).forEach((x: string) => {
-    const regex = new RegExp(x);
+    const regex = new RegExp(x, "i");
 
     if (regex.test(eventName)) {
       result = parsedIconMap[x];

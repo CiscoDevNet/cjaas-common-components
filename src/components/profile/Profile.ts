@@ -156,7 +156,6 @@ export namespace ProfileView {
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               const { displayName } = x?.query;
-              console.log("displayName: ", displayName);
               if (this.basicProfileProperties.includes(displayName)) {
                 return html`
                   <tr>
