@@ -60,6 +60,8 @@ export namespace TimelineItem {
      */
     @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
 
+    @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
+
     static get styles() {
       return styles;
     }
@@ -149,7 +151,8 @@ export namespace TimelineItem {
     }
 
     renderShowcase = () => {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isCluster);
+
       // const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
       // const npsScore = this.data["NPS"];
       // if (this.title.toLowerCase().includes("survey")) {
@@ -183,8 +186,10 @@ export namespace TimelineItem {
       }
 
       return html`
-        <p class="date">${dateAndTimeArray?.[0]}</p>
-        ${renderTimeRow}
+        <div class="date-time-container">
+          <p class="date">${dateAndTimeArray?.[0]}</p>
+          ${renderTimeRow}
+        </div>
       `;
     };
 

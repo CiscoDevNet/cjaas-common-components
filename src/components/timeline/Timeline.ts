@@ -295,6 +295,7 @@ export namespace Timeline {
       const clusterId = this.getClusterId(idString, 1);
       const dateObject = DateTime.fromISO(date);
       const readableDate = DateTime.fromISO(date).toFormat("D");
+
       // TO DO: Select a relevant Icon for the clustered view
       return (
         (dateObject > this.calculateOldestEntry() &&
@@ -305,7 +306,9 @@ export namespace Timeline {
                 ? html`
                     <cjaas-timeline-item
                       title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
-                      .data=${{ Date: date }}
+                      .data=${{ Date: readableDate }}
+                      .time=${date}
+                      ?is-cluster=${true}
                       .eventIconTemplate=${this.eventIconTemplate}
                       .badgeKeyword=${this.badgeKeyword}
                     ></cjaas-timeline-item>

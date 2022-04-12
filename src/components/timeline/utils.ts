@@ -104,19 +104,24 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   return result;
 }
 
-export function getTimeStamp(date: DateTime) {
+export function getTimeStamp(date: DateTime, isCluster = false) {
   const now = DateTime.local();
   const diff: any = now.diff(date, ["days", "hours", "minutes", "seconds"]).toObject();
 
   if (diff === undefined) {
     return;
   } else {
-    if (diff.days >= 30) {
+    if (isCluster) {
       return date.toFormat("D");
+    }
+    if (diff.days >= 30) {
+      // return date.toFormat("D");
+      return date.toFormat("f");
     } else if (diff.days >= 1 && diff.days < 30) {
       return date.toFormat("f");
     } else if (diff.days <= 1) {
-      return date.toFormat("tt");
+      // return date.toFormat("tt");
+      return date.toFormat("f");
     } else {
       return "now";
     }
