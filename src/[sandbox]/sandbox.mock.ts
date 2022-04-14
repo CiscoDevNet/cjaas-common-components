@@ -1098,7 +1098,7 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-12T10:12:15.593Z",
+    time: "2022-04-13T10:12:15.593Z",
     type: "live 5 / 14 task:ended",
   },
   {
@@ -1229,19 +1229,19 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "SMS",
     specVersion: "1.0",
     time: "2022-04-10T22:26:00Z",
-    type: "8 Doug",
+    type: "Doug",
   },
   {
     data: {
       message: "SMS",
     },
     dataContentType: "application/json",
-    id: "0e797665-e5e8-4190-bb0a-7f560002ca47",
+    id: "fcc0720e-0396-4f34-92af-f14248f8b8df",
     person: "+14695886412",
     source: "SMS",
     specVersion: "1.0",
-    time: "2022-04-01T22:26:00Z",
-    type: "7 Doug",
+    time: "2022-04-10T23:26:00Z",
+    type: "Doug",
   },
   {
     data: {

@@ -207,7 +207,7 @@ export namespace Timeline {
     toggleActive(e: Event) {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
-      this.activeDateRange = button.id.substr(12, button.id.length - 1);
+      this.activeDateRange = button.id.substring(12);
     }
 
     /**
