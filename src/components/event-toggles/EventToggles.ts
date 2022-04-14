@@ -147,13 +147,13 @@ export namespace EventToggles {
         ></md-combobox>
         <md-tooltip class="filter-tooltip" .message=${tooltipMessage} placement="bottom">
           <md-button
-            variant="green"
+            variant="secondary"
             circle
             @click=${() => {
               this.isFilterOpen = !this.isFilterOpen;
             }}
           >
-            <md-icon slot="icon" name="icon-filter-adr_16"></md-icon>
+            <md-icon class="filter-icon" slot="icon" name="icon-filter_16"></md-icon>
           </md-button>
         </md-tooltip>
       `;

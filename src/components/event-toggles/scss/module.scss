@@ -32,18 +32,6 @@ md-combobox::part(combobox-options) {
 md-button {
   display: inline-block;
   pointer-events: all;
-  md-icon {
-    width: 8px;
-  }
-}
-
-md-button::part(button-children) {
-  align-items: flex-start;
-}
-
-md-icon::part(icon) {
-  top: 1px;
-  right: 3px;
 }
 
 md-combobox {

@@ -179,7 +179,6 @@ export namespace TimelineItem {
       if (dateAndTimeArray && dateAndTimeArray?.length > 1) {
         renderTimeRow = html`
           <div class="time-row">
-            <md-icon class="time-icon" name="icon-recents_12"></md-icon>
             <span class="time-value">${dateAndTimeArray?.[1]}</span>
           </div>
         `;

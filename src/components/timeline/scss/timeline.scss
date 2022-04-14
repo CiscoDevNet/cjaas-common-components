@@ -100,7 +100,7 @@
 
 .controls {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   position: relative;
   justify-content: flex-start;
   gap: 0.5rem;
@@ -160,7 +160,7 @@ md-spinner::part(spinner) {
 .flex-apart {
   display: flex;
   min-height: 36px;
-  width: calc(100% - 40px);
+  width: calc(100% - 42px);
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
@@ -171,7 +171,7 @@ cjaas-event-toggles {
   position: absolute;
   right: 0;
   height: 36px;
-  top: 0;
+  top: 2px;
 }
 
 ::-webkit-scrollbar {
@@ -211,4 +211,27 @@ md-link {
 
 .event-counter.hidden {
   display: none;
+}
+
+.second-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.md-toggle-switch__label {
+  padding-top: 5px;
+}
+
+.livestream-toggle {
+  padding-top: 4px;
+}
+
+.button-group-button {
+  height: 100%;
+  margin: 0;
+}
+
+md-button-group::part(button-group) {
+  padding: 4px;
 }

@@ -216,11 +216,11 @@ export namespace Timeline {
      */
     calculateOldestEntry() {
       switch (this.activeDateRange) {
-        case "day":
+        case "24-hours":
           return DateTime.now().minus({ day: 1 });
-        case "week":
+        case "7-days":
           return DateTime.now().minus({ week: 1 });
-        case "month":
+        case "30-days":
           return DateTime.now().minus({ month: 1 });
         default:
           return DateTime.now().minus({ year: 10 });
@@ -259,7 +259,7 @@ export namespace Timeline {
 
     renderNewEventQueueToggle() {
       return html`
-        <md-toggle-switch smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
+        <md-toggle-switch class="livestream-toggle" smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
           <span style="font-size:.75rem;">
             Livestream
           </span>
@@ -383,35 +383,9 @@ export namespace Timeline {
 
     renderDateRangeButtons() {
       return html`
-        <md-button-group active="3">
+        <md-button-group active="0">
           <button
-            slot="button"
-            id="filter-last-day"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Day"
-          >
-            Day
-          </button>
-          <button
-            slot="button"
-            id="filter-last-week"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Week"
-          >
-            Week
-          </button>
-          <button
-            slot="button"
-            id="filter-last-month"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Month"
-          >
-            Month
-          </button>
-          <button
+            class="button-group-button"
             slot="button"
             id="filter-last-all"
             type="button"
@@ -420,11 +394,41 @@ export namespace Timeline {
           >
             All
           </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-24-hours"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 24 Hours"
+          >
+            Last 24 Hours
+          </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-7-days"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 7 Days"
+          >
+            Last 7 Days
+          </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-30-days"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 30 Days"
+          >
+            Last 30 Days
+          </button>
         </md-button-group>
       `;
     }
 
-    renderToggleButtons() {
+    renderFilterButton() {
       return html`
         <cjaas-event-toggles
           .eventTypes=${this.eventTypes}
@@ -505,10 +509,17 @@ export namespace Timeline {
         ? html`
             <div class="wrapper" part="timeline-wrapper">
               <section class="controls" part="controls">
-                <div class="flex-apart">
-                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
+                <div class="row first-row">
+                  <div class="flex-apart">
+                    ${this.renderDateRangeButtons()}
+                  </div>
+                  <div class="filter-button-wrapper">
+                    ${this.renderFilterButton()}
+                  </div>
                 </div>
-                ${this.renderToggleButtons()}
+                <div class="row second-row">
+                  ${this.renderNewEventQueueToggle()}
+                </div>
               </section>
               <section class="stream" part="stream">
                 ${repeat(

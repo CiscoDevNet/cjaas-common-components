@@ -44,8 +44,7 @@
   }
 
   .info-section {
-    margin-left: 12px;
-    margin-right: 2rem;
+    margin: 0 12px;
     flex: 1 1 auto;
     padding-top: 4px;
     width: 0;
@@ -61,6 +60,7 @@
 
   .sub-title {
     @include secondary-text();
+    @include ellipsis-text();
     font-size: 12px;
     line-height: 12px;
     margin: 8px 0;
@@ -99,7 +99,7 @@
     @include body-small-regular();
     @include secondary-text();
     padding: .5rem;
-    flex: 0 0 5.25rem;
+    flex: 0 0 2.25rem;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
@@ -111,10 +111,7 @@
 
     .time-row {
       display: flex;
-
-      .time-value {
-        padding-left: 0.2rem;
-      }
+      justify-content: flex-end;
     }
   }
 
