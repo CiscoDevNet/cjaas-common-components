@@ -52,8 +52,15 @@ export namespace TimelineItem {
      * Property to pass in data template to set color and icon settings and showcased data
      * @prop eventIconTemplate
      */
-    @property({ attribute: false })
-    eventIconTemplate: Timeline.TimelineCustomizations = iconData;
+    @property({ attribute: false }) eventIconTemplate: Timeline.TimelineCustomizations = iconData;
+
+    /**
+     * @prop badgeKeyword
+     * set badge icon based on declared keyword from dataset
+     */
+    @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
+
+    @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
 
     static get styles() {
       return styles;
@@ -144,26 +151,46 @@ export namespace TimelineItem {
     }
 
     renderShowcase = () => {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local());
-      const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
-      const npsScore = this.data["NPS"];
-      if (this.title.toLowerCase().includes("survey")) {
-        return html`
-          <div class="nps" style="background-color: var(--response-${npsScore});">
-            ${npsScore || "-"}
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isCluster);
+
+      // const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
+      // const npsScore = this.data["NPS"];
+      // if (this.title.toLowerCase().includes("survey")) {
+      //   return html`
+      //     <div class="nps" style="background-color: var(--response-${npsScore});">
+      //       ${npsScore || "-"}
+      //     </div>
+      //   `;
+      // }
+      // try {
+      //   const { showcase } = parsedIconMap![this.title];
+      //   if (showcase && this.data[showcase]) {
+      //     return this.data[showcase];
+      //   } else {
+      //     return timeStamp;
+      //   }
+      // } catch {
+      //   if (this.title.includes("events")) return;
+      // }
+
+      const dateAndTimeArray = timeStamp?.split(",");
+
+      let renderTimeRow = nothing;
+      if (dateAndTimeArray && dateAndTimeArray?.length > 1) {
+        renderTimeRow = html`
+          <div class="time-row">
+            <md-icon class="time-icon" name="icon-recents_12"></md-icon>
+            <span class="time-value">${dateAndTimeArray?.[1]}</span>
           </div>
         `;
       }
-      try {
-        const { showcase } = parsedIconMap![this.title];
-        if (showcase && this.data[showcase]) {
-          return this.data[showcase];
-        } else {
-          return timeStamp;
-        }
-      } catch {
-        if (this.title.includes("events")) return;
-      }
+
+      return html`
+        <div class="date-time-container">
+          <p class="date">${dateAndTimeArray?.[0]}</p>
+          ${renderTimeRow}
+        </div>
+      `;
     };
 
     expandDetails = () => {
@@ -178,7 +205,7 @@ export namespace TimelineItem {
     }
 
     render() {
-      const iconData = getIconData(this.title, this.eventIconTemplate!);
+      const iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">

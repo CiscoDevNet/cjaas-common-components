@@ -3,6 +3,10 @@
     "name": "icon-sms_16",
     "color": "mint"
   },
+  "Telephony": {
+    "name": "icon-handset-active_16",
+    "color": "green"
+  },
   "Voice": {
     "name": "icon-handset-active_16",
     "color": "green"

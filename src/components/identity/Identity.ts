@@ -93,7 +93,7 @@ export namespace Identity {
 
       const inputPlaceholder = `Enter new alias for ${this.customer}`;
 
-      const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form more complete profile of your customer.`;
+      const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
 
       const buttonText = this.isAPIInProgress ? spinnerInline : "Add";
 
