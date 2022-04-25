@@ -10,5 +10,6 @@ export const timelineTemplate = html`
     .timelineItems=${nineTimelineItems}
     event-filters
     .newestEvents=${fiveNewEvents}
+    .badgeKeyword=${"type"}
   ></cjaas-timeline>
 `;

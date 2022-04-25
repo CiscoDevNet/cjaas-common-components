@@ -131,6 +131,8 @@ export namespace Timeline {
      * Store for visible dates
      */
     @internalProperty() activeDateRange!: string;
+
+    @internalProperty() dateRangeOldestDate: DateTime = DateTime.now().minus({ year: 10 });
     /**
      * @prop expandDetails
      * Toggle expanded event details
@@ -139,10 +141,14 @@ export namespace Timeline {
 
     @internalProperty() apiInProgress = true;
 
+    filteredByTypeList: CustomerEvent[] | null = null;
+
+    newestEventsFilteredByType: Array<CustomerEvent> = [];
+
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
       this.getEventTypes();
-      this.activeTypes = this.eventTypes;
+      this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     updated(changedProperties: PropertyValues) {
@@ -153,10 +159,6 @@ export namespace Timeline {
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.showNewEvents();
-      }
-
-      if (changedProperties.has("eventTypes")) {
-        this.activeTypes = this.eventTypes;
       }
     }
 
@@ -173,18 +175,6 @@ export namespace Timeline {
       });
       this.eventTypes = Array.from(eventArray);
     }
-
-    // toggleDetailView = () => {
-    //   this.expandDetails = !this.expandDetails;
-    // };
-
-    // renderDetailsControl = () => {
-    //   return html`
-    //     <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
-    //       ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
-    //     >
-    //   `;
-    // };
 
     getClusterId(text: string, key: number) {
       return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
@@ -208,6 +198,7 @@ export namespace Timeline {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
       this.activeDateRange = button.id.substring(12);
+      this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     /**
@@ -235,7 +226,7 @@ export namespace Timeline {
      */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
-        this.timelineItems = [...this.newestEvents, ...(this.timelineItems || [])];
+        this.timelineItems = [...this.newestEvents, ...(this.filteredByTypeList || [])];
         this.newestEvents = [];
         this.dispatchEvent(
           new CustomEvent("new-event-queue-cleared", {
@@ -293,31 +284,25 @@ export namespace Timeline {
       const eventsKeyword = events.length === 1 ? "event" : "events";
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
-      const dateObject = DateTime.fromISO(date);
       const readableDate = DateTime.fromISO(date).toFormat("D");
 
-      // TO DO: Select a relevant Icon for the clustered view
-      return (
-        (dateObject > this.calculateOldestEntry() &&
-          html`
-            <div class="timeline date-set has-line" id=${clusterId}>
-              ${this.renderTimeBadge(readableDate, clusterId)}
-              ${this.collapsed.has(clusterId)
-                ? html`
-                    <cjaas-timeline-item
-                      title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
-                      .data=${{ Date: readableDate }}
-                      .time=${date}
-                      ?is-cluster=${true}
-                      .eventIconTemplate=${this.eventIconTemplate}
-                      .badgeKeyword=${this.badgeKeyword}
-                    ></cjaas-timeline-item>
-                  `
-                : this.populateEvents(groupedItem.events)}
-            </div>
-          `) ||
-        nothing
-      );
+      return html`
+        <div class="timeline date-set has-line" id=${clusterId}>
+          ${this.renderTimeBadge(readableDate, clusterId)}
+          ${this.collapsed.has(clusterId)
+            ? html`
+                <cjaas-timeline-item
+                  title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
+                  .data=${{ Date: readableDate }}
+                  .time=${date}
+                  ?is-cluster=${true}
+                  .eventIconTemplate=${this.eventIconTemplate}
+                  .badgeKeyword=${this.badgeKeyword}
+                ></cjaas-timeline-item>
+              `
+            : this.populateEvents(groupedItem.events)}
+        </div>
+      `;
     }
 
     /**
@@ -362,8 +347,7 @@ export namespace Timeline {
               title=${`${cluster.length} ${clusterType} events`}
               type=${clusterType}
               time=${cluster[0].time}
-              class="has-line show-${this.activeTypes.includes(clusterType) ||
-                this.activeDates.includes(cluster[0].time)}"
+              class="has-line"
               .events=${cluster}
               ?grouped=${this.collapseView}
               .activeDates=${this.activeDates}
@@ -443,6 +427,7 @@ export namespace Timeline {
 
     renderEventBlock(event: CustomerEvent) {
       const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
+
       return html`
         <cjaas-timeline-item
           .event=${event}
@@ -454,13 +439,13 @@ export namespace Timeline {
           .eventIconTemplate=${this.eventIconTemplate}
           .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"
-          class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
+          class="has-line"
         ></cjaas-timeline-item>
       `;
     }
 
     renderLoadMoreAction() {
-      return (this.timelineItems || []).length > this.limit && this.activeTypes.length > 0
+      return (this.filteredByTypeList || []).length > this.limit
         ? html`
             <md-link
               @click=${(e: Event) => {
@@ -478,6 +463,8 @@ export namespace Timeline {
     }
 
     renderEmptyState() {
+      const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
+
       if (this.apiInProgress) {
         return html`
           <div class="empty-state">
@@ -493,47 +480,85 @@ export namespace Timeline {
             <span class="empty-state-text">No historic events to show. Listening for new events...</span>
           </div>
         `;
+      } else if (isFilteredListEmpty) {
+        return html`
+          <div class="empty-state">
+            <div>
+              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
+            </div>
+            <span class="empty-state-text">No historic events exist within the current date range.</span>
+          </div>
+        `;
+      }
+    }
+
+    filterByType(list: CustomerEvent[] | undefined | null) {
+      if (this.activeTypes.length) {
+        return list?.filter(item => this.activeTypes.includes(item.type)) || null;
+      } else {
+        return list;
+      }
+    }
+
+    convertStringToDateObject(time: string) {
+      return DateTime.fromJSDate(new Date(time)).toUTC();
+    }
+
+    filterByDateRange() {
+      return this.timelineItems?.filter(item => {
+        return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
+      });
+    }
+
+    renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
+      if (dateGroupArray.length > 0) {
+        return html`
+          ${repeat(
+            dateGroupArray,
+            singleDaysEvents => singleDaysEvents.date,
+            singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
+          )}
+        `;
+      } else {
+        return this.renderEmptyState();
       }
     }
 
     render() {
       // Groups items by date
-      const limitedList = (this.timelineItems || []).slice(0, this.limit);
+      const filterByDateRangeResult = this.filterByDateRange();
+      this.filteredByTypeList = this.filterByType(filterByDateRangeResult) || null;
+      const limitedList = (this.filteredByTypeList || []).slice(0, this.limit);
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
+
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
       });
 
-      return Object.keys(groupedByDate).length > 0
-        ? html`
-            <div class="wrapper" part="timeline-wrapper">
-              <section class="controls" part="controls">
-                <div class="row first-row">
-                  <div class="flex-apart">
-                    ${this.renderDateRangeButtons()}
-                  </div>
-                  <div class="filter-button-wrapper">
-                    ${this.renderFilterButton()}
-                  </div>
-                </div>
-                <div class="row second-row">
-                  ${this.renderNewEventQueueToggle()}
-                </div>
-              </section>
-              <section class="stream" part="stream">
-                ${repeat(
-                  dateGroupArray,
-                  singleDaysEvents => singleDaysEvents.date,
-                  singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
-                )}
-                <div class="footer">
-                  ${this.renderLoadMoreAction()}
-                </div>
-              </section>
+      return html`
+        <div class="wrapper" part="timeline-wrapper">
+          <section class="controls" part="controls">
+            <div class="row first-row">
+              <div class="flex-apart">
+                ${this.renderDateRangeButtons()}
+              </div>
+              <div class="filter-button-wrapper">
+                ${this.renderFilterButton()}
+              </div>
             </div>
-          `
-        : this.renderEmptyState();
+            <div class="row second-row">
+              ${this.renderNewEventQueueToggle()}
+            </div>
+          </section>
+          <section class="stream" part="stream">
+            ${this.renderList(dateGroupArray)}
+            <div class="footer">
+              ${this.renderLoadMoreAction()}
+            </div>
+          </section>
+        </div>
+      `;
     }
   }
 }

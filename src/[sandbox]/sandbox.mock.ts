@@ -1098,8 +1098,8 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-13T10:12:15.593Z",
-    type: "live 5 / 14 task:ended",
+    time: "2022-04-20T10:12:15.593Z",
+    type: "Chat",
   },
   {
     data: {
@@ -1121,8 +1121,8 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-12T09:12:15.593Z",
-    type: "live 4 / 13 task:started",
+    time: "2022-04-20T09:12:15.593Z",
+    type: "Email",
   },
   {
     data: {
@@ -1144,8 +1144,8 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-12T08:12:15.593Z",
-    type: "live 3 / 12 task:completed",
+    time: "2022-04-19T08:12:15.593Z",
+    type: "Telephony",
   },
   {
     data: {
@@ -1167,8 +1167,8 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-12T06:12:15.593Z",
-    type: "live 2 / 11 task:ended",
+    time: "2022-04-19T06:12:15.593Z",
+    type: "SMS",
   },
   {
     data: {
@@ -1190,15 +1190,15 @@ export const fiveNewEvents: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-12T05:12:15.593Z",
-    type: "live 1 / 10 task:changed",
+    time: "2022-04-18T05:12:15.593Z",
+    type: "Chat",
   },
 ];
 
 export const nineTimelineItems: Timeline.CustomerEvent[] = [
   {
     data: {
-      channelType: "chat",
+      channelType: "Email",
       createdTime: 1646086335593,
       destination: "+13333338888",
       direction: "INBOUND",
@@ -1216,8 +1216,8 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
-    time: "2022-04-14T10:12:15.593Z",
-    type: "9 task:ended",
+    time: "2022-04-10T10:12:15.593Z",
+    type: "Email",
   },
   {
     data: {
@@ -1229,7 +1229,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "SMS",
     specVersion: "1.0",
     time: "2022-04-10T22:26:00Z",
-    type: "Doug",
+    type: "Email",
   },
   {
     data: {
@@ -1241,7 +1241,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "SMS",
     specVersion: "1.0",
     time: "2022-04-10T23:26:00Z",
-    type: "Doug",
+    type: "Telephony",
   },
   {
     data: {
@@ -1253,7 +1253,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "SMS",
     specVersion: "1.0",
     time: "2022-03-24T22:26:00Z",
-    type: "6 Daniel",
+    type: "SMS",
   },
   {
     data: {
@@ -1265,7 +1265,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "SMS",
     specVersion: "1.0",
     time: "2022-03-08T22:26:00Z",
-    type: "5 SMS",
+    type: "Email",
   },
   {
     data: {
@@ -1278,7 +1278,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     person: "DougKing",
     source: "WebChat",
     time: "2022-01-10T16:01:19.385Z",
-    type: "4 wxcc-tasks:state_change",
+    type: "Email",
   },
   {
     data: {
@@ -1291,7 +1291,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     person: "DougKing",
     source: "WebChat",
     time: "2021-05-29T16:01:19.385Z",
-    type: "3 wxcc-tasks:state_change",
+    type: "Chat",
   },
   {
     data: {
@@ -1305,7 +1305,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "Voice",
     specVersion: "1.0",
     time: "2022-01-10T19:57:02.715984Z",
-    type: "2 Voice",
+    type: "Telephony",
   },
   {
     data: {
@@ -1319,7 +1319,7 @@ export const nineTimelineItems: Timeline.CustomerEvent[] = [
     source: "Voice",
     specVersion: "1.0",
     time: "2022-01-10T19:56:26.111791Z",
-    type: "1 Voice",
+    type: "SMS",
   },
 ];
 

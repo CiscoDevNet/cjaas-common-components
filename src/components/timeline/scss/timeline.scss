@@ -235,3 +235,11 @@ md-link {
 md-button-group::part(button-group) {
   padding: 4px;
 }
+
+md-button-group {
+  padding-left: 2px;
+}
+
+md-toggle-switch {
+  padding-left: 2px;
+}

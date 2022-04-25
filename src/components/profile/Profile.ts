@@ -71,6 +71,7 @@ export namespace ProfileView {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
       // Accept a type parameter to render phone / email / etc.
       // See the "contactData.contactChannels" property, parse an array of objects.
+      // if ((this.contactData?.imgSrc || this.contactData?.name) && this.contactData?.email) {
       if (this.contactData?.email) {
         return html`
           <div class="contact-item">

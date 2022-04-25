@@ -11,7 +11,6 @@ import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import { DateTime } from "luxon";
 import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace TimelineItemGroup {
@@ -79,13 +78,12 @@ export namespace TimelineItemGroup {
       this.dispatchEvent(
         new CustomEvent("toggle-group", {
           bubbles: true,
-          composed: true
+          composed: true,
         })
       );
     };
 
     renderSingleton(event: Timeline.CustomerEvent) {
-      const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
       return html`
         <cjaas-timeline-item
           .event=${event}
@@ -96,20 +94,19 @@ export namespace TimelineItemGroup {
           .person=${event.person || null}
           group-item
           .eventIconTemplate=${this.eventIconTemplate}
-          class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
+          class="has-line"
         ></cjaas-timeline-item>
       `;
     }
 
     render() {
-      const stringDate = DateTime.fromISO(this.time).toFormat("dd LLL yyyy");
       return this.grouped
         ? html`
             <cjaas-timeline-item
               @click=${() => this.expandDetails()}
               title=${this.title}
               time=${this.time}
-              class="has-line show-${this.activeTypes.includes(this.type) || this.activeDates.includes(stringDate)}"
+              class="has-line"
               .data=${{ "Event Group": this.title }}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>

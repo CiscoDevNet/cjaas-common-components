@@ -83,35 +83,7 @@ export namespace EventToggles {
       }
     };
 
-    firstUpdated(changedProperties: PropertyValues) {
-      super.firstUpdated(changedProperties);
-      this.activeTypes = this.eventTypes;
-    }
-
-    updated(changedProperties: PropertyValues) {
-      if (changedProperties.has("eventTypes")) {
-        // new incoming eventTypes needs to be added to active types be default
-        const oldValue = changedProperties.get("eventTypes") || [];
-        if ((oldValue as Array<string>)?.length == 0) {
-          this.activeTypes = this.eventTypes.slice();
-        } else {
-          const differences = this.eventTypes?.filter(x => !((oldValue as string[]) || []).includes(x));
-          this.activeTypes = this.activeTypes.concat(differences);
-        }
-
-        this.dispatchEvent(
-          new CustomEvent("active-type-update", {
-            bubbles: true,
-            composed: true,
-            detail: {
-              activeTypes: this.activeTypes,
-            },
-          })
-        );
-      }
-    }
-
-    toggleFilter(e: CustomEvent) {
+    comboboxChangeSelected(e: CustomEvent) {
       this.activeTypes = e.detail.selected;
       this.dispatchEvent(
         new CustomEvent("active-type-update", {
@@ -142,12 +114,12 @@ export namespace EventToggles {
           .noClearIcon=${true}
           .visibleOptions=${3}
           shape="pill"
-          @change-selected=${(e: CustomEvent) => this.toggleFilter(e)}
+          @change-selected=${(e: CustomEvent) => this.comboboxChangeSelected(e)}
           @remove-all-selected=${() => (this.activeTypes = [])}
         ></md-combobox>
         <md-tooltip class="filter-tooltip" .message=${tooltipMessage} placement="bottom">
           <md-button
-            variant="secondary"
+            variant=${this.activeTypes.length ? "green" : "secondary"}
             circle
             @click=${() => {
               this.isFilterOpen = !this.isFilterOpen;

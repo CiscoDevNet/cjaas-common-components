@@ -13,14 +13,15 @@ md-combobox {
 }
 
 md-combobox::part(combobox) {
-  width: 100%;
+  width: 18rem;
 }
 md-combobox::part(group) {
   overflow: auto;
   min-height: 2rem;
   border-radius: 0.75rem;
-  padding: 0.4rem 0.6rem;
+  padding: 0.2rem 0.5rem;
   border: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
+  width: 18rem;
 }
 md-combobox::part(multiwrap) {
   flex-wrap: wrap;
@@ -32,6 +33,18 @@ md-combobox::part(combobox-options) {
 md-button {
   display: inline-block;
   pointer-events: all;
+  md-icon {
+    width: 10px;
+  }
+}
+
+md-button::part(button-children) {
+  align-items: flex-start;
+}
+
+md-icon::part(icon) {
+  top: 1px;
+  right: 3px;
 }
 
 md-combobox {
