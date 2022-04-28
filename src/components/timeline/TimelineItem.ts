@@ -204,18 +204,21 @@ export namespace TimelineItem {
     }
 
     render() {
-      const iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+      let iconData;
+      if (this.data) {
+        iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+      }
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
           <div class="top-content">
-            <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
-              ${iconData.name
+            <md-badge class="badge" .circle=${true} size="40" .color=${iconData?.color}>
+              ${iconData?.name
                 ? html`
-                    <md-icon class="badge-icon" .name=${iconData.name}></md-icon>
+                    <md-icon class="badge-icon" .name=${iconData?.name}></md-icon>
                   `
                 : html`
-                    <img src=${iconData.src} />
+                    <img src=${iconData?.src} />
                   `}
             </md-badge>
             <div class="info-section">

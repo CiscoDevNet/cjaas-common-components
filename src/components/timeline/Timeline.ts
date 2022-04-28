@@ -58,10 +58,10 @@ export namespace Timeline {
      */
     @property({ type: Number, reflect: true }) limit = 5;
     /**
-     * @attr loading
-     * Toggle Loading state
+     * @prop getEventsInProgress
+     * Whether or not to render loading spinner or not
      */
-    @property({ type: Boolean }) loading = true;
+    @property({ type: Boolean }) getEventsInProgress = false;
     /**
      * @attr event-filters
      * Show/hide event filters UI
@@ -138,8 +138,6 @@ export namespace Timeline {
      * Toggle expanded event details
      */
     @internalProperty() expandDetails = false;
-
-    @internalProperty() apiInProgress = true;
 
     filteredByTypeList: CustomerEvent[] | null = null;
 
@@ -426,8 +424,6 @@ export namespace Timeline {
     }
 
     renderEventBlock(event: CustomerEvent) {
-      const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
-
       return html`
         <cjaas-timeline-item
           .event=${event}
@@ -464,8 +460,7 @@ export namespace Timeline {
 
     renderEmptyState() {
       const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-
-      if (this.apiInProgress) {
+      if (this.getEventsInProgress) {
         return html`
           <div class="empty-state">
             <md-spinner size="32"></md-spinner>

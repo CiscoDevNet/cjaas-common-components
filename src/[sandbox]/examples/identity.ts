@@ -14,6 +14,24 @@ const aliasDeleteInProgress = {
 };
 
 export const identityTemplate = html`
-  <cjaas-identity .alias=${alias} .aliasDeleteInProgress=${aliasDeleteInProgress} .customer=${"Alex Ross"}>
+  <h3>Default</h3>
+  <cjaas-identity .alias=${alias} .customer=${"Alex Ross"}> </cjaas-identity>
+
+  <h3>No Aliases</h3>
+  <cjaas-identity .customer=${"Alex Ross"}> </cjaas-identity>
+
+  <h3>Alias Delete In Progress</h3>
+  <cjaas-identity
+    .alias=${alias}
+    .aliasDeleteInProgress=${aliasDeleteInProgress}
+    .aliasAddInProgress=${true}
+    .customer=${"Alex Ross"}
+  >
   </cjaas-identity>
+
+  <h3>Alias Add In Progress</h3>
+  <cjaas-identity .alias=${alias} .aliasAddInProgress=${true} .customer=${"Alex Ross"}> </cjaas-identity>
+
+  <h3>Alias Get In Progress</h3>
+  <cjaas-identity .alias=${alias} aliasGetInProgress .customer=${"Alex Ross"}> </cjaas-identity>
 `;
