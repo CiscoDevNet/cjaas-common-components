@@ -26,17 +26,37 @@ import { Button } from "@momentum-ui/web-components";
 import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
+  export interface ImiDataPayload {
+    channelType?: string;
+    type?: string;
+  }
+
+  export interface WxccDataPayload {
+    agentId?: string; // state_change
+    currentState?: string; // state_change
+    teamId?: string; // state_change
+    channelType?: string; // types
+    createdTime?: number;
+    destination?: string;
+    direction?: "INBOUND" | "OUTBOUND"; // types
+    origin?: string;
+    outboundType?: string | null;
+    reason?: string; // ended
+    terminatingParty?: string; // ended
+    queueId?: string;
+    taskId?: string;
+    workflowManager?: string | null; // task new
+    type?: string;
+  }
+
   export interface CustomerEvent {
     data: Record<string, any>;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    dataContentType?: string;
-    previously?: string;
+    dataContentType: string;
     id: string;
     person: string;
-    source?: string;
-    specVersion?: string;
+    previously: string;
+    source: string;
+    specVersion: string;
     time: string;
     type: string;
   }
@@ -82,13 +102,11 @@ export namespace Timeline {
      * Set default event groups to collapsed
      */
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
-
     /**
      * @prop badgeKeyword
      * set badge icon based on declared keyword from dataset
      */
     @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
-
     // Data Property Input from Application
     /**
      * @prop timelineItems
@@ -460,13 +478,14 @@ export namespace Timeline {
 
     renderEmptyState() {
       const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-      if (this.getEventsInProgress) {
-        return html`
-          <div class="empty-state">
-            <md-spinner size="32"></md-spinner>
-          </div>
-        `;
-      } else if (!this.timelineItems || this.timelineItems.length === 0) {
+      // if (this.getEventsInProgress) {
+      //   return html`
+      //     <div class="empty-state">
+      //       <md-spinner size="32"></md-spinner>
+      //     </div>
+      //   `;
+      // } else
+      if (!this.timelineItems || this.timelineItems.length === 0) {
         return html`
           <div class="empty-state">
             <div>
@@ -506,7 +525,13 @@ export namespace Timeline {
     }
 
     renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
-      if (dateGroupArray.length > 0) {
+      if (this.getEventsInProgress) {
+        return html`
+          <div class="empty-state">
+            <md-spinner size="32"></md-spinner>
+          </div>
+        `;
+      } else if (dateGroupArray.length > 0) {
         return html`
           ${repeat(
             dateGroupArray,

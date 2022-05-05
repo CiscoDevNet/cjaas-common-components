@@ -94,10 +94,8 @@ export namespace TimelineItem {
               if (data[x]) {
                 /* eslint disable */
                 return html`
-                  <tr class="row">
-                    <td title=${x} class="label">${x}</td>
-                    <td title=${data[x]} class="value" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</td>
-                  </tr>
+                  <div title=${x} class="cell">${x}</div>
+                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</div>
                 `;
               }
             } else {
@@ -111,9 +109,9 @@ export namespace TimelineItem {
     renderExpandedDetails = () => {
       if (this.data === nothing) return nothing;
       return html`
-        <table class="details">
+        <div class="details grid">
           ${this.createTableRecursive(this.data)}
-        </table>
+        </div>
       `;
     };
 

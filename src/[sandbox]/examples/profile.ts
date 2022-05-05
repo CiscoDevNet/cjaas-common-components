@@ -14,15 +14,23 @@ export const profileTemplate = html`
   <h4>Snapshot display, contactData provided</h4>
   <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot> </cjaas-profile>
   <h4>Snapshot display, Loading</h4>
-  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot getProfileDataInProgress> </cjaas-profile>
+  <cjaas-profile
+    .contactData=${contactDataMock}
+    .profileData=${profileMock}
+    snapshot
+    getProfileDataInProgress
+  ></cjaas-profile>
   <h4>Compact display, contactData provided</h4>
   <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact> </cjaas-profile>
   <h4>Compact display, Loading</h4>
-  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact getProfileDataInProgress> </cjaas-profile>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact getProfileDataInProgress>
+  </cjaas-profile>
   <h4>With "No Data" Localized Message passed in</h4>
   <cjaas-profile>
     <p slot="l10n-no-data-message">No se han proporcionado datos</p>
   </cjaas-profile>
   <h4>Empty Contact Data & Profile Data</h4>
   <cjaas-profile .contactData=${{}} .profileData=${{}}></cjaas-profile>
+  <h4>Empty Contact Data & Profile Data but getProfileDataInProgress</h4>
+  <cjaas-profile .contactData=${{}} .profileData=${{}} getProfileDataInProgress></cjaas-profile>
 `;

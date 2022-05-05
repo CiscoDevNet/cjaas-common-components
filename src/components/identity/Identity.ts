@@ -91,6 +91,12 @@ export namespace Identity {
         </div>
       `;
 
+      const renderNullCustomerView = html`
+        <div class="null-customer-identity-view">
+          <p class="null-customer-text">No customer provided. Cannot execute any actions.</p>
+        </div>
+      `;
+
       const inputPlaceholder = `Enter new alias for ${this.customer}`;
 
       const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
@@ -115,23 +121,29 @@ export namespace Identity {
         `;
       }
 
-      return html`
-        <div class="flex alias-input-row">
-          <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
-          <md-button .disabled=${this.aliasAddInProgress} variant="secondary" @click=${async () => this.addAlias()}>
-            ${buttonText}
-          </md-button>
-        </div>
-        <div part="aliases-container" class="aliases">
-          <div part="alias-header-container" class="header-container">
-            <h3 class="aliases-header">Aliases</h3>
-            <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
-              <md-icon class="alias-info-icon" name="info_14"></md-icon>
-            </md-tooltip>
+      if (this.customer) {
+        return html`
+          <div class="flex alias-input-row">
+            <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
+            <md-button .disabled=${this.aliasAddInProgress} variant="secondary" @click=${async () => this.addAlias()}>
+              ${buttonText}
+            </md-button>
           </div>
-          ${consolidatedAliases}
-        </div>
-      `;
+          <div part="aliases-container" class="aliases">
+            <div part="alias-header-container" class="header-container">
+              <h3 class="aliases-header">Aliases</h3>
+              <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
+                <md-icon class="alias-info-icon" name="info_14"></md-icon>
+              </md-tooltip>
+            </div>
+            ${consolidatedAliases}
+          </div>
+        `;
+      } else {
+        return html`
+          ${renderNullCustomerView}
+        `;
+      }
     }
   }
 }

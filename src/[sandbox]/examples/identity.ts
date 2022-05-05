@@ -20,6 +20,9 @@ export const identityTemplate = html`
   <h3>No Aliases</h3>
   <cjaas-identity .customer=${"Alex Ross"}> </cjaas-identity>
 
+  <h3>Null Customer</h3>
+  <cjaas-identity .customer=${null}> </cjaas-identity>
+
   <h3>Alias Delete In Progress</h3>
   <cjaas-identity
     .alias=${alias}

@@ -252,7 +252,7 @@ export namespace ProfileView {
     }
 
     render() {
-      if (this.contactData && this.profileData?.length > 0) {
+      if (this.getProfileDataInProgress || (this.contactData && this.profileData?.length > 0)) {
         return this.compact ? this.getCompact() : this.snapshot ? this.getSnapshot() : this.renderFullProfileView();
       } else {
         return html`
