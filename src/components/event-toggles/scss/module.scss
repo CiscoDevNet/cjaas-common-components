@@ -13,15 +13,26 @@ md-combobox {
 }
 
 md-combobox::part(combobox) {
-  width: 18rem;
+  width: 100%;
+
+  // 100% of timeline container
+  width: 100%;
+
+  // height grows ass more items are selected
+  height: 100%;
 }
 md-combobox::part(group) {
   overflow: auto;
   min-height: 2rem;
   border-radius: 0.75rem;
-  padding: 0.2rem 0.5rem;
   border: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
-  width: 18rem;
+  padding: 0.4rem 0.6rem;
+
+  // 100% of timeline container
+  width: 100%;
+
+  // height grows ass more items are selected
+  height: 100%;
 }
 md-combobox::part(multiwrap) {
   flex-wrap: wrap;

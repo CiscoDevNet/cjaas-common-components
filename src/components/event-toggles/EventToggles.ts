@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, PropertyValues, internalProperty } from "lit-element";
+import { LitElement, html, property, internalProperty } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import "@momentum-ui/web-components/dist/comp/md-combobox";
