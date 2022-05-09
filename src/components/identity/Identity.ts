@@ -10,10 +10,10 @@ const NO_ALIAS_TEXT = "Currently, no aliases exist.";
 export namespace Identity {
   @customElementWithCheck("cjaas-identity")
   export class ELEMENT extends LitElement {
-    @property() aliasDeleteInProgress: { [key: string]: boolean } = {};
     @property() customer: string | null = null;
-    @property({ type: Boolean }) isAPIInProgress = false;
-    @property({ type: Boolean }) getAPIInProgress = false;
+    @property() aliasDeleteInProgress: { [key: string]: boolean } = {};
+    @property({ type: Boolean }) aliasAddInProgress = false;
+    @property({ type: Boolean }) aliasGetInProgress = false;
     @property({ attribute: false }) alias:
       | undefined
       | {
@@ -27,7 +27,7 @@ export namespace Identity {
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-      if (changedProperties.has("getAPIInProgress") && !this.getAPIInProgress) {
+      if (changedProperties.has("getAPIInProgress") && !this.aliasGetInProgress) {
         if (this.aliasInput) {
           this.aliasInput.value = "";
         }
@@ -87,7 +87,13 @@ export namespace Identity {
 
       const spinner = html`
         <div class="spinner-container">
-          <md-spinner size="18"></md-spinner>
+          <md-spinner size="32"></md-spinner>
+        </div>
+      `;
+
+      const renderNullCustomerView = html`
+        <div class="null-customer-identity-view">
+          <p class="null-customer-text">No customer provided. Cannot execute any actions.</p>
         </div>
       `;
 
@@ -95,7 +101,7 @@ export namespace Identity {
 
       const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
 
-      const buttonText = this.isAPIInProgress ? spinnerInline : "Add";
+      const buttonText = this.aliasAddInProgress ? spinnerInline : "Add";
 
       let consolidatedAliases = html`
         <div class="no-alias-wrapper">
@@ -103,7 +109,7 @@ export namespace Identity {
         </div>
       `;
 
-      if (this.getAPIInProgress) {
+      if (this.aliasGetInProgress) {
         consolidatedAliases = spinner;
       } else if (this.alias && this.alias?.aliases?.length > 0) {
         consolidatedAliases = aliasList;
@@ -115,23 +121,29 @@ export namespace Identity {
         `;
       }
 
-      return html`
-        <div class="flex alias-input-row">
-          <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
-          <md-button .disabled=${this.isAPIInProgress} variant="secondary" @click=${async () => this.addAlias()}>
-            ${buttonText}
-          </md-button>
-        </div>
-        <div part="aliases-container" class="aliases">
-          <div part="alias-header-container" class="header-container">
-            <h3 class="aliases-header">Aliases</h3>
-            <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
-              <md-icon class="alias-info-icon" name="info_14"></md-icon>
-            </md-tooltip>
+      if (this.customer) {
+        return html`
+          <div class="flex alias-input-row">
+            <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
+            <md-button .disabled=${this.aliasAddInProgress} variant="secondary" @click=${async () => this.addAlias()}>
+              ${buttonText}
+            </md-button>
           </div>
-          ${consolidatedAliases}
-        </div>
-      `;
+          <div part="aliases-container" class="aliases">
+            <div part="alias-header-container" class="header-container">
+              <h3 class="aliases-header">Aliases</h3>
+              <md-tooltip class="alias-info-tooltip" .message=${tooltipMessage}>
+                <md-icon class="alias-info-icon" name="info_14"></md-icon>
+              </md-tooltip>
+            </div>
+            ${consolidatedAliases}
+          </div>
+        `;
+      } else {
+        return html`
+          ${renderNullCustomerView}
+        `;
+      }
     }
   }
 }

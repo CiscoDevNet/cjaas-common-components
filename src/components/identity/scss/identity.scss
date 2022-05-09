@@ -53,7 +53,8 @@
   }
 }
 
-.alias-text {
+.alias-text,
+.null-customer-text {
   font-weight: 100;
   font-size: 14px;
 }
@@ -109,4 +110,8 @@
 .no-alias-wrapper {
   color: var(--md-secondary-text-color, #545454);
   margin-top: 0.5rem;
+}
+
+.null-customer-identity-view {
+  color: var(--md-secondary-text-color, #545454);
 }

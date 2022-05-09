@@ -94,10 +94,8 @@ export namespace TimelineItem {
               if (data[x]) {
                 /* eslint disable */
                 return html`
-                  <tr class="row">
-                    <td title=${x} class="label">${x}</td>
-                    <td title=${data[x]} class="value" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</td>
-                  </tr>
+                  <div title=${x} class="cell">${x}</div>
+                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</div>
                 `;
               }
             } else {
@@ -111,9 +109,9 @@ export namespace TimelineItem {
     renderExpandedDetails = () => {
       if (this.data === nothing) return nothing;
       return html`
-        <table class="details">
+        <div class="details grid">
           ${this.createTableRecursive(this.data)}
-        </table>
+        </div>
       `;
     };
 
@@ -179,7 +177,6 @@ export namespace TimelineItem {
       if (dateAndTimeArray && dateAndTimeArray?.length > 1) {
         renderTimeRow = html`
           <div class="time-row">
-            <md-icon class="time-icon" name="icon-recents_12"></md-icon>
             <span class="time-value">${dateAndTimeArray?.[1]}</span>
           </div>
         `;
@@ -205,18 +202,21 @@ export namespace TimelineItem {
     }
 
     render() {
-      const iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+      let iconData;
+      if (this.data) {
+        iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+      }
 
       return html`
         <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
           <div class="top-content">
-            <md-badge class="badge" .circle=${true} size="40" .color=${iconData.color}>
-              ${iconData.name
+            <md-badge class="badge" .circle=${true} size="40" .color=${iconData?.color}>
+              ${iconData?.name
                 ? html`
-                    <md-icon class="badge-icon" .name=${iconData.name}></md-icon>
+                    <md-icon class="badge-icon" .name=${iconData?.name}></md-icon>
                   `
                 : html`
-                    <img src=${iconData.src} />
+                    <img src=${iconData?.src} />
                   `}
             </md-badge>
             <div class="info-section">

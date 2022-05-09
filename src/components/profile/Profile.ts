@@ -13,7 +13,7 @@ import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-avatar";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-icon";
-import "@momentum-ui/web-components/dist/comp/md-loading";
+import "@momentum-ui/web-components/dist/comp/md-spinner";
 
 export namespace ProfileView {
   interface ContactChannel {
@@ -49,10 +49,10 @@ export namespace ProfileView {
      */
     @property({ type: Boolean }) compact = false;
     /**
-     * @prop loading
-     * Toggle loading state render
+     * @prop getProfileDataInProgress
+     * Whether or not to render loading spinner or not
      */
-    @property({ type: Boolean }) loading = false;
+    @property({ type: Boolean }) getProfileDataInProgress = false;
 
     connectedCallback() {
       super.connectedCallback();
@@ -71,7 +71,7 @@ export namespace ProfileView {
       // TODO: This ought to be a stand-alone web component geared to provide various icons/colors
       // Accept a type parameter to render phone / email / etc.
       // See the "contactData.contactChannels" property, parse an array of objects.
-      if (this.contactData?.email) {
+      if ((this.contactData?.imgSrc || this.contactData?.name) && this.contactData?.email) {
         return html`
           <div class="contact-item">
             <md-badge circle color="violet">
@@ -194,7 +194,7 @@ export namespace ProfileView {
       return result;
     }
 
-    getLoading(size = 56) {
+    renderSpinner(size = 32) {
       return html`
         <md-spinner size=${size}></md-spinner>
       `;
@@ -202,8 +202,12 @@ export namespace ProfileView {
 
     getSnapshot() {
       return html`
-        <section class=${`snapshot ${this.loading ? "loading" : ""}`} part="profile-snapshot" title="Customer Profile">
-          ${this.loading ? this.getLoading() : this.getTopContent()}
+        <section
+          class=${`snapshot ${this.getProfileDataInProgress ? "loading" : ""}`}
+          part="profile-snapshot"
+          title="Customer Profile"
+        >
+          ${this.getProfileDataInProgress ? this.renderSpinner() : this.getTopContent()}
         </section>
       `;
     }
@@ -212,8 +216,8 @@ export namespace ProfileView {
       const name = this.contactData?.name || "";
       return html`
         <section class="compact" part="profile-compact" title="Customer Profile">
-          ${this.loading
-            ? this.getLoading(34)
+          ${this.getProfileDataInProgress
+            ? this.renderSpinner(34)
             : html`
                 ${this.renderAvatar()}
                 <div class="customer-titles">
@@ -232,9 +236,9 @@ export namespace ProfileView {
     }
 
     renderFullProfileView() {
-      if (this.loading) {
+      if (this.getProfileDataInProgress) {
         return html`
-          <div class="loading-wrapper">${this.getLoading()}</div>
+          <div class="loading-wrapper">${this.renderSpinner()}</div>
         `;
       } else {
         return html`
@@ -248,7 +252,7 @@ export namespace ProfileView {
     }
 
     render() {
-      if (this.contactData && this.profileData.length > 0) {
+      if (this.getProfileDataInProgress || (this.contactData && this.profileData?.length > 0)) {
         return this.compact ? this.getCompact() : this.snapshot ? this.getSnapshot() : this.renderFullProfileView();
       } else {
         return html`

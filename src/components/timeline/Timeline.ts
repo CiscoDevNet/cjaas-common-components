@@ -26,17 +26,37 @@ import { Button } from "@momentum-ui/web-components";
 import * as iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
+  export interface ImiDataPayload {
+    channelType?: string;
+    type?: string;
+  }
+
+  export interface WxccDataPayload {
+    agentId?: string; // state_change
+    currentState?: string; // state_change
+    teamId?: string; // state_change
+    channelType?: string; // types
+    createdTime?: number;
+    destination?: string;
+    direction?: "INBOUND" | "OUTBOUND"; // types
+    origin?: string;
+    outboundType?: string | null;
+    reason?: string; // ended
+    terminatingParty?: string; // ended
+    queueId?: string;
+    taskId?: string;
+    workflowManager?: string | null; // task new
+    type?: string;
+  }
+
   export interface CustomerEvent {
     data: Record<string, any>;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    dataContentType?: string;
-    previously?: string;
+    dataContentType: string;
     id: string;
     person: string;
-    source?: string;
-    specVersion?: string;
+    previously: string;
+    source: string;
+    specVersion: string;
     time: string;
     type: string;
   }
@@ -58,10 +78,10 @@ export namespace Timeline {
      */
     @property({ type: Number, reflect: true }) limit = 5;
     /**
-     * @attr loading
-     * Toggle Loading state
+     * @prop getEventsInProgress
+     * Whether or not to render loading spinner or not
      */
-    @property({ type: Boolean }) loading = true;
+    @property({ type: Boolean }) getEventsInProgress = false;
     /**
      * @attr event-filters
      * Show/hide event filters UI
@@ -82,13 +102,11 @@ export namespace Timeline {
      * Set default event groups to collapsed
      */
     @property({ type: Boolean, attribute: "collapse-view" }) collapseView = true;
-
     /**
      * @prop badgeKeyword
      * set badge icon based on declared keyword from dataset
      */
     @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
-
     // Data Property Input from Application
     /**
      * @prop timelineItems
@@ -131,18 +149,22 @@ export namespace Timeline {
      * Store for visible dates
      */
     @internalProperty() activeDateRange!: string;
+
+    @internalProperty() dateRangeOldestDate: DateTime = DateTime.now().minus({ year: 10 });
     /**
      * @prop expandDetails
      * Toggle expanded event details
      */
     @internalProperty() expandDetails = false;
 
-    @internalProperty() apiInProgress = true;
+    filteredByTypeList: CustomerEvent[] | null = null;
+
+    newestEventsFilteredByType: Array<CustomerEvent> = [];
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
       this.getEventTypes();
-      this.activeTypes = this.eventTypes;
+      this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     updated(changedProperties: PropertyValues) {
@@ -153,10 +175,6 @@ export namespace Timeline {
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.showNewEvents();
-      }
-
-      if (changedProperties.has("eventTypes")) {
-        this.activeTypes = this.eventTypes;
       }
     }
 
@@ -173,18 +191,6 @@ export namespace Timeline {
       });
       this.eventTypes = Array.from(eventArray);
     }
-
-    // toggleDetailView = () => {
-    //   this.expandDetails = !this.expandDetails;
-    // };
-
-    // renderDetailsControl = () => {
-    //   return html`
-    //     <md-button class="collapse-details" hasRemoveStyle @click="${this.toggleDetailView}">
-    //       ${this.expandDetails ? "Collapse All Details" : "Expand All Details"}</md-button
-    //     >
-    //   `;
-    // };
 
     getClusterId(text: string, key: number) {
       return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
@@ -208,6 +214,7 @@ export namespace Timeline {
       const button = e.target as Button.ELEMENT;
       button.active = !button.active;
       this.activeDateRange = button.id.substring(12);
+      this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     /**
@@ -216,11 +223,11 @@ export namespace Timeline {
      */
     calculateOldestEntry() {
       switch (this.activeDateRange) {
-        case "day":
+        case "24-hours":
           return DateTime.now().minus({ day: 1 });
-        case "week":
+        case "7-days":
           return DateTime.now().minus({ week: 1 });
-        case "month":
+        case "30-days":
           return DateTime.now().minus({ month: 1 });
         default:
           return DateTime.now().minus({ year: 10 });
@@ -235,7 +242,7 @@ export namespace Timeline {
      */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
-        this.timelineItems = [...this.newestEvents, ...(this.timelineItems || [])];
+        this.timelineItems = [...this.newestEvents, ...(this.filteredByTypeList || [])];
         this.newestEvents = [];
         this.dispatchEvent(
           new CustomEvent("new-event-queue-cleared", {
@@ -259,7 +266,7 @@ export namespace Timeline {
 
     renderNewEventQueueToggle() {
       return html`
-        <md-toggle-switch smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
+        <md-toggle-switch class="livestream-toggle" smaller @click=${this.toggleLiveEvents} ?checked=${this.liveStream}>
           <span style="font-size:.75rem;">
             Livestream
           </span>
@@ -293,31 +300,25 @@ export namespace Timeline {
       const eventsKeyword = events.length === 1 ? "event" : "events";
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
-      const dateObject = DateTime.fromISO(date);
       const readableDate = DateTime.fromISO(date).toFormat("D");
 
-      // TO DO: Select a relevant Icon for the clustered view
-      return (
-        (dateObject > this.calculateOldestEntry() &&
-          html`
-            <div class="timeline date-set has-line" id=${clusterId}>
-              ${this.renderTimeBadge(readableDate, clusterId)}
-              ${this.collapsed.has(clusterId)
-                ? html`
-                    <cjaas-timeline-item
-                      title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
-                      .data=${{ Date: readableDate }}
-                      .time=${date}
-                      ?is-cluster=${true}
-                      .eventIconTemplate=${this.eventIconTemplate}
-                      .badgeKeyword=${this.badgeKeyword}
-                    ></cjaas-timeline-item>
-                  `
-                : this.populateEvents(groupedItem.events)}
-            </div>
-          `) ||
-        nothing
-      );
+      return html`
+        <div class="timeline date-set has-line" id=${clusterId}>
+          ${this.renderTimeBadge(readableDate, clusterId)}
+          ${this.collapsed.has(clusterId)
+            ? html`
+                <cjaas-timeline-item
+                  title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
+                  .data=${{ Date: readableDate }}
+                  .time=${date}
+                  ?is-cluster=${true}
+                  .eventIconTemplate=${this.eventIconTemplate}
+                  .badgeKeyword=${this.badgeKeyword}
+                ></cjaas-timeline-item>
+              `
+            : this.populateEvents(groupedItem.events)}
+        </div>
+      `;
     }
 
     /**
@@ -362,8 +363,7 @@ export namespace Timeline {
               title=${`${cluster.length} ${clusterType} events`}
               type=${clusterType}
               time=${cluster[0].time}
-              class="has-line show-${this.activeTypes.includes(clusterType) ||
-                this.activeDates.includes(cluster[0].time)}"
+              class="has-line"
               .events=${cluster}
               ?grouped=${this.collapseView}
               .activeDates=${this.activeDates}
@@ -383,35 +383,9 @@ export namespace Timeline {
 
     renderDateRangeButtons() {
       return html`
-        <md-button-group active="3">
+        <md-button-group active="0">
           <button
-            slot="button"
-            id="filter-last-day"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Day"
-          >
-            Day
-          </button>
-          <button
-            slot="button"
-            id="filter-last-week"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Week"
-          >
-            Week
-          </button>
-          <button
-            slot="button"
-            id="filter-last-month"
-            type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
-            value="Month"
-          >
-            Month
-          </button>
-          <button
+            class="button-group-button"
             slot="button"
             id="filter-last-all"
             type="button"
@@ -420,11 +394,41 @@ export namespace Timeline {
           >
             All
           </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-24-hours"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 24 Hours"
+          >
+            Last 24 Hours
+          </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-7-days"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 7 Days"
+          >
+            Last 7 Days
+          </button>
+          <button
+            class="button-group-button"
+            slot="button"
+            id="filter-last-30-days"
+            type="button"
+            @click=${(e: Event) => this.toggleActive(e)}
+            value="Last 30 Days"
+          >
+            Last 30 Days
+          </button>
         </md-button-group>
       `;
     }
 
-    renderToggleButtons() {
+    renderFilterButton() {
       return html`
         <cjaas-event-toggles
           .eventTypes=${this.eventTypes}
@@ -438,7 +442,6 @@ export namespace Timeline {
     }
 
     renderEventBlock(event: CustomerEvent) {
-      const stringDate = DateTime.fromISO(event.time).toFormat("dd LLL yyyy");
       return html`
         <cjaas-timeline-item
           .event=${event}
@@ -450,13 +453,13 @@ export namespace Timeline {
           .eventIconTemplate=${this.eventIconTemplate}
           .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"
-          class="has-line show-${this.activeTypes.includes(event.type) || this.activeDates.includes(stringDate)}"
+          class="has-line"
         ></cjaas-timeline-item>
       `;
     }
 
     renderLoadMoreAction() {
-      return (this.timelineItems || []).length > this.limit && this.activeTypes.length > 0
+      return (this.filteredByTypeList || []).length > this.limit
         ? html`
             <md-link
               @click=${(e: Event) => {
@@ -474,13 +477,15 @@ export namespace Timeline {
     }
 
     renderEmptyState() {
-      if (this.apiInProgress) {
-        return html`
-          <div class="empty-state">
-            <md-spinner size="32"></md-spinner>
-          </div>
-        `;
-      } else if (!this.timelineItems || this.timelineItems.length === 0) {
+      const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
+      // if (this.getEventsInProgress) {
+      //   return html`
+      //     <div class="empty-state">
+      //       <md-spinner size="32"></md-spinner>
+      //     </div>
+      //   `;
+      // } else
+      if (!this.timelineItems || this.timelineItems.length === 0) {
         return html`
           <div class="empty-state">
             <div>
@@ -489,40 +494,91 @@ export namespace Timeline {
             <span class="empty-state-text">No historic events to show. Listening for new events...</span>
           </div>
         `;
+      } else if (isFilteredListEmpty) {
+        return html`
+          <div class="empty-state">
+            <div>
+              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
+            </div>
+            <span class="empty-state-text">No historic events exist within the current date range.</span>
+          </div>
+        `;
+      }
+    }
+
+    filterByType(list: CustomerEvent[] | undefined | null) {
+      if (this.activeTypes.length) {
+        return list?.filter(item => this.activeTypes.includes(item.type)) || null;
+      } else {
+        return list;
+      }
+    }
+
+    convertStringToDateObject(time: string) {
+      return DateTime.fromJSDate(new Date(time)).toUTC();
+    }
+
+    filterByDateRange() {
+      return this.timelineItems?.filter(item => {
+        return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
+      });
+    }
+
+    renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
+      if (this.getEventsInProgress) {
+        return html`
+          <div class="empty-state">
+            <md-spinner size="32"></md-spinner>
+          </div>
+        `;
+      } else if (dateGroupArray.length > 0) {
+        return html`
+          ${repeat(
+            dateGroupArray,
+            singleDaysEvents => singleDaysEvents.date,
+            singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
+          )}
+        `;
+      } else {
+        return this.renderEmptyState();
       }
     }
 
     render() {
       // Groups items by date
-      const limitedList = (this.timelineItems || []).slice(0, this.limit);
+      const filterByDateRangeResult = this.filterByDateRange();
+      this.filteredByTypeList = this.filterByType(filterByDateRangeResult) || null;
+      const limitedList = (this.filteredByTypeList || []).slice(0, this.limit);
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
+
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
       });
 
-      return Object.keys(groupedByDate).length > 0
-        ? html`
-            <div class="wrapper" part="timeline-wrapper">
-              <section class="controls" part="controls">
-                <div class="flex-apart">
-                  ${this.renderDateRangeButtons()} ${this.renderNewEventQueueToggle()}
-                </div>
-                ${this.renderToggleButtons()}
-              </section>
-              <section class="stream" part="stream">
-                ${repeat(
-                  dateGroupArray,
-                  singleDaysEvents => singleDaysEvents.date,
-                  singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
-                )}
-                <div class="footer">
-                  ${this.renderLoadMoreAction()}
-                </div>
-              </section>
+      return html`
+        <div class="wrapper" part="timeline-wrapper">
+          <section class="controls" part="controls">
+            <div class="row first-row">
+              <div class="flex-apart">
+                ${this.renderDateRangeButtons()}
+              </div>
+              <div class="filter-button-wrapper">
+                ${this.renderFilterButton()}
+              </div>
             </div>
-          `
-        : this.renderEmptyState();
+            <div class="row second-row">
+              ${this.renderNewEventQueueToggle()}
+            </div>
+          </section>
+          <section class="stream" part="stream">
+            ${this.renderList(dateGroupArray)}
+            <div class="footer">
+              ${this.renderLoadMoreAction()}
+            </div>
+          </section>
+        </div>
+      `;
     }
   }
 }

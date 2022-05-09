@@ -45,7 +45,6 @@
 
   .info-section {
     margin-left: 12px;
-    margin-right: 2rem;
     flex: 1 1 auto;
     padding-top: 4px;
     width: 0;
@@ -61,45 +60,17 @@
 
   .sub-title {
     @include secondary-text();
+    @include ellipsis-text();
     font-size: 12px;
     line-height: 12px;
     margin: 8px 0;
-  }
-
-  .details {
-    font-size: 12px;
-    margin: 8px 0;
-    width: 100%;
-
-    tr {
-      line-height: 16px;
-      margin-top: 8px;
-      width: 0;
-    }
-    td {
-      vertical-align: top;
-      max-width: 0;
-      cursor: pointer;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: pre-wrap;
-      &.label {
-        color: var(--md-secondary-text-color, #545454);
-        padding-left: 2rem;
-        padding-right: 0.5rem;
-      }
-      &.value {
-        color: var(--md-primary-text-color, #121212);
-        width: 50%;
-      }
-    }
   }
 
   .time-stamp {
     @include body-small-regular();
     @include secondary-text();
     padding: .5rem;
-    flex: 0 0 5.25rem;
+    flex: 0 0 4rem;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
@@ -111,10 +82,7 @@
 
     .time-row {
       display: flex;
-
-      .time-value {
-        padding-left: 0.2rem;
-      }
+      justify-content: flex-end;
     }
   }
 
@@ -145,5 +113,27 @@
   display: none;
   &.has-line::after{
     display: none;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 2rem;
+  margin: 1rem;
+  font-size: 12px;
+  margin: 0.5rem 0.5rem 0.5rem 1rem;
+  width: calc(100% - 24px);
+
+  .cell {
+    vertical-align: top;
+  }
+
+  .cell:nth-child(odd) {
+    color: var(--md-secondary-text-color, #545454);
+  }
+
+  .cell:nth-child(even) {
+    color: var(--md-primary-text-color, #121212);
   }
 }

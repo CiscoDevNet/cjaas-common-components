@@ -6,7 +6,7 @@
  *
  */
 
-import { elementUpdated, fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
+import { fixture, fixtureCleanup, html } from "@open-wc/testing-helpers";
 import "../profile/Profile";
 import { ProfileView } from "../profile/Profile";
 import { profileMock, contactDataMock } from "../../[sandbox]/sandbox.mock";
@@ -25,15 +25,20 @@ describe("Profile component", () => {
     expect(component).not.toBeNull();
   });
 
-  test("should render one profile component", async () => {
+  test("should render one profile component with email text content", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock}></cjaas-profile>
       `
     );
-    expect(component.shadowRoot!.querySelector(".contact-item")!.querySelector("span")!.textContent).toEqual(
-      component.contactData?.email
-    );
+
+    expect(component).not.toBeNull();
+
+    const contactItemDiv = component.shadowRoot?.querySelector(".contact-item");
+    expect(contactItemDiv).not.toBeNull();
+
+    const innerHTML = component.shadowRoot?.innerHTML;
+    expect(innerHTML).toContain(component.contactData?.email);
   });
 
   test("should render one profile component", async () => {
@@ -47,23 +52,26 @@ describe("Profile component", () => {
   test("should render snapshot view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot> </cjaas-profile>
       `
     );
-    const snapshotRender = spyOn(component, "getSnapshot");
+
+    expect(component).not.toBeNull();
+
     component.snapshot = true;
     await component.updateComplete;
-    expect(snapshotRender).toHaveBeenCalled();
+    const snapshotContainer = component.shadowRoot?.querySelector(".snapshot");
+    expect(snapshotContainer).not.toBeNull();
   });
   test("should render compact view", async () => {
     const component: ProfileView.ELEMENT = await fixture(
       html`
-        <cjaas-profile .contactData=${contactDataMock}> </cjaas-profile>
+        <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} compact> </cjaas-profile>
       `
     );
-    const compactRender = spyOn(component, "getCompact");
     component.compact = true;
     await component.updateComplete;
-    expect(compactRender).toHaveBeenCalled();
+    const compactContainer = component.shadowRoot?.querySelector(".compact");
+    expect(compactContainer).not.toBeNull();
   });
 });
