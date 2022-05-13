@@ -147,7 +147,7 @@ export namespace ProfileView {
       `;
     }
 
-    basicProfileProperties = ["First Name", "Last Name", "Email", "Phone"];
+    basicProfileProperties = ["Name", "First Name", "Last Name", "Email", "Phone"];
 
     getTable() {
       return html`
