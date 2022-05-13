@@ -28,13 +28,7 @@
   }
 }
 
-@include table;
-
-table {
-  font-size: 0.75rem;
-  height: 100%;
-  overflow: auto;
-}
+@include css-grid;
 
 .top-content {
   max-height: 50%;

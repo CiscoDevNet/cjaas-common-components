@@ -151,28 +151,22 @@ export namespace ProfileView {
 
     getTable() {
       return html`
-        <table title="Profile Details">
+        <div class="grid" title="Profile Details">
           ${this.profileData
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               const { displayName } = x?.query;
-              if (this.basicProfileProperties.includes(displayName)) {
+              if (
+                this.basicProfileProperties.includes(displayName) ||
+                (this.getValue(x) !== "-" && displayName !== "imgSrc")
+              ) {
                 return html`
-                  <tr>
-                    <td class="title">${displayName}</td>
-                    <td class="value">${this.getValue(x)}</td>
-                  </tr>
-                `;
-              } else if (this.getValue(x) !== "-" && displayName !== "imgSrc") {
-                return html`
-                  <tr>
-                    <td class="title">${displayName}</td>
-                    <td class="value">${this.getValue(x)}</td>
-                  </tr>
+                  <div class="cell">${displayName}</div>
+                  <div class="cell">${this.getValue(x)}</div>
                 `;
               }
             })}
-        </table>
+        </div>
       `;
     }
 
