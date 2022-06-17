@@ -28,12 +28,18 @@
   }
 }
 
-@include table;
+@include css-grid;
 
-table {
-  font-size: 0.75rem;
-  height: 100%;
-  overflow: auto;
+
+
+.grid {
+  margin: 8px 0px 0px;
+  column-gap: 3rem;
+
+  .cell {
+    margin-top: 8px;
+    line-height: 21px;
+  }
 }
 
 .top-content {

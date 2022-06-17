@@ -1,11 +1,18 @@
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, property, PropertyValues, query } from "lit-element";
+import { internalProperty, LitElement, property, PropertyValues, query } from "lit-element";
 import { html } from "lit-html";
 
 import "@momentum-ui/web-components/dist/comp/md-progress-bar";
 import styles from "./scss/identity.scss";
 
 const NO_ALIAS_TEXT = "Currently, no aliases exist.";
+
+export interface IdentityData {
+  id: string;
+  createdAt: string;
+  modifiedAt: string;
+  aliases: Array<string>;
+}
 
 export namespace Identity {
   @customElementWithCheck("cjaas-identity")
@@ -14,23 +21,18 @@ export namespace Identity {
     @property() aliasDeleteInProgress: { [key: string]: boolean } = {};
     @property({ type: Boolean }) aliasAddInProgress = false;
     @property({ type: Boolean }) aliasGetInProgress = false;
-    @property({ attribute: false }) alias:
-      | undefined
-      | {
-          namespace: string;
-          id: string;
-          aliases: string[];
-          lastSeen: JourneyEvent;
-        };
+    @property({ type: Boolean }) disableAddButton = false;
+    @property({ attribute: false }) identityData: undefined | IdentityData = undefined;
 
-    @query("#alias-input") aliasInput: HTMLInputElement | undefined;
+    @internalProperty() inputValue = "";
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-      if (changedProperties.has("getAPIInProgress") && !this.aliasGetInProgress) {
-        if (this.aliasInput) {
-          this.aliasInput.value = "";
-        }
+      if (
+        (changedProperties.has("aliasGetInProgress") && !this.aliasGetInProgress) ||
+        (changedProperties.has("aliasAddInProgress") && !this.aliasAddInProgress)
+      ) {
+        this.inputValue = "";
       }
     }
 
@@ -44,8 +46,15 @@ export namespace Identity {
       this.dispatchEvent(event);
     }
 
+    aliasInputChange(event: CustomEvent) {
+      this.inputValue = event?.detail?.value?.trim();
+    }
+
     addAlias() {
-      const alias = this.aliasInput?.value?.trim();
+      if (this.aliasAddInProgress || !this.inputValue) {
+        return;
+      }
+      const alias = this.inputValue?.trim();
       const event = new CustomEvent("addAlias", {
         detail: {
           alias,
@@ -70,7 +79,7 @@ export namespace Identity {
         ></md-tooltip>
       `;
 
-      const aliases = (this.alias?.aliases?.slice().reverse() || []).map(alias => {
+      const aliases = (this.identityData?.aliases?.slice().reverse() || []).map(alias => {
         return html`
           <li class="alias-item">
             <span class="alias-text">${alias}</span>
@@ -111,9 +120,9 @@ export namespace Identity {
 
       if (this.aliasGetInProgress) {
         consolidatedAliases = spinner;
-      } else if (this.alias && this.alias?.aliases?.length > 0) {
+      } else if (this.identityData && this.identityData?.aliases?.length > 0) {
         consolidatedAliases = aliasList;
-      } else if (this.alias && !this.alias?.aliases) {
+      } else if (this.identityData && !this.identityData?.aliases) {
         consolidatedAliases = html`
           <div class="no-alias-wrapper">
             <span class="alias-text">${NO_ALIAS_TEXT}</span>
@@ -124,8 +133,19 @@ export namespace Identity {
       if (this.customer) {
         return html`
           <div class="flex alias-input-row">
-            <md-input class="alias-input" placeholder=${inputPlaceholder} shape="pill" id="alias-input"></md-input>
-            <md-button .disabled=${this.aliasAddInProgress} variant="secondary" @click=${async () => this.addAlias()}>
+            <md-input
+              class="alias-input"
+              placeholder=${inputPlaceholder}
+              shape="pill"
+              id="alias-input"
+              value=${this.inputValue}
+              @input-change=${this.aliasInputChange}
+            ></md-input>
+            <md-button
+              .disabled=${this.aliasAddInProgress || !this.inputValue}
+              variant="secondary"
+              @click=${this.addAlias}
+            >
               ${buttonText}
             </md-button>
           </div>

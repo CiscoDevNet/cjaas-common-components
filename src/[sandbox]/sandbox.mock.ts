@@ -298,7 +298,7 @@ export const limitedProfileMock = [
     query: {
       version: "0.1",
       event: "Quote",
-      metadata: "name",
+      metadata: "firstName",
       displayName: "First Name",
       limit: 1,
       aggregationMode: "Value",
@@ -312,7 +312,7 @@ export const limitedProfileMock = [
     query: {
       version: "0.1",
       event: "Quote",
-      metadata: "name",
+      metadata: "lastName",
       displayName: "Last Name",
       limit: 1,
       aggregationMode: "Value",

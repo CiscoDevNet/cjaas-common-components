@@ -85,8 +85,10 @@ export namespace ProfileView {
 
     dataPointFilter(dataPoint: string) {
       // Usage agnostic, simply retrieves the usable data. Specific to CJaaS API
-      const dataAttribute = this.profileData?.filter((x: any) => x.query.metadata === dataPoint);
-      return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
+      if (Array.isArray(this.profileData)) {
+        const dataAttribute = this.profileData?.filter((x: any) => x.query.metadata === dataPoint);
+        return dataAttribute[0]?.result[0] ? dataAttribute[0].result[0] : undefined;
+      }
     }
 
     /**
@@ -97,9 +99,20 @@ export namespace ProfileView {
      */
     extractDataPoints(update?: boolean) {
       if ((!this.contactData && this.profileData) || update) {
-        // TODO: Pending more API development, populate the contactChannels her as well
+        // TODO: Pending more API development, populate the contactChannels here as well
+
+        const first = this.dataPointFilter("firstName");
+        const last = this.dataPointFilter("lastName");
+
+        let firstLastName;
+        if (first || last) {
+          firstLastName = `${first ? `${first} ` : ""}${last ? last : ""}`;
+        } else {
+          firstLastName = undefined;
+        }
+
         const contactDetails = {
-          name: this.dataPointFilter("name"),
+          name: this.dataPointFilter("name") || firstLastName,
           email: this.dataPointFilter("email"),
           label: this.dataPointFilter("label"),
           imgSrc: this.dataPointFilter("imgSrc"),
@@ -147,32 +160,26 @@ export namespace ProfileView {
       `;
     }
 
-    basicProfileProperties = ["First Name", "Last Name", "Email", "Phone"];
+    basicProfileProperties = ["Name", "First Name", "Last Name", "Email", "Phone"];
 
     getTable() {
       return html`
-        <table title="Profile Details">
+        <div class="grid" title="Profile Details">
           ${this.profileData
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               const { displayName } = x?.query;
-              if (this.basicProfileProperties.includes(displayName)) {
+              if (
+                this.basicProfileProperties.includes(displayName) ||
+                (this.getValue(x) !== "-" && displayName !== "imgSrc")
+              ) {
                 return html`
-                  <tr>
-                    <td class="title">${displayName}</td>
-                    <td class="value">${this.getValue(x)}</td>
-                  </tr>
-                `;
-              } else if (this.getValue(x) !== "-" && displayName !== "imgSrc") {
-                return html`
-                  <tr>
-                    <td class="title">${displayName}</td>
-                    <td class="value">${this.getValue(x)}</td>
-                  </tr>
+                  <div class="cell">${displayName}</div>
+                  <div class="cell">${this.getValue(x)}</div>
                 `;
               }
             })}
-        </table>
+        </div>
       `;
     }
 
