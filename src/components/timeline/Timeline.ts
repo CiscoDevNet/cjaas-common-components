@@ -8,6 +8,7 @@
 
 import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { nothing } from "lit-html";
+import parsePhoneNumber from "libphonenumber-js";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
@@ -109,10 +110,10 @@ export namespace Timeline {
     @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
     // Data Property Input from Application
     /**
-     * @prop timelineItems
+     * @prop historicEvents
      * Dataset of events
      */
-    @property({ type: Array, attribute: false }) timelineItems: CustomerEvent[] | null = null;
+    @property({ type: Array, attribute: false }) historicEvents: CustomerEvent[] | null = null;
     /**
      * @prop eventTypes
      * Dataset of all unique event types
@@ -169,7 +170,7 @@ export namespace Timeline {
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-      if (changedProperties.has("timelineItems")) {
+      if (changedProperties.has("historicEvents")) {
         this.getEventTypes();
         this.requestUpdate();
       }
@@ -181,12 +182,12 @@ export namespace Timeline {
     /**
      * @method getEventTypes
      * @returns void
-     * Sets `eventTypes` property to a unique set of event types from current timelineItems.
+     * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
 
     getEventTypes() {
       const eventArray: Set<string> = new Set();
-      (this.timelineItems || []).forEach(event => {
+      (this.historicEvents || []).forEach(event => {
         eventArray.add(event.type);
       });
       this.eventTypes = Array.from(eventArray);
@@ -242,7 +243,7 @@ export namespace Timeline {
      */
     showNewEvents() {
       if (this.newestEvents.length > 0) {
-        this.timelineItems = [...this.newestEvents, ...(this.filteredByTypeList || [])];
+        this.historicEvents = [...this.newestEvents, ...(this.filteredByTypeList || [])];
         this.newestEvents = [];
         this.dispatchEvent(
           new CustomEvent("new-event-queue-cleared", {
@@ -441,11 +442,24 @@ export namespace Timeline {
       `;
     }
 
+    formattedOrigin(event: Timeline.CustomerEvent) {
+      const { origin, channelType } = event?.data;
+
+      const hasPlusSign = (origin as string).charAt(0) === "+";
+      if (channelType === "telephony" || hasPlusSign) {
+        const parsedNumber = parsePhoneNumber(origin);
+        // return parsedNumber?.formatNational();
+        return parsedNumber?.formatInternational() || origin;
+      } else {
+        return origin;
+      }
+    }
+
     renderEventBlock(event: CustomerEvent) {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          title=${event.type}
+          title=${this.formattedOrigin(event)}
           time=${event.time}
           .data=${event.data}
           id=${event.id}
@@ -485,7 +499,7 @@ export namespace Timeline {
       //     </div>
       //   `;
       // } else
-      if (!this.timelineItems || this.timelineItems.length === 0) {
+      if (!this.historicEvents || this.historicEvents.length === 0) {
         return html`
           <div class="empty-state">
             <div>
@@ -519,7 +533,7 @@ export namespace Timeline {
     }
 
     filterByDateRange() {
-      return this.timelineItems?.filter(item => {
+      return this.historicEvents?.filter(item => {
         return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
       });
     }
