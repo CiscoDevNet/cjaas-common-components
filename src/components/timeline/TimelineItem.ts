@@ -221,7 +221,7 @@ export namespace TimelineItem {
             </md-badge>
             <div class="info-section">
               <div class="title">${this.title}</div>
-              ${this.renderSubTitle()}
+              <!-- ${this.renderSubTitle()} -->
             </div>
             <div class="time-stamp">${this.renderShowcase()}</div>
           </div>

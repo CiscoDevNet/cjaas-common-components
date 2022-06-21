@@ -2,6 +2,19 @@ import { ProfileView } from "../components/profile/Profile";
 import { MultiLineCondition } from "@/components/condition-block/ConditionBlock";
 import { Timeline } from "@/components/timeline/Timeline";
 
+const mockOriginByType = (channelType: string) => {
+  switch (channelType) {
+    case "telephony":
+      return "+14806754084";
+      break;
+    case "email":
+      return "ragreene@gmail.com";
+      break;
+    default:
+      return "Rachel Greene";
+  }
+};
+
 const mockedConnectedTask = (time: string, channelType = "chat") => {
   return {
     data: {
@@ -9,14 +22,14 @@ const mockedConnectedTask = (time: string, channelType = "chat") => {
       createdTime: 1651187948923,
       destination: "+19997770103",
       direction: "INBOUND",
-      origin: "egiere@cisco.com",
+      origin: mockOriginByType(channelType),
       outboundType: null,
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
     },
     dataContentType: "string",
     id: "c9ae34eb-914a-40e9-92b3-522cf3f3ccc7",
-    person: "egiere@cisco.com",
+    person: mockOriginByType(channelType),
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -32,14 +45,14 @@ const mockedStateChangeTask = (time: string) => {
       createdTime: 1651187948958,
       currentState: "connected",
       destination: "+19997770103",
-      origin: "egiere@cisco.com",
+      origin: "bob@gmail.com",
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       teamId: "9c73f123-0a33-414c-98db-b1169cccc8ce",
     },
     dataContentType: "string",
     id: "d30d8522-488d-4090-9bd8-a2e8febed0a4",
-    person: "egiere@cisco.com",
+    person: "bob@gmail.com",
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -55,7 +68,7 @@ const mockedConnectTask = (time: string, channelType = "chat") => {
       createdTime: 1651187946178,
       destination: "+19997770103",
       direction: "INBOUND",
-      origin: "egiere@cisco.com",
+      origin: mockOriginByType(channelType),
       outboundType: null,
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
@@ -63,7 +76,7 @@ const mockedConnectTask = (time: string, channelType = "chat") => {
     },
     dataContentType: "string",
     id: "5565558c-eb37-4ec4-b121-7e4a39fff840",
-    person: "egiere@cisco.com",
+    person: mockOriginByType(channelType),
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -79,14 +92,14 @@ const mockedNewTask = (time: string, channelType = "chat") => {
       createdTime: 1651187945943,
       destination: "Chat_temp_WXC-CHAT-EP1",
       direction: "INBOUND",
-      origin: "egiere@cisco.com",
+      origin: mockOriginByType(channelType),
       outboundType: null,
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       workflowManager: null,
     },
     dataContentType: "string",
     id: "85224781-4738-40bb-9b48-f79f48effd55",
-    person: "egiere@cisco.com",
+    person: mockOriginByType(channelType),
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -102,7 +115,7 @@ const mockParkedTask = (time: string, channelType = "chat") => {
       createdTime: 1651187717920,
       destination: "wxcc.ccp.switch@gmail.com",
       direction: "INBOUND",
-      origin: "egiere@cisco.com",
+      origin: mockOriginByType(channelType),
       outboundType: null,
       queueId: "7a682870-472b-4a0f-b3e9-01fadf4efcf3",
       taskId: "69a45a01-c737-11ec-bde5-e7810446c774",
@@ -110,7 +123,7 @@ const mockParkedTask = (time: string, channelType = "chat") => {
     },
     dataContentType: "string",
     id: "9242ce2a-8666-4e8b-a100-078994ccb980",
-    person: "egiere@cisco.com",
+    person: mockOriginByType(channelType),
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -125,7 +138,7 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
       channelType,
       createdTime: 1651182715768,
       direction: "INBOUND",
-      origin: "egiere@cisco.com",
+      origin: mockOriginByType(channelType),
       outboundType: null,
       reason: "Agent Left",
       taskId: "ffc6d07a-c73b-11ec-83e7-91a2c53dff83",
@@ -134,7 +147,7 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
     },
     dataContentType: "string",
     id: "4e7e48eb-e5ef-4b17-9a29-908ff4e1de03",
-    person: "egiere@cisco.com",
+    person: mockOriginByType(channelType),
     previously: "",
     source: "wxcc",
     specVersion: "1.0",
@@ -1156,13 +1169,30 @@ const isoEightDayStr = new Date(nowDate.setDate(nowDate.getDay() - 8)).toISOStri
 const isoTwoWeeksStr = new Date(nowDate.setDate(nowDate.getDay() - 14)).toISOString();
 const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOString();
 
-export const historicalTimelineItems: Timeline.CustomerEvent[] = [
+export const historicalEvents: Timeline.CustomerEvent[] = [
   mockedConnectedTask(isoNowStr, "email"),
   mockedConnectTask(isoTwoHourStr, "telephony"),
   mockedStateChangeTask(isoTwoDayStr),
   mockedNewTask(isoEightDayStr),
   mockedEndedTask(isoTwoWeeksStr),
   mockedConnectedTask(isoTwoMonthsStr),
+  {
+    id: "12345",
+    previously: "",
+    time: isoNowStr,
+    specVersion: "1.0",
+    type: "test",
+    source: "dummy",
+    person: "ruegreen@cisco.com",
+    dataContentType: "application/json",
+    data: {
+      origin: "Rue Green",
+      firstName: "Rue",
+      lastName: "Green",
+      email: "ruegreen@cisco.com",
+      channelType: "Initiated Walk In",
+    },
+  },
 ];
 
 export const fiveNewEvents: Timeline.CustomerEvent[] = [
