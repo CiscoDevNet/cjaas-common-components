@@ -214,7 +214,8 @@ export namespace TimelineItem {
     render() {
       let iconData;
       if (this.data) {
-        iconData = getIconData(this.data[this.badgeKeyword] || this.data?.currentState || "", this.eventIconTemplate!);
+        const isAgent = this.data?.currentState ? "agent" : "";
+        iconData = getIconData(this.data[this.badgeKeyword] || isAgent || "", this.eventIconTemplate!);
       }
 
       return html`

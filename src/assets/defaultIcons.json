@@ -23,6 +23,10 @@
     "name": "icon-close-space_18",
     "color": "red"
   },
+  "agent": {
+    "name": "icon-headset_16",
+    "color": "pink"
+  },
   "Messenger": {
     "name": "icon-messenger_16",
     "color": "cobalt"

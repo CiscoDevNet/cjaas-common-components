@@ -197,12 +197,12 @@ export namespace Timeline {
       allEvents?.map((event: CustomerEvent) => {
         const [eventType, eventSubType] = event?.type.split(":");
         const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
+        const agentState = event?.data?.currentState;
+        const formattedAgentState = agentState ? agentState?.charAt(0).toUpperCase() + agentState?.slice(1) : undefined;
 
         switch (eventType) {
           case EventType.Agent:
-            if (event?.data?.currentState === "wrapup") {
-              event.renderData = { title: "Agent Wrapup" };
-            }
+            event.renderData = { title: `Agent ${formattedAgentState || "Event"}` };
             break;
           case EventType.Task:
             event.renderData = { subTitle: ` ${eventSubType} ${channelTypeText}` };
