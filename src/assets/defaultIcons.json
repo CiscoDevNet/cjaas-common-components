@@ -19,6 +19,10 @@
     "name": "icon-email-active_16",
     "color": "violet"
   },
+  "wrapup": {
+    "name": "icon-close-space_18",
+    "color": "red"
+  },
   "Messenger": {
     "name": "icon-messenger_16",
     "color": "cobalt"

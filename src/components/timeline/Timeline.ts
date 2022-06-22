@@ -32,6 +32,11 @@ export namespace Timeline {
     type?: string;
   }
 
+  export enum EventType {
+    Agent = "agent",
+    Task = "task",
+  }
+
   export interface WxccDataPayload {
     agentId?: string; // state_change
     currentState?: string; // state_change
@@ -52,6 +57,7 @@ export namespace Timeline {
 
   export interface CustomerEvent {
     data: Record<string, any>;
+    renderData?: Record<string, any>;
     dataContentType: string;
     id: string;
     person: string;
@@ -115,6 +121,16 @@ export namespace Timeline {
      */
     @property({ type: Array, attribute: false }) historicEvents: CustomerEvent[] | null = null;
     /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
+    @property({ type: Array, attribute: false }) newestEvents: Array<CustomerEvent> = [];
+    /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
+    // @property({ type: Array, attribute: false }) finalEvents: Array<CustomerEvent> = [];
+    /**
      * @prop eventTypes
      * Dataset of all unique event types
      */
@@ -134,12 +150,6 @@ export namespace Timeline {
      * @prop eventIconTemplate
      */
     @property({ attribute: false }) eventIconTemplate: TimelineCustomizations = iconData;
-
-    /**
-     * @prop newestEvents
-     * Dataset keeping track of queued latest live events
-     */
-    @internalProperty() newestEvents: Array<CustomerEvent> = [];
     /**
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
@@ -164,19 +174,41 @@ export namespace Timeline {
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
-      this.getEventTypes();
+      // this.createEventTypeSet();
       this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
       if (changedProperties.has("historicEvents")) {
-        this.getEventTypes();
-        this.requestUpdate();
+        this.formatEvents(this.historicEvents);
+        this.createEventTypeSet();
+        // this.requestUpdate(); // TODO: check
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
-        this.showNewEvents();
+        this.consolidateEvents();
       }
+    }
+
+    /**
+     * @method formatEvents
+     */
+    formatEvents(allEvents: Array<CustomerEvent> | null): void {
+      allEvents?.map((event: CustomerEvent) => {
+        const [eventType, eventSubType] = event?.type.split(":");
+        const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
+
+        switch (eventType) {
+          case EventType.Agent:
+            if (event?.data?.currentState === "wrapup") {
+              event.renderData = { title: "Agent Wrapup" };
+            }
+            break;
+          case EventType.Task:
+            event.renderData = { subTitle: ` ${eventSubType} ${channelTypeText}` };
+            break;
+        }
+      });
     }
 
     /**
@@ -185,7 +217,7 @@ export namespace Timeline {
      * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
 
-    getEventTypes() {
+    createEventTypeSet() {
       const eventArray: Set<string> = new Set();
       (this.historicEvents || []).forEach(event => {
         eventArray.add(event.type);
@@ -236,12 +268,12 @@ export namespace Timeline {
     }
 
     /**
-     * @method showNewEvents
+     * @method consolidateEvents
      * @returns void
      * @fires new-event-queue-cleared
      * Updates the visible timeline events with queued new events
      */
-    showNewEvents() {
+    consolidateEvents() {
       if (this.newestEvents.length > 0) {
         this.historicEvents = [...this.newestEvents, ...(this.filteredByTypeList || [])];
         this.newestEvents = [];
@@ -261,7 +293,7 @@ export namespace Timeline {
     toggleLiveEvents() {
       this.liveStream = !this.liveStream;
       if (this.newestEvents.length > 0) {
-        this.showNewEvents();
+        this.consolidateEvents();
       }
     }
 
@@ -282,7 +314,7 @@ export namespace Timeline {
           class=${`event-counter ${this.newestEvents.length > 0 ? "" : "hidden"}`}
           class="event-counter"
           small
-          @click=${this.showNewEvents}
+          @click=${this.consolidateEvents}
           value="Show ${this.newestEvents.length} new events"
         ></md-chip>
       `;
@@ -459,7 +491,8 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          title=${this.formattedOrigin(event)}
+          title=${event.renderData?.title || this.formattedOrigin(event)}
+          sub-title=${event.renderData?.subTitle || ""}
           time=${event.time}
           .data=${event.data}
           id=${event.id}

@@ -43,7 +43,7 @@ const mockedStateChangeTask = (time: string) => {
     data: {
       agentId: "55de70fc-af58-40e8-b7f8-c23536a53e76",
       createdTime: 1651187948958,
-      currentState: "connected",
+      currentState: "wrapup",
       destination: "+19997770103",
       origin: "bob@gmail.com",
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
@@ -57,7 +57,7 @@ const mockedStateChangeTask = (time: string) => {
     source: "wxcc",
     specVersion: "1.0",
     time,
-    type: "task:state_change",
+    type: "agent:state_change",
   };
 };
 
@@ -1162,6 +1162,7 @@ export const emptyMock: Timeline.CustomerEvent[] = [];
 
 const nowDate = new Date();
 const isoNowStr = nowDate.toISOString(); // "2022-01-15T16:17:30.814Z";
+const isoTwoSecondsStr = new Date(nowDate.setDate(nowDate.getSeconds() - 2)).toISOString();
 
 const isoTwoHourStr = new Date(nowDate.setDate(nowDate.getHours() - 2)).toISOString();
 const isoTwoDayStr = new Date(nowDate.setDate(nowDate.getDay() - 2)).toISOString();
@@ -1171,34 +1172,17 @@ const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOSt
 
 export const historicalEvents: Timeline.CustomerEvent[] = [
   mockedConnectedTask(isoNowStr, "email"),
+  mockedStateChangeTask(isoTwoSecondsStr),
   mockedConnectTask(isoTwoHourStr, "telephony"),
-  mockedStateChangeTask(isoTwoDayStr),
   mockedNewTask(isoEightDayStr),
   mockedEndedTask(isoTwoWeeksStr),
   mockedConnectedTask(isoTwoMonthsStr),
-  {
-    id: "12345",
-    previously: "",
-    time: isoNowStr,
-    specVersion: "1.0",
-    type: "test",
-    source: "dummy",
-    person: "ruegreen@cisco.com",
-    dataContentType: "application/json",
-    data: {
-      origin: "Rue Green",
-      firstName: "Rue",
-      lastName: "Green",
-      email: "ruegreen@cisco.com",
-      channelType: "Initiated Walk In",
-    },
-  },
 ];
 
 export const fiveNewEvents: Timeline.CustomerEvent[] = [
   mockedConnectedTask(isoNowStr),
   mockedConnectTask(isoNowStr, "email"),
   mockedStateChangeTask(isoNowStr),
-  mockedNewTask(isoNowStr, "telphony"),
+  mockedNewTask(isoNowStr, "telephony"),
   mockedEndedTask(isoNowStr),
 ];

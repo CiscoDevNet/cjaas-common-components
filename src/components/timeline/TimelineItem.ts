@@ -29,6 +29,10 @@ export namespace TimelineItem {
      */
     @property({ type: String }) title = "";
     /**
+     * @attr title
+     */
+    @property({ type: String, attribute: "sub-title" }) subTitle = "";
+    /**
      * @attr time
      */
     @property({ type: String }) time = "";
@@ -116,34 +120,40 @@ export namespace TimelineItem {
     };
 
     renderSubTitle() {
-      let label;
-      let dataPoint;
+      // let label;
+      // let dataPoint;
 
-      if (this.data) {
-        const dataPoints = Object.keys(this.data);
-        let usableDataPointIndex = 0;
-        label = dataPoints[usableDataPointIndex];
-        dataPoint = this.data[label];
-        const dataPointIsString = false;
+      // if (this.data) {
+      //   const dataPoints = Object.keys(this.data);
+      //   let usableDataPointIndex = 0;
+      //   label = dataPoints[usableDataPointIndex];
+      //   dataPoint = this.data[label];
+      //   const dataPointIsString = false;
 
-        while (!dataPointIsString) {
-          if (typeof dataPoint === "string") {
-            break;
-          } else {
-            if (dataPoint === undefined) {
-              return nothing;
-            }
-            usableDataPointIndex++;
-            label = dataPoints[usableDataPointIndex];
-            dataPoint = this.data[label];
-          }
-        }
-      }
+      //   while (!dataPointIsString) {
+      //     if (typeof dataPoint === "string") {
+      //       break;
+      //     } else {
+      //       if (dataPoint === undefined) {
+      //         return nothing;
+      //       }
+      //       usableDataPointIndex++;
+      //       label = dataPoints[usableDataPointIndex];
+      //       dataPoint = this.data[label];
+      //     }
+      //   }
+      // }
+
+      // return html`
+      //   <div class="sub-title">
+      //     <span>${label || "NA"}: </span>
+      //     ${dataPoint || "NA"}
+      //   </div>
+      // `;
 
       return html`
         <div class="sub-title">
-          <span>${label || "NA"}: </span>
-          ${dataPoint || "NA"}
+          ${this.subTitle}
         </div>
       `;
     }
@@ -204,7 +214,7 @@ export namespace TimelineItem {
     render() {
       let iconData;
       if (this.data) {
-        iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+        iconData = getIconData(this.data[this.badgeKeyword] || this.data?.currentState || "", this.eventIconTemplate!);
       }
 
       return html`
@@ -221,7 +231,7 @@ export namespace TimelineItem {
             </md-badge>
             <div class="info-section">
               <div class="title">${this.title}</div>
-              <!-- ${this.renderSubTitle()} -->
+              ${this.subTitle ? this.renderSubTitle() : nothing}
             </div>
             <div class="time-stamp">${this.renderShowcase()}</div>
           </div>

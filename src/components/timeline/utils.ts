@@ -82,7 +82,7 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   });
 
   if (!result && !TEMP_ICON_MAP[eventName]) {
-    if (eventName.includes("events from")) {
+    if (eventName?.includes("events from")) {
       result = {
         // name: "icon-activities_16",
         name: "icon-multiple-devices_16",
@@ -92,7 +92,7 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
       result = {
         name: "icon-activities_16",
         // name: "icon-event_16",
-        color: "pink",
+        color: "darkmint",
         // name: getRandomIcon(),
         // color: getRandomColor(),
       };
