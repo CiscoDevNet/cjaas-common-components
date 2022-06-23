@@ -31,9 +31,17 @@
     "name": "icon-messenger_16",
     "color": "cobalt"
   },
+  "social": {
+    "name": "icon-contact-group_16",
+    "color": "mint"
+  },
   "task": {
     "name": "icon-tasks_16",
     "color": "yellow"
+  },
+  "Login": {
+    "name": "icon-sign-in_24",
+    "color": "gold"
   },
   "Page Visit": {
     "name": "icon-mouse-cursor_16",

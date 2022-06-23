@@ -23,7 +23,7 @@ export namespace TimelineItemGroup {
     /**
      * @attr title
      */
-    @property({ type: String }) title = "";
+    @property({ type: String, attribute: "event-title" }) eventTitle = "";
     /**
      * @attr type
      */
@@ -87,11 +87,10 @@ export namespace TimelineItemGroup {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          .title=${event.type}
+          event-title=${event.type}
           .time=${event.time}
           .data=${event.data}
           .id=${event.id}
-          ?is-cluster=${true}
           .person=${event.person || null}
           group-item
           .eventIconTemplate=${this.eventIconTemplate}
@@ -105,10 +104,11 @@ export namespace TimelineItemGroup {
         ? html`
             <cjaas-timeline-item
               @click=${() => this.expandDetails()}
-              title=${this.title}
+              event-title=${this.eventTitle}
               time=${this.time}
               class="has-line"
-              .data=${{ "Event Group": this.title }}
+              ?is-cluster=${true}
+              .data=${{ "Event Group": this.eventTitle }}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>
           `

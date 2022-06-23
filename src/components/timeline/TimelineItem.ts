@@ -25,9 +25,9 @@ export namespace TimelineItem {
      */
     @property({ type: String }) id = "";
     /**
-     * @attr title
+     * @attr eventTitle
      */
-    @property({ type: String }) title = "";
+    @property({ type: String, attribute: "event-title" }) eventTitle = "";
     /**
      * @attr title
      */
@@ -232,7 +232,7 @@ export namespace TimelineItem {
                   `}
             </md-badge>
             <div class="info-section">
-              <div class="title">${this.title}</div>
+              <div class="title">${this.eventTitle}</div>
               ${this.subTitle ? this.renderSubTitle() : nothing}
             </div>
             <div class="time-stamp">${this.renderShowcase()}</div>

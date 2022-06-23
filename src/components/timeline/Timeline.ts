@@ -90,15 +90,15 @@ export namespace Timeline {
      */
     @property({ type: Boolean }) getEventsInProgress = false;
     /**
-     * @attr event-filters
+     * @attr is-event-filter-visible
      * Show/hide event filters UI
      */
-    @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
+    @property({ type: Boolean, attribute: "is-event-filter-visible" }) isEventFilterVisible = false;
     /**
-     * @attr date-filters
+     * @attr is-date-filter-visible
      * Show/hide date filters UI
      */
-    @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
+    @property({ type: Boolean, attribute: "is-date-filter-visible" }) isDateFilterVisible = false;
     /**
      * @attr live-stream
      * Toggle adding latest live events being added directly to timeline (instead of queue)
@@ -135,6 +135,16 @@ export namespace Timeline {
      * Dataset of all unique event types
      */
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    /**
+     * @prop filterTypes
+     * Dataset of all unique filter types
+     */
+    @property({ type: Array, attribute: false }) filterTypes: Array<string> = [];
+    /**
+     * @prop channelTaskTypes
+     * Dataset of all unique channel & task Ids
+     */
+    @property({ type: Array, attribute: false }) channelTaskTypes: Array<string> = [];
     /**
      * @prop activeTypes
      * Dataset tracking all visible event types (in event filter)
@@ -174,7 +184,6 @@ export namespace Timeline {
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
-      // this.createEventTypeSet();
       this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
@@ -182,8 +191,7 @@ export namespace Timeline {
       super.updated(changedProperties);
       if (changedProperties.has("historicEvents")) {
         this.formatEvents(this.historicEvents);
-        this.createEventTypeSet();
-        // this.requestUpdate(); // TODO: check
+        this.createSets();
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.consolidateEvents();
@@ -199,30 +207,46 @@ export namespace Timeline {
         const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
         const agentState = event?.data?.currentState;
         const formattedAgentState = agentState ? agentState?.charAt(0).toUpperCase() + agentState?.slice(1) : undefined;
+        const { channelType, taskId, currentState } = event?.data;
 
         switch (eventType) {
           case EventType.Agent:
-            event.renderData = { title: `Agent ${formattedAgentState || "Event"}` };
+            event.renderData = {
+              title: `Agent ${formattedAgentState || "Event"}`,
+              filterType: `agent ${currentState}`,
+              channelTaskCluster: `${currentState}-${taskId}`,
+            };
             break;
           case EventType.Task:
-            event.renderData = { subTitle: ` ${eventSubType} ${channelTypeText}` };
+            event.renderData = {
+              subTitle: `${eventSubType} ${channelTypeText}`,
+              filterType: channelType,
+              channelTaskClusterName: `${channelType}-${taskId}`,
+            };
             break;
         }
       });
     }
 
     /**
-     * @method getEventTypes
+     * @method createSets
      * @returns void
+     * Sets `filterOptions` property to a unique set of filter options for filter feature.
      * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
+    createSets() {
+      const eventTypeArray: Set<string> = new Set(); // ex. task:connected
+      const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
+      const channelTaskClusterArray: Set<string> = new Set(); // ex. chat-123, email-456 wrapup-789
 
-    createEventTypeSet() {
-      const eventArray: Set<string> = new Set();
       (this.historicEvents || []).forEach(event => {
-        eventArray.add(event.type);
+        eventTypeArray.add(event.type);
+        filterOptionsArray.add(event?.renderData?.filterType);
+        channelTaskClusterArray.add(event?.renderData?.channelTaskClusterName);
       });
-      this.eventTypes = Array.from(eventArray);
+      this.eventTypes = Array.from(eventTypeArray);
+      this.filterTypes = Array.from(filterOptionsArray);
+      this.channelTaskTypes = Array.from(channelTaskClusterArray);
     }
 
     getClusterId(text: string, key: number) {
@@ -341,7 +365,7 @@ export namespace Timeline {
           ${this.collapsed.has(clusterId)
             ? html`
                 <cjaas-timeline-item
-                  title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
+                  event-title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
                   .data=${{ Date: readableDate }}
                   .time=${date}
                   ?is-cluster=${true}
@@ -393,7 +417,7 @@ export namespace Timeline {
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              title=${`${cluster.length} ${clusterType} events`}
+              event-title=${`${cluster.length} ${clusterType} events`}
               type=${clusterType}
               time=${cluster[0].time}
               class="has-line"
@@ -464,7 +488,7 @@ export namespace Timeline {
     renderFilterButton() {
       return html`
         <cjaas-event-toggles
-          .eventTypes=${this.eventTypes}
+          .eventTypes=${this.filterTypes}
           .activeTypes=${this.activeTypes}
           @active-type-update=${(e: CustomEvent) => {
             this.activeTypes = e.detail.activeTypes;
@@ -491,7 +515,7 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          title=${event.renderData?.title || this.formattedOrigin(event)}
+          event-title=${event.renderData?.title || this.formattedOrigin(event)}
           sub-title=${event.renderData?.subTitle || ""}
           time=${event.time}
           .data=${event.data}
@@ -555,7 +579,7 @@ export namespace Timeline {
 
     filterByType(list: CustomerEvent[] | undefined | null) {
       if (this.activeTypes.length) {
-        return list?.filter(item => this.activeTypes.includes(item.type)) || null;
+        return list?.filter(item => this.activeTypes.includes(item?.renderData?.filterType)) || null;
       } else {
         return list;
       }

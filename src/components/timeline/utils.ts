@@ -71,7 +71,8 @@ const staticIcons = [
 // uses known event types and also generates random pairs for unknown events
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
-  const parsedIconMap = JSON.parse(JSON.stringify(iconMap)).default;
+  const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
+  console.log("[Timeline][getIconData] parsedIconMap", parsedIconMap);
 
   Object.keys(parsedIconMap).forEach((x: string) => {
     const regex = new RegExp(x, "i");
@@ -92,7 +93,7 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
       result = {
         name: "icon-activities_16",
         // name: "icon-event_16",
-        color: "darkmint",
+        color: "grey",
         // name: getRandomIcon(),
         // color: getRandomColor(),
       };
