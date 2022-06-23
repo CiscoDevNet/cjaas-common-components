@@ -207,6 +207,7 @@ export namespace TimelineItem {
     private get groupClassMap() {
       return {
         "group-item": this.groupItem,
+        "cluster-item": this.isCluster,
         expanded: this.expanded,
       };
     }

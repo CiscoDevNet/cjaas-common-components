@@ -91,6 +91,7 @@ export namespace TimelineItemGroup {
           .time=${event.time}
           .data=${event.data}
           .id=${event.id}
+          ?is-cluster=${true}
           .person=${event.person || null}
           group-item
           .eventIconTemplate=${this.eventIconTemplate}
