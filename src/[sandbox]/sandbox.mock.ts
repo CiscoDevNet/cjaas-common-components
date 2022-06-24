@@ -1172,8 +1172,11 @@ const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOSt
 
 export const historicalEvents: Timeline.CustomerEvent[] = [
   mockedConnectedTask(isoNowStr, "email"),
-  mockedConnectedTask(isoNowStr, "chat"),
-  mockedConnectTask(isoTwoHourStr, "telephony"),
+  mockedConnectTask(isoNowStr, "email"),
+  mockedConnectTask(isoNowStr, "telephony"),
+  mockedConnectedTask(isoNowStr, "telephony"),
+  mockedNewTask(isoTwoHourStr, "email"),
+  mockedStateChangeTask(isoTwoDayStr),
   mockedStateChangeTask(isoTwoDayStr),
   mockedNewTask(isoEightDayStr),
   mockedEndedTask(isoTwoWeeksStr),

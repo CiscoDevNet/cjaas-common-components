@@ -12,6 +12,7 @@ import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import * as iconData from "@/assets/defaultIcons.json";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
@@ -27,7 +28,7 @@ export namespace TimelineItemGroup {
     /**
      * @attr type
      */
-    @property({ type: String }) type = "";
+    @property({ type: String, attribute: "group-type" }) groupType = "";
     /**
      * @attr time
      */
@@ -83,11 +84,24 @@ export namespace TimelineItemGroup {
       );
     };
 
+    formattedOrigin(event: Timeline.CustomerEvent) {
+      const { origin, channelType } = event?.data;
+
+      const hasPlusSign = (origin as string).charAt(0) === "+";
+      if (channelType === "telephony" || hasPlusSign) {
+        const parsedNumber = parsePhoneNumber(origin);
+        return parsedNumber?.formatInternational() || origin;
+      } else {
+        return origin;
+      }
+    }
+
     renderSingleton(event: Timeline.CustomerEvent) {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event.type}
+          event-title=${event.renderData?.title || this.formattedOrigin(event)}
+          sub-title=${event.renderData?.subTitle || ""}
           .time=${event.time}
           .data=${event.data}
           .id=${event.id}
@@ -108,6 +122,7 @@ export namespace TimelineItemGroup {
               time=${this.time}
               class="has-line"
               ?is-cluster=${true}
+              group-icon-map-keyword=${this.groupType}
               .data=${{ "Event Group": this.eventTitle }}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>

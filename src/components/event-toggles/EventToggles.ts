@@ -56,7 +56,7 @@ export namespace EventToggles {
     handleOutsideOverlayKeydown = async (event: KeyboardEvent) => {
       let insideMenuKeyDown = false;
       const path = event.composedPath();
-      if (path.length) {
+      if (path?.length) {
         insideMenuKeyDown = !!path.find(element => element === this);
         if (!insideMenuKeyDown) {
           return;
@@ -75,7 +75,7 @@ export namespace EventToggles {
     handleOutsideOverlayClick = (event: MouseEvent) => {
       let insideMenuClick = false;
       const path = event.composedPath();
-      if (path.length) {
+      if (path?.length) {
         insideMenuClick = !!path.find(element => element === this);
         if (!insideMenuClick) {
           this.isFilterOpen = false;
@@ -100,7 +100,9 @@ export namespace EventToggles {
       // animate combo box with translateX
       const classList = { expanded: this.isFilterOpen };
       const tooltipMessage =
-        this.activeTypes.length > 0 ? `Filter Event Types (${this.activeTypes.length} applied)` : `Filter Event Types`;
+        this.activeTypes?.length > 0
+          ? `Filter Event Types (${this.activeTypes?.length} applied)`
+          : `Filter Event Types`;
 
       return html`
         <md-combobox
@@ -119,7 +121,7 @@ export namespace EventToggles {
         ></md-combobox>
         <md-tooltip class="filter-tooltip" .message=${tooltipMessage} placement="bottom">
           <md-button
-            variant=${this.activeTypes.length ? "green" : "secondary"}
+            variant=${this.activeTypes?.length ? "green" : "secondary"}
             circle
             @click=${() => {
               this.isFilterOpen = !this.isFilterOpen;

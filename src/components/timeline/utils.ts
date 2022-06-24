@@ -74,10 +74,10 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
   console.log("[Timeline][getIconData] parsedIconMap", parsedIconMap);
 
-  Object.keys(parsedIconMap).forEach((x: string) => {
+  Object.keys(parsedIconMap)?.forEach((x: string) => {
     const regex = new RegExp(x, "i");
 
-    if (regex.test(eventName)) {
+    if (eventName && regex.test(eventName)) {
       result = parsedIconMap[x];
     }
   });
@@ -87,13 +87,13 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
       result = {
         // name: "icon-activities_16",
         name: "icon-multiple-devices_16",
-        color: "cobalt",
+        color: "orange",
       };
     } else {
       result = {
         name: "icon-activities_16",
         // name: "icon-event_16",
-        color: "grey",
+        color: "orange",
         // name: getRandomIcon(),
         // color: getRandomColor(),
       };

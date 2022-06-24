@@ -24,7 +24,7 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import { Button } from "@momentum-ui/web-components";
-import * as iconData from "@/assets/defaultIcons.json";
+import iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
   export interface ImiDataPayload {
@@ -214,14 +214,18 @@ export namespace Timeline {
             event.renderData = {
               title: `Agent ${formattedAgentState || "Event"}`,
               filterType: `agent ${currentState}`,
-              channelTaskCluster: `${currentState}-${taskId}`,
             };
             break;
           case EventType.Task:
             event.renderData = {
               subTitle: `${eventSubType} ${channelTypeText}`,
               filterType: channelType,
-              channelTaskClusterName: `${channelType}-${taskId}`,
+            };
+            break;
+          default:
+            event.renderData = {
+              subTitle: `${eventSubType} ${channelTypeText}`,
+              filterType: channelType || "misc",
             };
             break;
         }
@@ -250,7 +254,8 @@ export namespace Timeline {
     }
 
     getClusterId(text: string, key: number) {
-      return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
+      const clusterId = `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
+      return clusterId;
     }
 
     /**
@@ -346,9 +351,11 @@ export namespace Timeline {
 
     renderTimeBadge(readableDate: any, clusterId: string) {
       return html`
-        <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
-          <span class="badge-text">${readableDate}</span>
-        </md-badge>
+        <md-tooltip message="Toggle to expand/collapse events on this date">
+          <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
+            <span class="badge-text">${readableDate}</span>
+          </md-badge>
+        </md-tooltip>
       `;
     }
 
@@ -369,6 +376,7 @@ export namespace Timeline {
                   .data=${{ Date: readableDate }}
                   .time=${date}
                   ?is-cluster=${true}
+                  group-icon-map-keyword="multi events single day"
                   .eventIconTemplate=${this.eventIconTemplate}
                   .badgeKeyword=${this.badgeKeyword}
                 ></cjaas-timeline-item>
@@ -376,6 +384,22 @@ export namespace Timeline {
             : this.populateEvents(groupedItem.events)}
         </div>
       `;
+    }
+
+    getClusterType(event: CustomerEvent) {
+      const { channelType, taskId } = event?.data;
+      const [eventType, eventSubType] = event?.type.split(":");
+      // TODO: see if we want to add taskId to only group same type if it is the same communication thread.
+      // maybe could cluster based on taskId all together?
+
+      switch (eventType) {
+        case EventType.Agent:
+          return "agent";
+        case EventType.Task:
+          return channelType === "telephony" ? "call" : channelType;
+        default:
+          return taskId;
+      }
     }
 
     /**
@@ -392,10 +416,13 @@ export namespace Timeline {
         }
 
         const cluster = [events[index]]; // start new cluster
-        const clusterType = events[index].type; // set the new cluster type
+        const clusterType = this.getClusterType(events[index]);
         const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
 
-        while (index < events.length - 1 && events[index].type === events[index + 1].type) {
+        while (
+          index < events.length - 1 &&
+          this.getClusterType(events[index]) === this.getClusterType(events[index + 1])
+        ) {
           cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
         }
@@ -418,7 +445,7 @@ export namespace Timeline {
             <cjaas-timeline-item-group
               id=${clusterId}
               event-title=${`${cluster.length} ${clusterType} events`}
-              type=${clusterType}
+              group-type=${clusterType}
               time=${cluster[0].time}
               class="has-line"
               .events=${cluster}
@@ -486,16 +513,20 @@ export namespace Timeline {
     }
 
     renderFilterButton() {
-      return html`
-        <cjaas-event-toggles
-          .eventTypes=${this.filterTypes}
-          .activeTypes=${this.activeTypes}
-          @active-type-update=${(e: CustomEvent) => {
-            this.activeTypes = e.detail.activeTypes;
-            this.requestUpdate();
-          }}
-        ></cjaas-event-toggles>
-      `;
+      if (this.filterTypes && this.activeTypes) {
+        return html`
+          <cjaas-event-toggles
+            .eventTypes=${this.filterTypes}
+            .activeTypes=${this.activeTypes}
+            @active-type-update=${(e: CustomEvent) => {
+              this.activeTypes = e.detail.activeTypes;
+              this.requestUpdate();
+            }}
+          ></cjaas-event-toggles>
+        `;
+      } else {
+        nothing;
+      }
     }
 
     formattedOrigin(event: Timeline.CustomerEvent) {
@@ -504,7 +535,6 @@ export namespace Timeline {
       const hasPlusSign = (origin as string).charAt(0) === "+";
       if (channelType === "telephony" || hasPlusSign) {
         const parsedNumber = parsePhoneNumber(origin);
-        // return parsedNumber?.formatNational();
         return parsedNumber?.formatInternational() || origin;
       } else {
         return origin;
@@ -549,13 +579,7 @@ export namespace Timeline {
 
     renderEmptyState() {
       const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-      // if (this.getEventsInProgress) {
-      //   return html`
-      //     <div class="empty-state">
-      //       <md-spinner size="32"></md-spinner>
-      //     </div>
-      //   `;
-      // } else
+
       if (!this.historicEvents || this.historicEvents.length === 0) {
         return html`
           <div class="empty-state">
