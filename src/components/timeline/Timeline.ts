@@ -8,11 +8,10 @@
 
 import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { nothing } from "lit-html";
-import parsePhoneNumber from "libphonenumber-js";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
-import { getRelativeDate } from "./utils";
+import { formattedOrigin, getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import "@/components/timeline/TimelineItem";
 import "@/components/timeline/TimelineItemGroup";
@@ -241,16 +240,13 @@ export namespace Timeline {
     createSets() {
       const eventTypeArray: Set<string> = new Set(); // ex. task:connected
       const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
-      const channelTaskClusterArray: Set<string> = new Set(); // ex. chat-123, email-456 wrapup-789
 
       (this.historicEvents || []).forEach(event => {
         eventTypeArray.add(event.type);
         filterOptionsArray.add(event?.renderData?.filterType);
-        channelTaskClusterArray.add(event?.renderData?.channelTaskClusterName);
       });
       this.eventTypes = Array.from(eventTypeArray);
       this.filterTypes = Array.from(filterOptionsArray);
-      this.channelTaskTypes = Array.from(channelTaskClusterArray);
     }
 
     getClusterId(text: string, key: number) {
@@ -387,19 +383,27 @@ export namespace Timeline {
     }
 
     getClusterType(event: CustomerEvent) {
-      const { channelType, taskId } = event?.data;
+      const { channelType, origin } = event?.data;
       const [eventType, eventSubType] = event?.type.split(":");
       // TODO: see if we want to add taskId to only group same type if it is the same communication thread.
       // maybe could cluster based on taskId all together?
 
+      let clusterType;
+
       switch (eventType) {
         case EventType.Agent:
-          return "agent";
+          clusterType = "agent";
+          break;
         case EventType.Task:
-          return channelType === "telephony" ? "call" : channelType;
+          clusterType = channelType === "telephony" ? "call" : channelType;
+          break;
         default:
-          return taskId;
+          clusterType = origin;
+          break;
       }
+
+      clusterType = `${clusterType}_${origin}`;
+      return clusterType;
     }
 
     /**
@@ -440,11 +444,15 @@ export namespace Timeline {
 
     renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
       const clusterId = this.getClusterId(clusterType, keyId);
+      const [clusterChannelType, clusterOrigin] = clusterType.split("_");
+      const formattedClusterOrigin = formattedOrigin(clusterOrigin, clusterChannelType);
+
       return this.collapsed.has(clusterId)
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              event-title=${`${cluster.length} ${clusterType} events`}
+              event-title=${`${cluster.length} ${clusterChannelType} events`}
+              cluster-sub-title=${clusterChannelType === "agent" ? "" : formattedClusterOrigin}
               group-type=${clusterType}
               time=${cluster[0].time}
               class="has-line"
@@ -529,23 +537,11 @@ export namespace Timeline {
       }
     }
 
-    formattedOrigin(event: Timeline.CustomerEvent) {
-      const { origin, channelType } = event?.data;
-
-      const hasPlusSign = (origin as string).charAt(0) === "+";
-      if (channelType === "telephony" || hasPlusSign) {
-        const parsedNumber = parsePhoneNumber(origin);
-        return parsedNumber?.formatInternational() || origin;
-      } else {
-        return origin;
-      }
-    }
-
     renderEventBlock(event: CustomerEvent) {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event.renderData?.title || this.formattedOrigin(event)}
+          event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
           sub-title=${event.renderData?.subTitle || ""}
           time=${event.time}
           .data=${event.data}

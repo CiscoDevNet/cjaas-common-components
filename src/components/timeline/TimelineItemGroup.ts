@@ -12,7 +12,7 @@ import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import * as iconData from "@/assets/defaultIcons.json";
-import { parsePhoneNumber } from "libphonenumber-js";
+import { formattedOrigin } from "./utils";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
@@ -25,6 +25,10 @@ export namespace TimelineItemGroup {
      * @attr title
      */
     @property({ type: String, attribute: "event-title" }) eventTitle = "";
+    /**
+     * @attr cluster-sub-title
+     */
+    @property({ type: String, attribute: "cluster-sub-title" }) clusterSubTitle = "";
     /**
      * @attr type
      */
@@ -84,23 +88,11 @@ export namespace TimelineItemGroup {
       );
     };
 
-    formattedOrigin(event: Timeline.CustomerEvent) {
-      const { origin, channelType } = event?.data;
-
-      const hasPlusSign = (origin as string).charAt(0) === "+";
-      if (channelType === "telephony" || hasPlusSign) {
-        const parsedNumber = parsePhoneNumber(origin);
-        return parsedNumber?.formatInternational() || origin;
-      } else {
-        return origin;
-      }
-    }
-
     renderSingleton(event: Timeline.CustomerEvent) {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event.renderData?.title || this.formattedOrigin(event)}
+          event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
           sub-title=${event.renderData?.subTitle || ""}
           .time=${event.time}
           .data=${event.data}
@@ -119,6 +111,7 @@ export namespace TimelineItemGroup {
             <cjaas-timeline-item
               @click=${() => this.expandDetails()}
               event-title=${this.eventTitle}
+              sub-title=${this.clusterSubTitle}
               time=${this.time}
               class="has-line"
               ?is-cluster=${true}

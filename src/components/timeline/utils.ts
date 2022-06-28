@@ -7,6 +7,7 @@
  */
 
 import { Timeline } from "@/index";
+import { parsePhoneNumber } from "libphonenumber-js";
 import { DateTime } from "luxon";
 import { querySelectorAllDeep } from "query-selector-shadow-dom";
 
@@ -25,6 +26,22 @@ export function getTimelineEventFromMessage(message: any) {
   }
 
   return event;
+}
+
+export function formattedOrigin(origin: string, channelType: string) {
+  const hasPlusSign = (origin as string).charAt(0) === "+";
+  if (channelType === "telephony" || hasPlusSign) {
+    const parsedNumber = parsePhoneNumber(origin);
+
+    if (parsedNumber?.country === "US") {
+      const national = parsedNumber?.formatNational() && `+1 ${parsedNumber?.formatNational()}`;
+      return national || parsedNumber?.formatInternational() || origin;
+    } else {
+      return parsedNumber?.formatInternational() || origin;
+    }
+  } else {
+    return origin;
+  }
 }
 
 export interface IconMap {
@@ -72,7 +89,6 @@ const staticIcons = [
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
-  console.log("[Timeline][getIconData] parsedIconMap", parsedIconMap);
 
   Object.keys(parsedIconMap)?.forEach((x: string) => {
     const regex = new RegExp(x, "i");

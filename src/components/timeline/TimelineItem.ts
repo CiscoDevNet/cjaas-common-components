@@ -29,7 +29,7 @@ export namespace TimelineItem {
      */
     @property({ type: String, attribute: "event-title" }) eventTitle = "";
     /**
-     * @attr title
+     * @attr sub-title
      */
     @property({ type: String, attribute: "sub-title" }) subTitle = "";
     /**

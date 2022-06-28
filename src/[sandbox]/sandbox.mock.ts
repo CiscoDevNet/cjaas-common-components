@@ -6,10 +6,9 @@ const mockOriginByType = (channelType: string) => {
   switch (channelType) {
     case "telephony":
       return "+14806754084";
-      break;
+    // return "+3227045654"; International Number
     case "email":
       return "ragreene@gmail.com";
-      break;
     default:
       return "Rachel Greene";
   }
@@ -38,12 +37,12 @@ const mockedConnectedTask = (time: string, channelType = "chat") => {
   };
 };
 
-const mockedStateChangeTask = (time: string) => {
+const mockedStateChangeTask = (time: string, currentState = "wrapup") => {
   return {
     data: {
       agentId: "55de70fc-af58-40e8-b7f8-c23536a53e76",
       createdTime: 1651187948958,
-      currentState: "wrapup",
+      currentState,
       destination: "+19997770103",
       origin: "bob@gmail.com",
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
@@ -61,14 +60,14 @@ const mockedStateChangeTask = (time: string) => {
   };
 };
 
-const mockedConnectTask = (time: string, channelType = "chat") => {
+const mockedConnectTask = (time: string, channelType = "chat", origin = mockOriginByType(channelType)) => {
   return {
     data: {
       channelType,
       createdTime: 1651187946178,
       destination: "+19997770103",
       direction: "INBOUND",
-      origin: mockOriginByType(channelType),
+      origin,
       outboundType: null,
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
@@ -1173,11 +1172,12 @@ const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOSt
 export const historicalEvents: Timeline.CustomerEvent[] = [
   mockedConnectedTask(isoNowStr, "email"),
   mockedConnectTask(isoNowStr, "email"),
+  mockedConnectTask(isoNowStr, "email", "bill@gmail.com"),
   mockedConnectTask(isoNowStr, "telephony"),
   mockedConnectedTask(isoNowStr, "telephony"),
   mockedNewTask(isoTwoHourStr, "email"),
   mockedStateChangeTask(isoTwoDayStr),
-  mockedStateChangeTask(isoTwoDayStr),
+  mockedStateChangeTask(isoTwoDayStr, "connected"),
   mockedNewTask(isoEightDayStr),
   mockedEndedTask(isoTwoWeeksStr),
   mockedConnectedTask(isoTwoMonthsStr),
