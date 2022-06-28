@@ -6,4 +6,5 @@ md-chip::part(chip){
 }
 md-chip.group-item::part(chip){
   color: var(--md-primary-text-color, #dedede);
+  padding-top: 2px;
 }

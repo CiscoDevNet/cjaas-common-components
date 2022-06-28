@@ -67,6 +67,14 @@ export namespace Timeline {
     type: string;
   }
 
+  export interface ClusterInfoObject {
+    id: string;
+    channelType: string;
+    origin: string;
+    eventType: string;
+    eventSubType: string;
+  }
+
   export interface TimelineCustomizations {
     [key: string]: {
       name?: string;
@@ -205,25 +213,27 @@ export namespace Timeline {
         const [eventType, eventSubType] = event?.type.split(":");
         const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
         const agentState = event?.data?.currentState;
-        const formattedAgentState = agentState ? agentState?.charAt(0).toUpperCase() + agentState?.slice(1) : undefined;
-        const { channelType, taskId, currentState } = event?.data;
+        const formattedAgentState = agentState
+          ? agentState?.charAt(0)?.toUpperCase() + agentState?.slice(1)
+          : undefined;
+        const { channelType, currentState } = event?.data;
 
         switch (eventType) {
           case EventType.Agent:
             event.renderData = {
               title: `Agent ${formattedAgentState || "Event"}`,
-              filterType: `agent ${currentState}`,
+              filterType: currentState ? `agent ${currentState}` : "",
             };
             break;
           case EventType.Task:
             event.renderData = {
-              subTitle: `${eventSubType} ${channelTypeText}`,
+              subTitle: `${eventSubType || ""} ${channelTypeText || ""}`,
               filterType: channelType,
             };
             break;
           default:
             event.renderData = {
-              subTitle: `${eventSubType} ${channelTypeText}`,
+              subTitle: `${channelTypeText || ""}`,
               filterType: channelType || "misc",
             };
             break;
@@ -361,6 +371,7 @@ export namespace Timeline {
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const readableDate = DateTime.fromISO(date).toFormat("D");
+      const printableDate = DateTime.fromISO(date).toFormat("DD");
 
       return html`
         <div class="timeline date-set has-line" id=${clusterId}>
@@ -368,7 +379,7 @@ export namespace Timeline {
           ${this.collapsed.has(clusterId)
             ? html`
                 <cjaas-timeline-item
-                  event-title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
+                  event-title=${`${events.length} ${eventsKeyword} from ${printableDate}`}
                   .data=${{ Date: readableDate }}
                   .time=${date}
                   ?is-cluster=${true}
@@ -382,28 +393,21 @@ export namespace Timeline {
       `;
     }
 
-    getClusterType(event: CustomerEvent) {
-      const { channelType, origin } = event?.data;
-      const [eventType, eventSubType] = event?.type.split(":");
-      // TODO: see if we want to add taskId to only group same type if it is the same communication thread.
-      // maybe could cluster based on taskId all together?
+    createClusterInfo(clusterArray: Array<CustomerEvent>) {
+      const firstRealEvent: CustomerEvent =
+        clusterArray.find((event: CustomerEvent) => event?.data?.channelType !== undefined) || clusterArray[0];
 
-      let clusterType;
+      const { channelType, origin, taskId } = firstRealEvent?.data;
+      const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
+      const [eventType, eventSubType] = firstRealEvent?.type.split(":");
 
-      switch (eventType) {
-        case EventType.Agent:
-          clusterType = "agent";
-          break;
-        case EventType.Task:
-          clusterType = channelType === "telephony" ? "call" : channelType;
-          break;
-        default:
-          clusterType = origin;
-          break;
-      }
-
-      clusterType = `${clusterType}_${origin}`;
-      return clusterType;
+      return {
+        id: taskId,
+        channelType: formattedChannelType,
+        origin,
+        eventType,
+        eventSubType,
+      };
     }
 
     /**
@@ -420,40 +424,38 @@ export namespace Timeline {
         }
 
         const cluster = [events[index]]; // start new cluster
-        const clusterType = this.getClusterType(events[index]);
+        const clusterTaskId = events[index].data?.taskId;
         const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
 
-        while (
-          index < events.length - 1 &&
-          this.getClusterType(events[index]) === this.getClusterType(events[index + 1])
-        ) {
+        while (index < events.length - 1 && events[index].data?.taskId === events[index + 1].data?.taskId) {
           cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
         }
+        const clusterInfo = this.createClusterInfo(cluster);
+
         index++;
         if (cluster.length > 1) {
           if (this.collapseView) {
-            this.collapsed.add(this.getClusterId(clusterType, keyId));
+            this.collapsed.add(this.getClusterId(clusterTaskId, keyId));
           }
-          return this.renderCluster(cluster, clusterType, keyId);
+          return this.renderCluster(cluster, clusterInfo, keyId);
         } else {
           return this.renderEventBlock(events[keyId]);
         }
       });
     }
 
-    renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
-      const clusterId = this.getClusterId(clusterType, keyId);
-      const [clusterChannelType, clusterOrigin] = clusterType.split("_");
-      const formattedClusterOrigin = formattedOrigin(clusterOrigin, clusterChannelType);
+    renderCluster(cluster: CustomerEvent[], clusterInfo: ClusterInfoObject, keyId: number) {
+      const clusterId = this.getClusterId(clusterInfo?.id, keyId);
+      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType);
 
       return this.collapsed.has(clusterId)
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              event-title=${`${cluster.length} ${clusterChannelType} events`}
-              cluster-sub-title=${clusterChannelType === "agent" ? "" : formattedClusterOrigin}
-              group-type=${clusterType}
+              event-title=${`${cluster.length} ${clusterInfo.channelType} events`}
+              cluster-sub-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
+              group-icon=${clusterInfo.channelType}
               time=${cluster[0].time}
               class="has-line"
               .events=${cluster}

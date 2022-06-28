@@ -6,7 +6,7 @@ const mockOriginByType = (channelType: string) => {
   switch (channelType) {
     case "telephony":
       return "+14806754084";
-    // return "+3227045654"; International Number
+    // return "+3227045654"; International
     case "email":
       return "ragreene@gmail.com";
     default:
@@ -117,7 +117,7 @@ const mockParkedTask = (time: string, channelType = "chat") => {
       origin: mockOriginByType(channelType),
       outboundType: null,
       queueId: "7a682870-472b-4a0f-b3e9-01fadf4efcf3",
-      taskId: "69a45a01-c737-11ec-bde5-e7810446c774",
+      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       workflowManager: null,
     },
     dataContentType: "string",
@@ -140,7 +140,7 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
       origin: mockOriginByType(channelType),
       outboundType: null,
       reason: "Agent Left",
-      taskId: "ffc6d07a-c73b-11ec-83e7-91a2c53dff83",
+      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       terminatingParty: "Agent",
       workflowManager: null,
     },
@@ -1170,23 +1170,23 @@ const isoTwoWeeksStr = new Date(nowDate.setDate(nowDate.getDay() - 14)).toISOStr
 const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOString();
 
 export const historicalEvents: Timeline.CustomerEvent[] = [
-  mockedConnectedTask(isoNowStr, "email"),
-  mockedConnectTask(isoNowStr, "email"),
-  mockedConnectTask(isoNowStr, "email", "bill@gmail.com"),
-  mockedConnectTask(isoNowStr, "telephony"),
+  mockedStateChangeTask(isoNowStr, "wrapup"),
+  mockedEndedTask(isoNowStr, "telephony"),
   mockedConnectedTask(isoNowStr, "telephony"),
-  mockedNewTask(isoTwoHourStr, "email"),
-  mockedStateChangeTask(isoTwoDayStr),
-  mockedStateChangeTask(isoTwoDayStr, "connected"),
-  mockedNewTask(isoEightDayStr),
-  mockedEndedTask(isoTwoWeeksStr),
-  mockedConnectedTask(isoTwoMonthsStr),
+  mockedConnectTask(isoNowStr, "telephony"),
+  // mockedConnectTask(isoNowStr, "telephony"),
+  // mockedConnectedTask(isoNowStr, "telephony"),
+  // mockedNewTask(isoTwoHourStr, "email"),
+  mockedStateChangeTask(isoNowStr, "connected"),
+  // mockedNewTask(isoEightDayStr),
+  // mockedEndedTask(isoTwoWeeksStr),
+  // mockedConnectedTask(isoTwoMonthsStr),
 ];
 
 export const fiveNewEvents: Timeline.CustomerEvent[] = [
-  mockedConnectedTask(isoNowStr),
-  mockedConnectTask(isoNowStr, "email"),
-  mockedStateChangeTask(isoNowStr),
-  mockedNewTask(isoNowStr, "telephony"),
-  mockedEndedTask(isoNowStr),
+  // mockedConnectedTask(isoNowStr),
+  // mockedConnectTask(isoNowStr, "email"),
+  // mockedStateChangeTask(isoNowStr),
+  // mockedNewTask(isoNowStr, "telephony"),
+  // mockedEndedTask(isoNowStr),
 ];

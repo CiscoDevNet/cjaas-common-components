@@ -29,7 +29,7 @@ export function getTimelineEventFromMessage(message: any) {
 }
 
 export function formattedOrigin(origin: string, channelType: string) {
-  const hasPlusSign = (origin as string).charAt(0) === "+";
+  const hasPlusSign = (origin as string)?.charAt(0) === "+";
   if (channelType === "telephony" || hasPlusSign) {
     const parsedNumber = parsePhoneNumber(origin);
 
