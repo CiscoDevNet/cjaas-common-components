@@ -109,7 +109,7 @@ export namespace TimelineItemGroup {
       return this.grouped
         ? html`
             <cjaas-timeline-item
-              @click=${() => this.expandDetails()}
+              @click=${this.expandDetails}
               event-title=${this.eventTitle}
               sub-title=${this.clusterSubTitle}
               time=${this.time}
@@ -121,8 +121,8 @@ export namespace TimelineItemGroup {
             ></cjaas-timeline-item>
           `
         : html`
-            <md-chip class="group-item" small value="collapse events" @click=${() => this.expandDetails()}></md-chip>
-            ${this.events.map(event => {
+            <md-chip class="group-item" small value="collapse events" @click=${this.expandDetails}></md-chip>
+            ${this.events?.map(event => {
               return this.renderSingleton(event);
             })}
           `;

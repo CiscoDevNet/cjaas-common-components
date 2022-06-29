@@ -123,14 +123,14 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   return result;
 }
 
-export function getTimeStamp(date: DateTime, isCluster = false) {
+export function getTimeStamp(date: DateTime, isDateCluster = false) {
   const now = DateTime.local();
   const diff: any = now.diff(date, ["days", "hours", "minutes", "seconds"]).toObject();
 
   if (diff === undefined) {
     return;
   } else {
-    if (isCluster) {
+    if (isDateCluster) {
       return date.toFormat("D");
     }
     if (diff.days >= 30) {

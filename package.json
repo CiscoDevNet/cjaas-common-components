@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.3.6-dev11",
+  "version": "4.3.6",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -59,7 +59,8 @@
     "luxon": "^1.25.0",
     "nanoid": "^3.1.16",
     "papaparse": "^5.3.0",
-    "sortablejs": "^1.13.0"
+    "sortablejs": "^1.13.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -90,6 +91,7 @@
     "@types/node": "^13.7.7",
     "@types/papaparse": "^5.2.4",
     "@types/sortablejs": "^1.10.6",
+    "@types/uuid": "^8.3.4",
     "@types/webpack": "^4.41.7",
     "@types/webpack-dev-server": "^3.10.0",
     "@types/webpack-merge": "^5.0.0",

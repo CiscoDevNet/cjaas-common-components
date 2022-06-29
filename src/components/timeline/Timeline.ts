@@ -11,6 +11,7 @@ import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
+import { v4 as uuidv4 } from "uuid";
 import { formattedOrigin, getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import "@/components/timeline/TimelineItem";
@@ -22,6 +23,7 @@ import "@momentum-ui/web-components/dist/comp/md-button";
 import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
+import "@momentum-ui/web-components/dist/comp/md-chip";
 import { Button } from "@momentum-ui/web-components";
 import iconData from "@/assets/defaultIcons.json";
 
@@ -71,8 +73,6 @@ export namespace Timeline {
     id: string;
     channelType: string;
     origin: string;
-    eventType: string;
-    eventSubType: string;
   }
 
   export interface TimelineCustomizations {
@@ -252,7 +252,7 @@ export namespace Timeline {
       const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
 
       (this.historicEvents || []).forEach(event => {
-        eventTypeArray.add(event.type);
+        eventTypeArray.add(event?.type);
         filterOptionsArray.add(event?.renderData?.filterType);
       });
       this.eventTypes = Array.from(eventTypeArray);
@@ -260,7 +260,10 @@ export namespace Timeline {
     }
 
     getClusterId(text: string, key: number) {
-      const clusterId = `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
+      const myText = text || uuidv4();
+      const myKey = key || 0;
+
+      const clusterId = `${myText?.replace(/\s+/g, "-").toLowerCase()}-${myKey}`;
       return clusterId;
     }
 
@@ -371,7 +374,7 @@ export namespace Timeline {
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const readableDate = DateTime.fromISO(date).toFormat("D");
-      const printableDate = DateTime.fromISO(date).toFormat("DD");
+      const printableDate = DateTime.fromISO(date).toFormat("DDD");
 
       return html`
         <div class="timeline date-set has-line" id=${clusterId}>
@@ -383,6 +386,7 @@ export namespace Timeline {
                   .data=${{ Date: readableDate }}
                   .time=${date}
                   ?is-cluster=${true}
+                  ?is-date-cluster=${true}
                   group-icon-map-keyword="multi events single day"
                   .eventIconTemplate=${this.eventIconTemplate}
                   .badgeKeyword=${this.badgeKeyword}
@@ -399,14 +403,11 @@ export namespace Timeline {
 
       const { channelType, origin, taskId } = firstRealEvent?.data;
       const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
-      const [eventType, eventSubType] = firstRealEvent?.type.split(":");
 
       return {
-        id: taskId,
+        id: taskId || uuidv4(),
         channelType: formattedChannelType,
         origin,
-        eventType,
-        eventSubType,
       };
     }
 
@@ -424,20 +425,25 @@ export namespace Timeline {
         }
 
         const cluster = [events[index]]; // start new cluster
-        const clusterTaskId = events[index].data?.taskId;
+        const clusterTaskId = events[index]?.data?.taskId || uuidv4();
         const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
 
-        while (index < events.length - 1 && events[index].data?.taskId === events[index + 1].data?.taskId) {
+        while (
+          index < events.length - 1 &&
+          events[index]?.data?.taskId &&
+          events[index + 1]?.data?.taskId &&
+          events[index]?.data?.taskId === events[index + 1]?.data?.taskId
+        ) {
           cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
         }
-        const clusterInfo = this.createClusterInfo(cluster);
 
         index++;
         if (cluster.length > 1) {
           if (this.collapseView) {
             this.collapsed.add(this.getClusterId(clusterTaskId, keyId));
           }
+          const clusterInfo = this.createClusterInfo(cluster);
           return this.renderCluster(cluster, clusterInfo, keyId);
         } else {
           return this.renderEventBlock(events[keyId]);
@@ -543,12 +549,12 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
-          sub-title=${event.renderData?.subTitle || ""}
-          time=${event.time}
-          .data=${event.data}
-          id=${event.id}
-          .person=${event.person || null}
+          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          sub-title=${event?.renderData?.subTitle || ""}
+          time=${event?.time}
+          .data=${event?.data}
+          id=${event?.id}
+          .person=${event?.person || null}
           .eventIconTemplate=${this.eventIconTemplate}
           .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"

@@ -66,6 +66,8 @@ export namespace TimelineItem {
 
     @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
 
+    @property({ type: Boolean, attribute: "is-date-cluster" }) isDateCluster = false;
+
     @property({ type: String, attribute: "group-icon-map-keyword" }) groupIconMapKeyword = "";
 
     static get styles() {
@@ -161,7 +163,7 @@ export namespace TimelineItem {
     }
 
     renderShowcase = () => {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isCluster);
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isDateCluster);
 
       // const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
       // const npsScore = this.data["NPS"];
