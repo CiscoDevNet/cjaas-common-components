@@ -8,11 +8,11 @@
 
 import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
 import { nothing } from "lit-html";
-import parsePhoneNumber from "libphonenumber-js";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
-import { getRelativeDate } from "./utils";
+import { v4 as uuidv4 } from "uuid";
+import { formattedOrigin, getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import "@/components/timeline/TimelineItem";
 import "@/components/timeline/TimelineItemGroup";
@@ -23,13 +23,19 @@ import "@momentum-ui/web-components/dist/comp/md-button";
 import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
+import "@momentum-ui/web-components/dist/comp/md-chip";
 import { Button } from "@momentum-ui/web-components";
-import * as iconData from "@/assets/defaultIcons.json";
+import iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
   export interface ImiDataPayload {
     channelType?: string;
     type?: string;
+  }
+
+  export enum EventType {
+    Agent = "agent",
+    Task = "task",
   }
 
   export interface WxccDataPayload {
@@ -52,6 +58,7 @@ export namespace Timeline {
 
   export interface CustomerEvent {
     data: Record<string, any>;
+    renderData?: Record<string, any>;
     dataContentType: string;
     id: string;
     person: string;
@@ -60,6 +67,12 @@ export namespace Timeline {
     specVersion: string;
     time: string;
     type: string;
+  }
+
+  export interface ClusterInfoObject {
+    id: string;
+    channelType: string;
+    origin: string;
   }
 
   export interface TimelineCustomizations {
@@ -84,15 +97,15 @@ export namespace Timeline {
      */
     @property({ type: Boolean }) getEventsInProgress = false;
     /**
-     * @attr event-filters
+     * @attr is-event-filter-visible
      * Show/hide event filters UI
      */
-    @property({ type: Boolean, attribute: "event-filters" }) eventFilters = false;
+    @property({ type: Boolean, attribute: "is-event-filter-visible" }) isEventFilterVisible = false;
     /**
-     * @attr date-filters
+     * @attr is-date-filter-visible
      * Show/hide date filters UI
      */
-    @property({ type: Boolean, attribute: "date-filters" }) dateFilters = false;
+    @property({ type: Boolean, attribute: "is-date-filter-visible" }) isDateFilterVisible = false;
     /**
      * @attr live-stream
      * Toggle adding latest live events being added directly to timeline (instead of queue)
@@ -115,10 +128,30 @@ export namespace Timeline {
      */
     @property({ type: Array, attribute: false }) historicEvents: CustomerEvent[] | null = null;
     /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
+    @property({ type: Array, attribute: false }) newestEvents: Array<CustomerEvent> = [];
+    /**
+     * @prop newestEvents
+     * Dataset keeping track of queued latest live events
+     */
+    // @property({ type: Array, attribute: false }) finalEvents: Array<CustomerEvent> = [];
+    /**
      * @prop eventTypes
      * Dataset of all unique event types
      */
     @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    /**
+     * @prop filterTypes
+     * Dataset of all unique filter types
+     */
+    @property({ type: Array, attribute: false }) filterTypes: Array<string> = [];
+    /**
+     * @prop channelTaskTypes
+     * Dataset of all unique channel & task Ids
+     */
+    @property({ type: Array, attribute: false }) channelTaskTypes: Array<string> = [];
     /**
      * @prop activeTypes
      * Dataset tracking all visible event types (in event filter)
@@ -134,12 +167,6 @@ export namespace Timeline {
      * @prop eventIconTemplate
      */
     @property({ attribute: false }) eventIconTemplate: TimelineCustomizations = iconData;
-
-    /**
-     * @prop newestEvents
-     * Dataset keeping track of queued latest live events
-     */
-    @internalProperty() newestEvents: Array<CustomerEvent> = [];
     /**
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
@@ -164,37 +191,80 @@ export namespace Timeline {
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
-      this.getEventTypes();
       this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
       if (changedProperties.has("historicEvents")) {
-        this.getEventTypes();
-        this.requestUpdate();
+        this.formatEvents(this.historicEvents);
+        this.createSets();
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
-        this.showNewEvents();
+        this.consolidateEvents();
       }
     }
 
     /**
-     * @method getEventTypes
+     * @method formatEvents
+     */
+    formatEvents(allEvents: Array<CustomerEvent> | null): void {
+      allEvents?.map((event: CustomerEvent) => {
+        const [eventType, eventSubType] = event?.type.split(":");
+        const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
+        const agentState = event?.data?.currentState;
+        const formattedAgentState = agentState
+          ? agentState?.charAt(0)?.toUpperCase() + agentState?.slice(1)
+          : undefined;
+        const { channelType, currentState } = event?.data;
+
+        switch (eventType) {
+          case EventType.Agent:
+            event.renderData = {
+              title: `Agent ${formattedAgentState || "Event"}`,
+              filterType: currentState ? `agent ${currentState}` : "",
+            };
+            break;
+          case EventType.Task:
+            event.renderData = {
+              subTitle: `${eventSubType || ""} ${channelTypeText || ""}`,
+              filterType: channelType,
+            };
+            break;
+          default:
+            event.renderData = {
+              subTitle: `${channelTypeText || ""}`,
+              filterType: channelType || "misc",
+            };
+            break;
+        }
+      });
+    }
+
+    /**
+     * @method createSets
      * @returns void
+     * Sets `filterOptions` property to a unique set of filter options for filter feature.
      * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
+    createSets() {
+      const eventTypeArray: Set<string> = new Set(); // ex. task:connected
+      const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
 
-    getEventTypes() {
-      const eventArray: Set<string> = new Set();
       (this.historicEvents || []).forEach(event => {
-        eventArray.add(event.type);
+        eventTypeArray.add(event?.type);
+        filterOptionsArray.add(event?.renderData?.filterType);
       });
-      this.eventTypes = Array.from(eventArray);
+      this.eventTypes = Array.from(eventTypeArray);
+      this.filterTypes = Array.from(filterOptionsArray);
     }
 
     getClusterId(text: string, key: number) {
-      return `${text.replace(/\s+/g, "-").toLowerCase()}-${key}`;
+      const myText = text || uuidv4();
+      const myKey = key || 0;
+
+      const clusterId = `${myText?.replace(/\s+/g, "-").toLowerCase()}-${myKey}`;
+      return clusterId;
     }
 
     /**
@@ -236,12 +306,12 @@ export namespace Timeline {
     }
 
     /**
-     * @method showNewEvents
+     * @method consolidateEvents
      * @returns void
      * @fires new-event-queue-cleared
      * Updates the visible timeline events with queued new events
      */
-    showNewEvents() {
+    consolidateEvents() {
       if (this.newestEvents.length > 0) {
         this.historicEvents = [...this.newestEvents, ...(this.filteredByTypeList || [])];
         this.newestEvents = [];
@@ -261,7 +331,7 @@ export namespace Timeline {
     toggleLiveEvents() {
       this.liveStream = !this.liveStream;
       if (this.newestEvents.length > 0) {
-        this.showNewEvents();
+        this.consolidateEvents();
       }
     }
 
@@ -282,7 +352,7 @@ export namespace Timeline {
           class=${`event-counter ${this.newestEvents.length > 0 ? "" : "hidden"}`}
           class="event-counter"
           small
-          @click=${this.showNewEvents}
+          @click=${this.consolidateEvents}
           value="Show ${this.newestEvents.length} new events"
         ></md-chip>
       `;
@@ -290,9 +360,11 @@ export namespace Timeline {
 
     renderTimeBadge(readableDate: any, clusterId: string) {
       return html`
-        <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
-          <span class="badge-text">${readableDate}</span>
-        </md-badge>
+        <md-tooltip message="Toggle to expand/collapse events on this date">
+          <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
+            <span class="badge-text">${readableDate}</span>
+          </md-badge>
+        </md-tooltip>
       `;
     }
 
@@ -302,6 +374,7 @@ export namespace Timeline {
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
       const readableDate = DateTime.fromISO(date).toFormat("D");
+      const printableDate = DateTime.fromISO(date).toFormat("DDD");
 
       return html`
         <div class="timeline date-set has-line" id=${clusterId}>
@@ -309,10 +382,12 @@ export namespace Timeline {
           ${this.collapsed.has(clusterId)
             ? html`
                 <cjaas-timeline-item
-                  title=${`${events.length} ${eventsKeyword} from ${readableDate}`}
+                  event-title=${`${events.length} ${eventsKeyword} from ${printableDate}`}
                   .data=${{ Date: readableDate }}
                   .time=${date}
                   ?is-cluster=${true}
+                  ?is-date-cluster=${true}
+                  group-icon-map-keyword="multi events single day"
                   .eventIconTemplate=${this.eventIconTemplate}
                   .badgeKeyword=${this.badgeKeyword}
                 ></cjaas-timeline-item>
@@ -320,6 +395,20 @@ export namespace Timeline {
             : this.populateEvents(groupedItem.events)}
         </div>
       `;
+    }
+
+    createClusterInfo(clusterArray: Array<CustomerEvent>) {
+      const firstRealEvent: CustomerEvent =
+        clusterArray.find((event: CustomerEvent) => event?.data?.channelType !== undefined) || clusterArray[0];
+
+      const { channelType, origin, taskId } = firstRealEvent?.data;
+      const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
+
+      return {
+        id: taskId || uuidv4(),
+        channelType: formattedChannelType,
+        origin,
+      };
     }
 
     /**
@@ -336,33 +425,43 @@ export namespace Timeline {
         }
 
         const cluster = [events[index]]; // start new cluster
-        const clusterType = events[index].type; // set the new cluster type
+        const clusterTaskId = events[index]?.data?.taskId || uuidv4();
         const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
 
-        while (index < events.length - 1 && events[index].type === events[index + 1].type) {
+        while (
+          index < events.length - 1 &&
+          events[index]?.data?.taskId &&
+          events[index + 1]?.data?.taskId &&
+          events[index]?.data?.taskId === events[index + 1]?.data?.taskId
+        ) {
           cluster.push(events[index + 1]); // push the next event into ongoing cluster
           index++;
         }
+
         index++;
         if (cluster.length > 1) {
           if (this.collapseView) {
-            this.collapsed.add(this.getClusterId(clusterType, keyId));
+            this.collapsed.add(this.getClusterId(clusterTaskId, keyId));
           }
-          return this.renderCluster(cluster, clusterType, keyId);
+          const clusterInfo = this.createClusterInfo(cluster);
+          return this.renderCluster(cluster, clusterInfo, keyId);
         } else {
           return this.renderEventBlock(events[keyId]);
         }
       });
     }
 
-    renderCluster(cluster: CustomerEvent[], clusterType: string, keyId: number) {
-      const clusterId = this.getClusterId(clusterType, keyId);
+    renderCluster(cluster: CustomerEvent[], clusterInfo: ClusterInfoObject, keyId: number) {
+      const clusterId = this.getClusterId(clusterInfo?.id, keyId);
+      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType);
+
       return this.collapsed.has(clusterId)
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              title=${`${cluster.length} ${clusterType} events`}
-              type=${clusterType}
+              event-title=${`${cluster.length} ${clusterInfo.channelType} events`}
+              cluster-sub-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
+              group-icon=${clusterInfo.channelType}
               time=${cluster[0].time}
               class="has-line"
               .events=${cluster}
@@ -430,28 +529,19 @@ export namespace Timeline {
     }
 
     renderFilterButton() {
-      return html`
-        <cjaas-event-toggles
-          .eventTypes=${this.eventTypes}
-          .activeTypes=${this.activeTypes}
-          @active-type-update=${(e: CustomEvent) => {
-            this.activeTypes = e.detail.activeTypes;
-            this.requestUpdate();
-          }}
-        ></cjaas-event-toggles>
-      `;
-    }
-
-    formattedOrigin(event: Timeline.CustomerEvent) {
-      const { origin, channelType } = event?.data;
-
-      const hasPlusSign = (origin as string).charAt(0) === "+";
-      if (channelType === "telephony" || hasPlusSign) {
-        const parsedNumber = parsePhoneNumber(origin);
-        // return parsedNumber?.formatNational();
-        return parsedNumber?.formatInternational() || origin;
+      if (this.filterTypes && this.activeTypes) {
+        return html`
+          <cjaas-event-toggles
+            .eventTypes=${this.filterTypes}
+            .activeTypes=${this.activeTypes}
+            @active-type-update=${(e: CustomEvent) => {
+              this.activeTypes = e.detail.activeTypes;
+              this.requestUpdate();
+            }}
+          ></cjaas-event-toggles>
+        `;
       } else {
-        return origin;
+        nothing;
       }
     }
 
@@ -459,11 +549,12 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          title=${this.formattedOrigin(event)}
-          time=${event.time}
-          .data=${event.data}
-          id=${event.id}
-          .person=${event.person || null}
+          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          sub-title=${event?.renderData?.subTitle || ""}
+          time=${event?.time}
+          .data=${event?.data}
+          id=${event?.id}
+          .person=${event?.person || null}
           .eventIconTemplate=${this.eventIconTemplate}
           .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"
@@ -492,13 +583,7 @@ export namespace Timeline {
 
     renderEmptyState() {
       const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-      // if (this.getEventsInProgress) {
-      //   return html`
-      //     <div class="empty-state">
-      //       <md-spinner size="32"></md-spinner>
-      //     </div>
-      //   `;
-      // } else
+
       if (!this.historicEvents || this.historicEvents.length === 0) {
         return html`
           <div class="empty-state">
@@ -522,7 +607,7 @@ export namespace Timeline {
 
     filterByType(list: CustomerEvent[] | undefined | null) {
       if (this.activeTypes.length) {
-        return list?.filter(item => this.activeTypes.includes(item.type)) || null;
+        return list?.filter(item => this.activeTypes.includes(item?.renderData?.filterType)) || null;
       } else {
         return list;
       }

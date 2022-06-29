@@ -17,12 +17,23 @@
    --response-3: #FFC57A;
    --response-2: #75757B;
    --response-1: #323334;
+  --shadowColor: 1px 1px 1px var(--md-primary-bg-color, #FFFFFF),
+  2px 2px 1px var(--md-primary-bg-color, #FFFFFF),
+  3px 3px 1px var(--md-quaternary-bg-color, #DEDEDE),
+  4px 4px 1px var(--md-primary-bg-color, #FFFFFF),
+  5px 5px 1px var(--md-primary-bg-color, #FFFFFF),
+  6px 6px 1px var(--md-quaternary-bg-color, #DEDEDE),
+  1px 1px 1px rgba(0,0,0,.3);
  }
 
 .timeline-item {
   background-color: var(--md-secondary-one-bg-color, #F7F7F7);
   border-radius: 8px;
   padding: 8px;
+
+  &.cluster-item {
+    box-shadow: var(--shadowColor);
+  }
 
   .top-content {
     align-items: center;

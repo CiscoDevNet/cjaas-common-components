@@ -17,6 +17,11 @@ export class Sandbox extends LitElement {
   @property({ type: Boolean }) darkTheme = false;
   @property({ type: Boolean }) lumos = false;
 
+  protected firstUpdated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    this.lumos = true;
+  }
+
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
     if (this.darkTheme) {

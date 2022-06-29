@@ -10,6 +10,11 @@
   overflow-x: hidden;
   display: block;
 }
+
+cjaas-timeline-item {
+  padding: 0.4rem; // to allow box shadow to appear for cluster item
+}
+
 .connection {
   margin-left: auto;
   width: 10px;

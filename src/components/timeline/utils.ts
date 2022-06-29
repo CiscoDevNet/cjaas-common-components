@@ -7,6 +7,7 @@
  */
 
 import { Timeline } from "@/index";
+import { parsePhoneNumber } from "libphonenumber-js";
 import { DateTime } from "luxon";
 import { querySelectorAllDeep } from "query-selector-shadow-dom";
 
@@ -25,6 +26,22 @@ export function getTimelineEventFromMessage(message: any) {
   }
 
   return event;
+}
+
+export function formattedOrigin(origin: string, channelType: string) {
+  const hasPlusSign = (origin as string)?.charAt(0) === "+";
+  if (channelType === "telephony" || hasPlusSign) {
+    const parsedNumber = parsePhoneNumber(origin);
+
+    if (parsedNumber?.country === "US") {
+      const national = parsedNumber?.formatNational() && `+1 ${parsedNumber?.formatNational()}`;
+      return national || parsedNumber?.formatInternational() || origin;
+    } else {
+      return parsedNumber?.formatInternational() || origin;
+    }
+  } else {
+    return origin;
+  }
 }
 
 export interface IconMap {
@@ -71,28 +88,28 @@ const staticIcons = [
 // uses known event types and also generates random pairs for unknown events
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
-  const parsedIconMap = JSON.parse(JSON.stringify(iconMap)).default;
+  const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
 
-  Object.keys(parsedIconMap).forEach((x: string) => {
+  Object.keys(parsedIconMap)?.forEach((x: string) => {
     const regex = new RegExp(x, "i");
 
-    if (regex.test(eventName)) {
+    if (eventName && regex.test(eventName)) {
       result = parsedIconMap[x];
     }
   });
 
   if (!result && !TEMP_ICON_MAP[eventName]) {
-    if (eventName.includes("events from")) {
+    if (eventName?.includes("events from")) {
       result = {
         // name: "icon-activities_16",
         name: "icon-multiple-devices_16",
-        color: "cobalt",
+        color: "orange",
       };
     } else {
       result = {
         name: "icon-activities_16",
         // name: "icon-event_16",
-        color: "pink",
+        color: "orange",
         // name: getRandomIcon(),
         // color: getRandomColor(),
       };
@@ -106,14 +123,14 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   return result;
 }
 
-export function getTimeStamp(date: DateTime, isCluster = false) {
+export function getTimeStamp(date: DateTime, isDateCluster = false) {
   const now = DateTime.local();
   const diff: any = now.diff(date, ["days", "hours", "minutes", "seconds"]).toObject();
 
   if (diff === undefined) {
     return;
   } else {
-    if (isCluster) {
+    if (isDateCluster) {
       return date.toFormat("D");
     }
     if (diff.days >= 30) {

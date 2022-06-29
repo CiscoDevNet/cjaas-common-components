@@ -6,10 +6,9 @@ const mockOriginByType = (channelType: string) => {
   switch (channelType) {
     case "telephony":
       return "+14806754084";
-      break;
+    // return "+3227045654"; International
     case "email":
       return "ragreene@gmail.com";
-      break;
     default:
       return "Rachel Greene";
   }
@@ -38,16 +37,20 @@ const mockedConnectedTask = (time: string, channelType = "chat") => {
   };
 };
 
-const mockedStateChangeTask = (time: string) => {
+const mockedStateChangeTask = (
+  time: string,
+  currentState = "wrapup",
+  taskId = "94d8835d-c749-11ec-8573-7becd36cb425"
+) => {
   return {
     data: {
       agentId: "55de70fc-af58-40e8-b7f8-c23536a53e76",
       createdTime: 1651187948958,
-      currentState: "connected",
+      currentState,
       destination: "+19997770103",
       origin: "bob@gmail.com",
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
-      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
+      taskId,
       teamId: "9c73f123-0a33-414c-98db-b1169cccc8ce",
     },
     dataContentType: "string",
@@ -57,18 +60,18 @@ const mockedStateChangeTask = (time: string) => {
     source: "wxcc",
     specVersion: "1.0",
     time,
-    type: "task:state_change",
+    type: "agent:state_change",
   };
 };
 
-const mockedConnectTask = (time: string, channelType = "chat") => {
+const mockedConnectTask = (time: string, channelType = "chat", origin = mockOriginByType(channelType)) => {
   return {
     data: {
       channelType,
       createdTime: 1651187946178,
       destination: "+19997770103",
       direction: "INBOUND",
-      origin: mockOriginByType(channelType),
+      origin,
       outboundType: null,
       queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
@@ -85,7 +88,7 @@ const mockedConnectTask = (time: string, channelType = "chat") => {
   };
 };
 
-const mockedNewTask = (time: string, channelType = "chat") => {
+const mockedNewTask = (time: string, channelType = "chat", taskId = "94d8835d-c749-11ec-8573-7becd36cb425") => {
   return {
     data: {
       channelType,
@@ -94,7 +97,7 @@ const mockedNewTask = (time: string, channelType = "chat") => {
       direction: "INBOUND",
       origin: mockOriginByType(channelType),
       outboundType: null,
-      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
+      taskId,
       workflowManager: null,
     },
     dataContentType: "string",
@@ -118,7 +121,7 @@ const mockParkedTask = (time: string, channelType = "chat") => {
       origin: mockOriginByType(channelType),
       outboundType: null,
       queueId: "7a682870-472b-4a0f-b3e9-01fadf4efcf3",
-      taskId: "69a45a01-c737-11ec-bde5-e7810446c774",
+      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       workflowManager: null,
     },
     dataContentType: "string",
@@ -141,7 +144,7 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
       origin: mockOriginByType(channelType),
       outboundType: null,
       reason: "Agent Left",
-      taskId: "ffc6d07a-c73b-11ec-83e7-91a2c53dff83",
+      taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       terminatingParty: "Agent",
       workflowManager: null,
     },
@@ -682,523 +685,28 @@ export const mockOptionsList = [
   },
 ];
 
-// export const bigTimeline: Timeline.CustomerEvent[] = [
-//   {
-//     data: {
-//       summary:
-//         "Sam called in regarding a possible data breach incident displayed alerts on her NetworkATX 1001 device. She wanted the threat analysis report. There were 5 attempts to breach the account. Account has been locked. Created the 24 Hour Unlock request.",
-//     },
-//     dataContentType: "application/json",
-//     id: "515ec9e6-4c51-4cb3-baf8-db6e648a15c2",
-//     person: "75082-Sam",
-//     source: "Contact",
-//     specVersion: "1.0",
-//     time: "2021-09-12T21:28:45.658Z",
-//     type: "Summary",
-//   },
-//   {
-//     id: "a09ea52e-5432-4ac0-b53a-cd084234ef19",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-24T14:10:28.841Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "a09ea52e-5432-4ac0-b53a-cd084234ef19",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-24T14:10:28.841Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "3978911c-5dda-43a0-890e-5859e74765f5",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-24T14:10:15.325Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "60fe91a7-9c67-40fc-b247-97376b68e7c0",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Alex",
-//     time: "2021-08-23T23:02:56.317Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "3a7ce8b0-9324-4605-9b14-f98e0ac4e9d0",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:19:57.73Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "15ddbfa9-76f6-42b0-8e0b-048e40412853",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "anon-9c7b57cb-9a87-4402-b95b-34f66146cfea",
-//     time: "2021-08-23T22:19:23.257Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "2400d29a-3f1d-4503-84f1-ee1a9cf6243f",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:09:53.548Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "f816f11f-ba09-4a65-ad36-80a4acb7c71f",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:06:47.086Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "11398c5d-21a1-4b6f-b186-190da7ef9c91",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:04:08.819Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/try/webexwalkin/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "e65172ec-8c36-4005-8718-236b5bc4cc9a",
-//     type: "Walkin Offered",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:42.503Z",
-//     data: {},
-//   },
-//   {
-//     id: "6fdf274f-39f4-4514-a334-ccfd73b29740",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:42.098Z",
-//     data: {
-//       "FSD Level": "2",
-//     },
-//   },
-//   {
-//     id: "4cf6b384-3821-4198-862e-d65066bab4e8",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:41.195Z",
-//     data: {
-//       "Is FSD Certified?": "No",
-//     },
-//   },
-//   {
-//     id: "0bffea29-1430-4568-8b85-1e1dc7941544",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:37.584Z",
-//     data: {
-//       "Is EV?": "No",
-//     },
-//   },
-//   {
-//     id: "f1f74ca5-ac0b-4cc7-82f2-a4f13743e6f2",
-//     type: "Trigger Sent to Server",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:32.349Z",
-//     data: {
-//       user: "30313-Zubinq",
-//       agent: "zudang@cisco.com",
-//     },
-//   },
-//   {
-//     id: "97b8dc84-6b14-438b-b672-3846ee3bc955",
-//     type: "Initiated Walk In",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:30.617Z",
-//     data: {},
-//   },
-//   {
-//     id: "a4509c99-24b4-4e33-b5d7-946172092645",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:30.511Z",
-//     data: {
-//       "Year of Make": "2014",
-//     },
-//   },
-//   {
-//     id: "d7770870-d001-4155-8962-08f2bb3d1cc0",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:27.173Z",
-//     data: {
-//       Model: "Civic",
-//     },
-//   },
-//   {
-//     id: "1f25e301-5991-4728-ac49-98f56576b046",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:23.538Z",
-//     data: {
-//       Make: "Honda",
-//     },
-//   },
-//   {
-//     id: "f4cbeaaa-81a5-4f78-b68a-f7f6798966ce",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:18.545Z",
-//     data: {
-//       "License Plate": "CFN1234",
-//     },
-//   },
-//   {
-//     id: "bc6aa49c-37da-4199-9fb4-aed4b0723e13",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:15.314Z",
-//     data: {
-//       street: "121 Summer Drive",
-//       city: "Atlanta",
-//     },
-//   },
-//   {
-//     id: "ea0fe7d2-cc08-423a-ae3d-cc81f7a68eea",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:02:05.55Z",
-//     data: {
-//       firstName: "Zubinq",
-//       lastName: "Dang",
-//       email: "zubin@gmail.com",
-//     },
-//   },
-//   {
-//     id: "e974eb27-2efe-483b-9d98-322422443610",
-//     type: "Identify",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "30313-Zubinq",
-//     time: "2021-08-23T22:01:50.48Z",
-//     data: {},
-//   },
-//   {
-//     id: "5efe5dd0-1e74-4a10-b3e7-5d528e20dd17",
-//     type: "Entered ZipCode",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "84000-Zubin",
-//     time: "2021-08-23T22:01:47.828Z",
-//     data: {
-//       zipCode: "30313",
-//     },
-//   },
-//   {
-//     id: "20e19b09-8fd6-48d7-b6a2-27de340a6492",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "84000-Zubin",
-//     time: "2021-08-23T22:00:51.573Z",
-//     data: {
-//       page: {
-//         path: "/try/webexwalkin/",
-//         referrer: "https://cjaas.cisco.com/",
-//         search: "",
-//         title: "Demo Assure",
-//         url: "https://cjaas.cisco.com/try/webexwalkin/",
-//       },
-//     },
-//   },
-//   {
-//     id: "8e35422b-7800-431c-892a-4916fff26c44",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John  Smith",
-//     time: "2021-08-23T21:49:56.195Z",
-//     data: {
-//       page: {
-//         path: "/CJaas/index.html",
-//         referrer: "http://127.0.0.1:53954/CJaas/index.html?",
-//         search: "",
-//         title: "Healthcare Now",
-//         url: "http://127.0.0.1:53954/CJaas/index.html?",
-//       },
-//     },
-//   },
-//   {
-//     id: "3be08d0f-d840-46e7-a7bd-48aa2c9e28d8",
-//     type: "Identify",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John  Smith",
-//     time: "2021-08-23T21:48:26.038Z",
-//     data: {},
-//   },
-//   {
-//     id: "42023ce1-814e-4064-8b35-4ed1cb7cae27",
-//     type: "Quote",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John  Smith",
-//     time: "2021-08-23T21:48:26.042Z",
-//     data: {
-//       firstName: "John ",
-//       lastName: "Smith",
-//       email: "john@john.com",
-//     },
-//   },
-//   {
-//     id: "3c8a6f79-e697-4bc5-9c8e-23f97e50be18",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John Doe",
-//     time: "2021-08-23T21:47:06.456Z",
-//     data: {
-//       page: {
-//         path: "/CJaas/index.html",
-//         referrer: "http://127.0.0.1:53954/CJaas/index.html?",
-//         search: "",
-//         title: "Healthcare Now",
-//         url: "http://127.0.0.1:53954/CJaas/index.html?",
-//       },
-//     },
-//   },
-//   {
-//     id: "9d21c61c-ee72-4263-bca2-cd8f76d1d8c5",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John Doe",
-//     time: "2021-08-23T21:46:46.308Z",
-//     data: {
-//       page: {
-//         path: "/CJaas/index.html",
-//         referrer: "http://127.0.0.1:53954/CJaas/index.html?",
-//         search: "",
-//         title: "Healthcare Now",
-//         url: "http://127.0.0.1:53954/CJaas/index.html?",
-//       },
-//     },
-//   },
-//   {
-//     id: "ad6f9f3b-0cc9-4d52-aa28-a33dd6ef9f81",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John Doe",
-//     time: "2021-08-23T21:46:40.932Z",
-//     data: {
-//       page: {
-//         path: "/CJaas/index.html",
-//         referrer: "http://127.0.0.1:53954/CJaas/index.html?",
-//         search: "",
-//         title: "Healthcare Now",
-//         url: "http://127.0.0.1:53954/CJaas/index.html?",
-//       },
-//     },
-//   },
-//   {
-//     id: "8bf9440f-7e28-4655-bcfb-12975ec78012",
-//     type: "Page Visit",
-//     source: "Website",
-//     specVersion: "1.0",
-//     dataContentType: "application/json",
-//     person: "John Doe",
-//     time: "2021-08-23T21:43:22.725Z",
-//     data: {
-//       page: {
-//         path: "/CJaas/index.html",
-//         referrer: "http://127.0.0.1:53954/CJaas/index.html?",
-//         search: "",
-//         title: "CJaas",
-//         url: "http://127.0.0.1:53954/CJaas/index.html?",
-//       },
-//     },
-//   },
-// ];
-
 export const emptyMock: Timeline.CustomerEvent[] = [];
 
 const nowDate = new Date();
 const isoNowStr = nowDate.toISOString(); // "2022-01-15T16:17:30.814Z";
+const isTwentyMinutesStr = new Date(nowDate.setMinutes(nowDate.getMinutes() - 20)).toISOString();
 
-const isoTwoHourStr = new Date(nowDate.setDate(nowDate.getHours() - 2)).toISOString();
-const isoTwoDayStr = new Date(nowDate.setDate(nowDate.getDay() - 2)).toISOString();
-const isoEightDayStr = new Date(nowDate.setDate(nowDate.getDay() - 8)).toISOString();
-const isoTwoWeeksStr = new Date(nowDate.setDate(nowDate.getDay() - 14)).toISOString();
-const isoTwoMonthsStr = new Date(nowDate.setDate(nowDate.getDay() - 60)).toISOString();
+const isoTwoHourStr = new Date(nowDate.setHours(nowDate.getHours() - 2)).toISOString();
+const isoThreeHourStr = new Date(nowDate.setHours(nowDate.getHours() - 3)).toISOString();
 
 export const historicalEvents: Timeline.CustomerEvent[] = [
-  mockedConnectedTask(isoNowStr, "email"),
-  mockedConnectTask(isoTwoHourStr, "telephony"),
-  mockedStateChangeTask(isoTwoDayStr),
-  mockedNewTask(isoEightDayStr),
-  mockedEndedTask(isoTwoWeeksStr),
-  mockedConnectedTask(isoTwoMonthsStr),
-  {
-    id: "12345",
-    previously: "",
-    time: isoNowStr,
-    specVersion: "1.0",
-    type: "test",
-    source: "dummy",
-    person: "ruegreen@cisco.com",
-    dataContentType: "application/json",
-    data: {
-      origin: "Rue Green",
-      firstName: "Rue",
-      lastName: "Green",
-      email: "ruegreen@cisco.com",
-      channelType: "Initiated Walk In",
-    },
-  },
+  mockedStateChangeTask(isoNowStr, "wrapup"),
+  mockedEndedTask(isTwentyMinutesStr, "telephony"),
+  mockedConnectedTask(isTwentyMinutesStr, "telephony"),
+  mockedConnectTask(isTwentyMinutesStr, "telephony"),
+  mockedStateChangeTask(isoTwoHourStr, "connected"),
+  mockedNewTask(isoTwoHourStr, "email", "123-456"),
+  mockedStateChangeTask(isoTwoHourStr, "wrapup"),
+  mockedNewTask(isoThreeHourStr, "chat", "456-789"),
 ];
 
 export const fiveNewEvents: Timeline.CustomerEvent[] = [
-  mockedConnectedTask(isoNowStr),
-  mockedConnectTask(isoNowStr, "email"),
-  mockedStateChangeTask(isoNowStr),
-  mockedNewTask(isoNowStr, "telphony"),
-  mockedEndedTask(isoNowStr),
+  mockedStateChangeTask(isoNowStr, "wrapup", "999"),
+  mockedNewTask(isoNowStr, "email", "999"),
+  mockedStateChangeTask(isoNowStr, "connected", "999"),
 ];

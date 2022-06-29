@@ -12,6 +12,7 @@ import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import * as iconData from "@/assets/defaultIcons.json";
+import { formattedOrigin } from "./utils";
 
 export namespace TimelineItemGroup {
   @customElementWithCheck("cjaas-timeline-item-group")
@@ -23,11 +24,15 @@ export namespace TimelineItemGroup {
     /**
      * @attr title
      */
-    @property({ type: String }) title = "";
+    @property({ type: String, attribute: "event-title" }) eventTitle = "";
+    /**
+     * @attr cluster-sub-title
+     */
+    @property({ type: String, attribute: "cluster-sub-title" }) clusterSubTitle = "";
     /**
      * @attr type
      */
-    @property({ type: String }) type = "";
+    @property({ type: String, attribute: "group-icon" }) groupIcon = "";
     /**
      * @attr time
      */
@@ -87,7 +92,8 @@ export namespace TimelineItemGroup {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          .title=${event.type}
+          event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          sub-title=${event.renderData?.subTitle || ""}
           .time=${event.time}
           .data=${event.data}
           .id=${event.id}
@@ -103,17 +109,20 @@ export namespace TimelineItemGroup {
       return this.grouped
         ? html`
             <cjaas-timeline-item
-              @click=${() => this.expandDetails()}
-              title=${this.title}
+              @click=${this.expandDetails}
+              event-title=${this.eventTitle}
+              sub-title=${this.clusterSubTitle}
               time=${this.time}
               class="has-line"
-              .data=${{ "Event Group": this.title }}
+              ?is-cluster=${true}
+              group-icon-map-keyword=${this.groupIcon}
+              .data=${{ "Event Group": this.eventTitle }}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>
           `
         : html`
-            <md-chip class="group-item" small value="collapse events" @click=${() => this.expandDetails()}></md-chip>
-            ${this.events.map(event => {
+            <md-chip class="group-item" small value="collapse events" @click=${this.expandDetails}></md-chip>
+            ${this.events?.map(event => {
               return this.renderSingleton(event);
             })}
           `;

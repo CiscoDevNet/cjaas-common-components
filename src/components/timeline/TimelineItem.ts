@@ -25,9 +25,13 @@ export namespace TimelineItem {
      */
     @property({ type: String }) id = "";
     /**
-     * @attr title
+     * @attr eventTitle
      */
-    @property({ type: String }) title = "";
+    @property({ type: String, attribute: "event-title" }) eventTitle = "";
+    /**
+     * @attr sub-title
+     */
+    @property({ type: String, attribute: "sub-title" }) subTitle = "";
     /**
      * @attr time
      */
@@ -61,6 +65,10 @@ export namespace TimelineItem {
     @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
 
     @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
+
+    @property({ type: Boolean, attribute: "is-date-cluster" }) isDateCluster = false;
+
+    @property({ type: String, attribute: "group-icon-map-keyword" }) groupIconMapKeyword = "";
 
     static get styles() {
       return styles;
@@ -116,40 +124,46 @@ export namespace TimelineItem {
     };
 
     renderSubTitle() {
-      let label;
-      let dataPoint;
+      // let label;
+      // let dataPoint;
 
-      if (this.data) {
-        const dataPoints = Object.keys(this.data);
-        let usableDataPointIndex = 0;
-        label = dataPoints[usableDataPointIndex];
-        dataPoint = this.data[label];
-        const dataPointIsString = false;
+      // if (this.data) {
+      //   const dataPoints = Object.keys(this.data);
+      //   let usableDataPointIndex = 0;
+      //   label = dataPoints[usableDataPointIndex];
+      //   dataPoint = this.data[label];
+      //   const dataPointIsString = false;
 
-        while (!dataPointIsString) {
-          if (typeof dataPoint === "string") {
-            break;
-          } else {
-            if (dataPoint === undefined) {
-              return nothing;
-            }
-            usableDataPointIndex++;
-            label = dataPoints[usableDataPointIndex];
-            dataPoint = this.data[label];
-          }
-        }
-      }
+      //   while (!dataPointIsString) {
+      //     if (typeof dataPoint === "string") {
+      //       break;
+      //     } else {
+      //       if (dataPoint === undefined) {
+      //         return nothing;
+      //       }
+      //       usableDataPointIndex++;
+      //       label = dataPoints[usableDataPointIndex];
+      //       dataPoint = this.data[label];
+      //     }
+      //   }
+      // }
+
+      // return html`
+      //   <div class="sub-title">
+      //     <span>${label || "NA"}: </span>
+      //     ${dataPoint || "NA"}
+      //   </div>
+      // `;
 
       return html`
         <div class="sub-title">
-          <span>${label || "NA"}: </span>
-          ${dataPoint || "NA"}
+          ${this.subTitle}
         </div>
       `;
     }
 
     renderShowcase = () => {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isCluster);
+      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isDateCluster);
 
       // const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
       // const npsScore = this.data["NPS"];
@@ -197,14 +211,27 @@ export namespace TimelineItem {
     private get groupClassMap() {
       return {
         "group-item": this.groupItem,
+        "cluster-item": this.isCluster,
         expanded: this.expanded,
       };
     }
 
     render() {
       let iconData;
+      let iconKeyword;
+
       if (this.data) {
-        iconData = getIconData(this.data[this.badgeKeyword] || this.title, this.eventIconTemplate!);
+        const isAgent = this.data?.currentState ? "agent" : "";
+
+        if (this.groupIconMapKeyword) {
+          iconKeyword = this.groupIconMapKeyword;
+        } else {
+          iconKeyword = this.data[this.badgeKeyword] || isAgent || "";
+        }
+        iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
+          name: "icon-activities_16",
+          color: "orange", // TODO CHANGE
+        };
       }
 
       return html`
@@ -220,8 +247,8 @@ export namespace TimelineItem {
                   `}
             </md-badge>
             <div class="info-section">
-              <div class="title">${this.title}</div>
-              <!-- ${this.renderSubTitle()} -->
+              <div class="title">${this.eventTitle}</div>
+              ${this.subTitle ? this.renderSubTitle() : nothing}
             </div>
             <div class="time-stamp">${this.renderShowcase()}</div>
           </div>
