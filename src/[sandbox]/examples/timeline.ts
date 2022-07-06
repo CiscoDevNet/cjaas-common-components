@@ -10,6 +10,16 @@ export const timelineTemplate = html`
     event-filters
     .newestEvents=${fiveNewEvents}
     badge-keyword="channelType"
+    time-frame="All"
+  ></cjaas-timeline>
+
+  <h3>Empty historicEvents</h3>
+  <cjaas-timeline
+    limit=${3}
+    .historicEvents=${emptyMock}
+    event-filters
+    .newestEvents=${emptyMock}
+    error-message="Failed to fetch historical events for this user."
   ></cjaas-timeline>
 
   <h3>Empty historicEvents</h3>

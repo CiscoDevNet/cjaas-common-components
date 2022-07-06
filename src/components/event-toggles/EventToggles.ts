@@ -41,6 +41,8 @@ export namespace EventToggles {
 
     @internalProperty() isFilterOpen = false;
 
+    @internalProperty() comboBoxSearchValue = "";
+
     connectedCallback() {
       super.connectedCallback();
       document.addEventListener("click", this.handleOutsideOverlayClick);
@@ -84,7 +86,9 @@ export namespace EventToggles {
     };
 
     comboboxChangeSelected(e: CustomEvent) {
-      this.activeTypes = e.detail.selected;
+      this.comboBoxSearchValue = "";
+
+      this.activeTypes = e?.detail?.selected;
       this.dispatchEvent(
         new CustomEvent("active-type-update", {
           bubbles: true,
@@ -94,6 +98,11 @@ export namespace EventToggles {
           },
         })
       );
+    }
+
+    handleComboBoxInput(event: CustomEvent) {
+      const { value } = event?.detail;
+      this.comboBoxSearchValue = value;
     }
 
     renderFilterSelector() {
@@ -109,6 +118,8 @@ export namespace EventToggles {
           part="combobox"
           aria-expanded=${this.isFilterOpen}
           class=${classMap(classList)}
+          input-value=${this.comboBoxSearchValue}
+          @combobox-input=${this.handleComboBoxInput}
           .options=${this.eventTypes}
           option-value="event"
           is-multi

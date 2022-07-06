@@ -29,6 +29,11 @@ export namespace ProfileView {
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     /**
+     * @prop customer
+     * Customer Name used to call api
+     */
+    @property({ type: String }) customer = "";
+    /**
      * @prop contactData
      * Data object specific to contact details
      */
@@ -53,6 +58,11 @@ export namespace ProfileView {
      * Whether or not to render loading spinner or not
      */
     @property({ type: Boolean }) getProfileDataInProgress = false;
+    /**
+     * @prop error-message
+     * Resulting error message from profile api call
+     */
+    @property({ type: String, attribute: "error-message" }) errorMessage = "";
 
     connectedCallback() {
       super.connectedCallback();
@@ -258,15 +268,21 @@ export namespace ProfileView {
       }
     }
 
+    renderProfileText(message: string, isError = false) {
+      return html`
+        <slot name="l10n-no-data-message">
+          <p class=${`profile-text ${isError ? "error" : ""}`}>${message}</p>
+        </slot>
+      `;
+    }
+
     render() {
-      if (this.getProfileDataInProgress || (this.contactData && this.profileData?.length > 0)) {
+      if (this.errorMessage) {
+        return this.renderProfileText(this.errorMessage, true);
+      } else if (this.getProfileDataInProgress || (this.contactData && this.profileData?.length > 0)) {
         return this.compact ? this.getCompact() : this.snapshot ? this.getSnapshot() : this.renderFullProfileView();
       } else {
-        return html`
-          <slot name="l10n-no-data-message">
-            <p class="no-profile-data">No profile data</p>
-          </slot>
-        `;
+        return this.renderProfileText(`No profile data found for ${this.customer || "this user"}.`);
       }
     }
   }

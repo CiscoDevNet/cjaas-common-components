@@ -1,5 +1,5 @@
 import "@/components/identity/Identity";
-import { JourneyEvent } from "@/components/identity/Identity";
+import { IdentityData, JourneyEvent } from "@/components/identity/Identity";
 import { html } from "lit-element";
 
 const alias = {
@@ -9,16 +9,26 @@ const alias = {
   lastSeen: {} as JourneyEvent,
 };
 
+const identityData: IdentityData = {
+  id: "123-789-1010",
+  createdAt: "1656625453851",
+  modifiedAt: "1656625453851",
+  aliases: ["Alex", "Ross", "A-rod"],
+};
+
 const aliasDeleteInProgress = {
   Alex: true,
 };
 
 export const identityTemplate = html`
   <h3>Default</h3>
-  <cjaas-identity .alias=${alias} .customer=${"Alex Ross"}> </cjaas-identity>
+  <cjaas-identity .identityData=${identityData} customer="Alex Ross"></cjaas-identity>
 
   <h3>No Aliases</h3>
   <cjaas-identity .customer=${"Alex Ross"}> </cjaas-identity>
+
+  <h3>Error Message</h3>
+  <cjaas-identity .customer=${"Alex Ross"} error-message="Failed to fetch aliases for Alex Ross."> </cjaas-identity>
 
   <h3>Null Customer</h3>
   <cjaas-identity .customer=${null}> </cjaas-identity>

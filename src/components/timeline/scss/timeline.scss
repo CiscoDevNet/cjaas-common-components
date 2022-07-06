@@ -89,7 +89,10 @@ cjaas-timeline-item {
     color: var(--md-blue-50);
   }
 
-  .empty-state-text {
+  .timeline-statement {
+    &.error {
+      color: var(--md-alert-error-text-color);
+    }
     color: var(--md-secondary-text-color, #545454);
     text-align: center;
     width: 100%;
