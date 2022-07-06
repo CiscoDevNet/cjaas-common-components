@@ -15,6 +15,7 @@ import { getIconData, getTimeStamp } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import { Timeline } from "./Timeline";
 import * as iconData from "@/assets/defaultIcons.json";
+import * as linkify from "linkifyjs";
 
 export namespace TimelineItem {
   export type ShowcaseList = string[];
@@ -100,10 +101,16 @@ export namespace TimelineItem {
           ${Object.keys(data).map((x: string) => {
             if (typeof data[x] === "string") {
               if (data[x]) {
+                let renderValue = data[x] || "-";
+                if (linkify.test(data[x], "url")) {
+                  renderValue = html`
+                    <a href=${data[x]} target="_blank">${renderValue}</a>
+                  `;
+                }
                 /* eslint disable */
                 return html`
                   <div title=${x} class="cell">${x}</div>
-                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${data[x] || "-"}</div>
+                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${renderValue}</div>
                 `;
               }
             } else {
@@ -235,8 +242,8 @@ export namespace TimelineItem {
       }
 
       return html`
-        <div class="timeline-item ${classMap(this.groupClassMap)}" @click="${() => this.expandDetails()}">
-          <div class="top-content">
+        <div class="timeline-item ${classMap(this.groupClassMap)}">
+          <div class="top-content" @click=${this.expandDetails}>
             <md-badge class="badge" .circle=${true} size="40" .color=${iconData?.color}>
               ${iconData?.name
                 ? html`

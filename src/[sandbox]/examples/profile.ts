@@ -30,7 +30,15 @@ export const profileTemplate = html`
     <p slot="l10n-no-data-message">No se han proporcionado datos</p>
   </cjaas-profile>
   <h4>Empty Contact Data & Profile Data</h4>
-  <cjaas-profile .contactData=${{}} .profileData=${{}}></cjaas-profile>
+  <cjaas-profile .contactData=${{}} .profileData=${{}} customer="Bruce Springsteen"></cjaas-profile>
   <h4>Empty Contact Data & Profile Data but getProfileDataInProgress</h4>
   <cjaas-profile .contactData=${{}} .profileData=${{}} getProfileDataInProgress></cjaas-profile>
+  <h4>Has Error Message</h4>
+  <cjaas-profile
+    .contactData=${{}}
+    .profileData=${{}}
+    getProfileDataInProgress
+    error-message="Profile not found for Elena"
+    customer="Bruce"
+  ></cjaas-profile>
 `;

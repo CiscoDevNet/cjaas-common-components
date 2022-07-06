@@ -38,6 +38,13 @@ export namespace Timeline {
     Task = "task",
   }
 
+  export enum TimeFrame {
+    "All" = "All",
+    "24-Hours" = "24-Hours",
+    "7-Days" = "7-Days",
+    "30-Days" = "30-Days",
+  }
+
   export interface WxccDataPayload {
     agentId?: string; // state_change
     currentState?: string; // state_change
@@ -107,6 +114,11 @@ export namespace Timeline {
      */
     @property({ type: Boolean, attribute: "is-date-filter-visible" }) isDateFilterVisible = false;
     /**
+     * @attr time-frame
+     * Determine default time frame on start
+     */
+    @property({ type: String, attribute: "time-frame" }) timeFrame: TimeFrame = TimeFrame.All;
+    /**
      * @attr live-stream
      * Toggle adding latest live events being added directly to timeline (instead of queue)
      */
@@ -132,11 +144,6 @@ export namespace Timeline {
      * Dataset keeping track of queued latest live events
      */
     @property({ type: Array, attribute: false }) newestEvents: Array<CustomerEvent> = [];
-    /**
-     * @prop newestEvents
-     * Dataset keeping track of queued latest live events
-     */
-    // @property({ type: Array, attribute: false }) finalEvents: Array<CustomerEvent> = [];
     /**
      * @prop eventTypes
      * Dataset of all unique event types
@@ -168,15 +175,15 @@ export namespace Timeline {
      */
     @property({ attribute: false }) eventIconTemplate: TimelineCustomizations = iconData;
     /**
+     * Property to pass in data template to set color and icon settings and showcased data
+     * @prop eventIconTemplate
+     */
+    @property({ type: String, attribute: "error-message" }) errorMessage = "";
+    /**
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
      */
     @internalProperty() collapsed: Set<string> = new Set();
-    /**
-     * @prop activeDateRange
-     * Store for visible dates
-     */
-    @internalProperty() activeDateRange!: string;
 
     @internalProperty() dateRangeOldestDate: DateTime = DateTime.now().minus({ year: 10 });
     /**
@@ -279,12 +286,10 @@ export namespace Timeline {
 
     /**
      * @method toggleActive
-     * @param {Event} e
+     * @param {Number} index
      */
-    toggleActive(e: Event) {
-      const button = e.target as Button.ELEMENT;
-      button.active = !button.active;
-      this.activeDateRange = button.id.substring(12);
+    toggleActive(index: number) {
+      this.timeFrame = Object.values(TimeFrame)[index];
       this.dateRangeOldestDate = this.calculateOldestEntry();
     }
 
@@ -293,12 +298,12 @@ export namespace Timeline {
      * @returns {DateTime}
      */
     calculateOldestEntry() {
-      switch (this.activeDateRange) {
-        case "24-hours":
+      switch (this.timeFrame) {
+        case TimeFrame["24-Hours"]:
           return DateTime.now().minus({ day: 1 });
-        case "7-days":
+        case TimeFrame["7-Days"]:
           return DateTime.now().minus({ week: 1 });
-        case "30-days":
+        case TimeFrame["30-Days"]:
           return DateTime.now().minus({ month: 1 });
         default:
           return DateTime.now().minus({ year: 10 });
@@ -401,12 +406,13 @@ export namespace Timeline {
       const firstRealEvent: CustomerEvent =
         clusterArray.find((event: CustomerEvent) => event?.data?.channelType !== undefined) || clusterArray[0];
 
-      const { channelType, origin, taskId } = firstRealEvent?.data;
+      const { channelType, origin, taskId, currentState } = firstRealEvent?.data;
       const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
+      const agentType = currentState ? "agent" : "";
 
       return {
         id: taskId || uuidv4(),
-        channelType: formattedChannelType,
+        channelType: formattedChannelType || agentType,
         origin,
       };
     }
@@ -459,8 +465,8 @@ export namespace Timeline {
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              event-title=${`${cluster.length} ${clusterInfo.channelType} events`}
-              cluster-sub-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
+              cluster-sub-title=${`${cluster.length} events`}
+              event-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
               group-icon=${clusterInfo.channelType}
               time=${cluster[0].time}
               class="has-line"
@@ -481,15 +487,18 @@ export namespace Timeline {
           `;
     }
 
-    renderDateRangeButtons() {
+    renderDateRangeButtons(aTimeFrame: TimeFrame) {
+      const timeFrameArray = Object.values(TimeFrame);
+      const index = timeFrameArray?.indexOf(aTimeFrame);
+
       return html`
-        <md-button-group active="0">
+        <md-button-group .active=${index}>
           <button
             class="button-group-button"
             slot="button"
             id="filter-last-all"
             type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
+            @click=${() => this.toggleActive(0)}
             value="All"
           >
             All
@@ -499,7 +508,7 @@ export namespace Timeline {
             slot="button"
             id="filter-last-24-hours"
             type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
+            @click=${() => this.toggleActive(1)}
             value="Last 24 Hours"
           >
             Last 24 Hours
@@ -509,7 +518,7 @@ export namespace Timeline {
             slot="button"
             id="filter-last-7-days"
             type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
+            @click=${() => this.toggleActive(2)}
             value="Last 7 Days"
           >
             Last 7 Days
@@ -519,7 +528,7 @@ export namespace Timeline {
             slot="button"
             id="filter-last-30-days"
             type="button"
-            @click=${(e: Event) => this.toggleActive(e)}
+            @click=${() => this.toggleActive(3)}
             value="Last 30 Days"
           >
             Last 30 Days
@@ -590,7 +599,9 @@ export namespace Timeline {
             <div>
               <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
             </div>
-            <span class="empty-state-text">No historic events to show. Listening for new events...</span>
+            <span class="timeline-statement"
+              >${`No historic events to show.${this.liveStream ? " Listening for new events..." : ""}`}</span
+            >
           </div>
         `;
       } else if (isFilteredListEmpty) {
@@ -599,7 +610,7 @@ export namespace Timeline {
             <div>
               <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
             </div>
-            <span class="empty-state-text">No historic events exist within the current date range.</span>
+            <span class="timeline-statement">No historic events exist within the current date range.</span>
           </div>
         `;
       }
@@ -624,6 +635,13 @@ export namespace Timeline {
     }
 
     renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
+      if (this.errorMessage) {
+        return html`
+          <div class="empty-state">
+            <span class="timeline-statement error">${this.errorMessage}</span>
+          </div>
+        `;
+      }
       if (this.getEventsInProgress) {
         return html`
           <div class="empty-state">
@@ -660,7 +678,7 @@ export namespace Timeline {
           <section class="controls" part="controls">
             <div class="row first-row">
               <div class="flex-apart">
-                ${this.renderDateRangeButtons()}
+                ${this.renderDateRangeButtons(this.timeFrame)}
               </div>
               <div class="filter-button-wrapper">
                 ${this.renderFilterButton()}

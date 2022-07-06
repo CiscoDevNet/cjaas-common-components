@@ -5,8 +5,6 @@ import { html } from "lit-html";
 import "@momentum-ui/web-components/dist/comp/md-progress-bar";
 import styles from "./scss/identity.scss";
 
-const NO_ALIAS_TEXT = "Currently, no aliases exist.";
-
 export interface IdentityData {
   id: string;
   createdAt: string;
@@ -23,6 +21,7 @@ export namespace Identity {
     @property({ type: Boolean }) aliasGetInProgress = false;
     @property({ type: Boolean }) disableAddButton = false;
     @property({ attribute: false }) identityData: undefined | IdentityData = undefined;
+    @property({ type: String, attribute: "error-message", reflect: true }) errorMessage = "";
 
     @internalProperty() inputValue = "";
 
@@ -32,7 +31,11 @@ export namespace Identity {
         (changedProperties.has("aliasGetInProgress") && !this.aliasGetInProgress) ||
         (changedProperties.has("aliasAddInProgress") && !this.aliasAddInProgress)
       ) {
-        this.inputValue = "";
+        this.inputValue = this.customer || "";
+      }
+
+      if (changedProperties.has("customer")) {
+        this.inputValue = this.customer || "";
       }
     }
 
@@ -68,12 +71,30 @@ export namespace Identity {
       return styles;
     }
 
-    render() {
-      const spinnerInline = html`
-        <md-spinner size="12"></md-spinner>
+    renderErrorMessage() {
+      return html`
+        <p class="alias-text error">${this.errorMessage}</p>
       `;
+    }
 
-      const deleteIcon = (alias: string) => html`
+    renderContent() {
+      if (this.aliasGetInProgress) {
+        return html`
+          <div class="spinner-container">
+            <md-spinner size="32"></md-spinner>
+          </div>
+        `;
+      } else if (!this.identityData?.aliases || !this.identityData?.aliases.length) {
+        return html`
+          <p class="alias-text">${`No aliases exist for ${this.customer || "this user"}.`}</p>
+        `;
+      } else {
+        return this.renderAliasList();
+      }
+    }
+
+    renderAliasList() {
+      const renderInlineDeleteIcon = (alias: string) => html`
         <md-tooltip class="delete-icon-tooltip" message="Delete Alias">
           <md-icon class="alias-delete-icon" name="icon-delete_14" @click=${() => this.deleteAlias(alias)}></md-icon
         ></md-tooltip>
@@ -82,60 +103,38 @@ export namespace Identity {
       const aliases = (this.identityData?.aliases?.slice().reverse() || []).map(alias => {
         return html`
           <li class="alias-item">
-            <span class="alias-text">${alias}</span>
-            ${this.aliasDeleteInProgress[alias] ? spinnerInline : deleteIcon(alias)}
+            <span class="alias-item-text">${alias}</span>
+            ${this.aliasDeleteInProgress[alias] ? this.renderInlineSpinner() : renderInlineDeleteIcon(alias)}
           </li>
         `;
       });
 
-      const aliasList = html`
+      return html`
         <ul class="alias-list" part="list">
           ${aliases}
         </ul>
       `;
+    }
 
-      const spinner = html`
-        <div class="spinner-container">
-          <md-spinner size="32"></md-spinner>
-        </div>
+    renderInlineSpinner() {
+      return html`
+        <md-spinner size="12"></md-spinner>
       `;
+    }
 
+    render() {
       const renderNullCustomerView = html`
-        <div class="null-customer-identity-view">
-          <p class="null-customer-text">No customer provided. Cannot execute any actions.</p>
-        </div>
+        <p class="alias-text">No customer provided. Cannot execute any alias related actions.</p>
       `;
-
-      const inputPlaceholder = `Enter new alias for ${this.customer}`;
 
       const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
-
-      const buttonText = this.aliasAddInProgress ? spinnerInline : "Add";
-
-      let consolidatedAliases = html`
-        <div class="no-alias-wrapper">
-          <span class="alias-text">${NO_ALIAS_TEXT}</span>
-        </div>
-      `;
-
-      if (this.aliasGetInProgress) {
-        consolidatedAliases = spinner;
-      } else if (this.identityData && this.identityData?.aliases?.length > 0) {
-        consolidatedAliases = aliasList;
-      } else if (this.identityData && !this.identityData?.aliases) {
-        consolidatedAliases = html`
-          <div class="no-alias-wrapper">
-            <span class="alias-text">${NO_ALIAS_TEXT}</span>
-          </div>
-        `;
-      }
 
       if (this.customer) {
         return html`
           <div class="flex alias-input-row">
             <md-input
               class="alias-input"
-              placeholder=${inputPlaceholder}
+              placeholder=${`Enter new alias for ${this.customer}`}
               shape="pill"
               id="alias-input"
               value=${this.inputValue}
@@ -146,7 +145,7 @@ export namespace Identity {
               variant="secondary"
               @click=${this.addAlias}
             >
-              ${buttonText}
+              ${this.aliasAddInProgress ? this.renderInlineSpinner() : "Add"}
             </md-button>
           </div>
           <div part="aliases-container" class="aliases">
@@ -156,7 +155,9 @@ export namespace Identity {
                 <md-icon class="alias-info-icon" name="info_14"></md-icon>
               </md-tooltip>
             </div>
-            ${consolidatedAliases}
+            <div class="alias-content">
+              ${this.errorMessage ? this.renderErrorMessage() : this.renderContent()}
+            </div>
           </div>
         `;
       } else {

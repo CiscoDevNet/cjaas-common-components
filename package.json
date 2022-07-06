@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.3.6",
+  "version": "4.3.7",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -56,6 +56,7 @@
     "dompurify": "^2.2.6",
     "highlight.js": "^10.5.0",
     "libphonenumber-js": "^1.10.6",
+    "linkifyjs": "^3.0.5",
     "luxon": "^1.25.0",
     "nanoid": "^3.1.16",
     "papaparse": "^5.3.0",

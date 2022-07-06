@@ -144,6 +144,8 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
       origin: mockOriginByType(channelType),
       outboundType: null,
       reason: "Agent Left",
+      url: "https://www.google.com",
+      email: "bob@gmail.com",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
       terminatingParty: "Agent",
       workflowManager: null,
@@ -694,15 +696,20 @@ const isTwentyMinutesStr = new Date(nowDate.setMinutes(nowDate.getMinutes() - 20
 const isoTwoHourStr = new Date(nowDate.setHours(nowDate.getHours() - 2)).toISOString();
 const isoThreeHourStr = new Date(nowDate.setHours(nowDate.getHours() - 3)).toISOString();
 
+const isoTwoDaysStr = new Date(nowDate.setHours(nowDate.getHours() - 48)).toISOString();
+
 export const historicalEvents: Timeline.CustomerEvent[] = [
-  mockedStateChangeTask(isoNowStr, "wrapup"),
-  mockedEndedTask(isTwentyMinutesStr, "telephony"),
-  mockedConnectedTask(isTwentyMinutesStr, "telephony"),
-  mockedConnectTask(isTwentyMinutesStr, "telephony"),
-  mockedStateChangeTask(isoTwoHourStr, "connected"),
-  mockedNewTask(isoTwoHourStr, "email", "123-456"),
-  mockedStateChangeTask(isoTwoHourStr, "wrapup"),
-  mockedNewTask(isoThreeHourStr, "chat", "456-789"),
+  // mockedStateChangeTask(isoNowStr, "wrapup"),
+  mockedEndedTask(isoTwoDaysStr, "telephony"),
+  mockedConnectedTask(isoTwoDaysStr, "telephony"),
+  mockedConnectTask(isoTwoDaysStr, "telephony"),
+  mockedStateChangeTask(isoTwoDaysStr, "connected"),
+
+  mockedStateChangeTask(isoTwoDaysStr, "wrapup", "123-456"),
+  mockedNewTask(isoTwoDaysStr, "email", "123-456"),
+  // mockedStateChangeTask(isoTwoDaysStr, "wrapup"),
+  mockedStateChangeTask(isoTwoDaysStr, "wrapup", "456-789"),
+  mockedNewTask(isoTwoDaysStr, "chat", "456-789"),
 ];
 
 export const fiveNewEvents: Timeline.CustomerEvent[] = [
