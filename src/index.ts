@@ -16,4 +16,5 @@ export { Timer } from "./components/timer/Timer";
 export { Condition } from "./components/condition/Condition";
 export { ConditionBlock } from "./components/condition-block/ConditionBlock";
 export { Identity } from "./components/identity/Identity";
+export { FormRow } from "./components/FormRow/FormRow";
 // eslint-disable-next-line prettier/prettier

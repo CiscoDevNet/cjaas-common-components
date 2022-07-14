@@ -7,9 +7,32 @@
  */
 
 .condition-row {
+  background-color: var(--md-secondary-bg-color);
   display: flex;
   align-items: center;
-  margin: 1rem 0;
+  margin-bottom: 1rem;
+
+  .left-block {
+    background-color: var(--md-tertiary-bg-color);
+    height: 67px;
+    align-items: center;
+    display: flex;
+    padding: 0 1.5rem;
+    margin-right: 1rem;
+  }
+
+  .main-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .tools-container {
+    display: flex;
+    margin-right: 1rem;
+    gap: 1rem;
+  }
+
   .dot {
     height: 10px;
     width: 10px;
@@ -19,33 +42,14 @@
   }
 
   md-input {
-    min-width: 80px;
     margin: 0 12px;
     margin-top: 1rem;
   }
   md-dropdown {
-    min-width: 80px;
     margin: 0 12px;
   }
 
   .relation {
     margin-left: 0;
-  }
-
-  .icon {
-    cursor: pointer;
-    margin: 0 8px;
-  }
-  .add-below-icon {
-    @extend .icon;
-    &:hover {
-      color: var(--add-icon-color, #27aa3d);
-    }
-  }
-  .delete-icon {
-    @extend .icon;
-    &:hover {
-      color: var(--delete-icon-color, #f05006);
-    }
   }
 }

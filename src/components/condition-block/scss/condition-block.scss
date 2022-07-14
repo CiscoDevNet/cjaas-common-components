@@ -7,7 +7,6 @@
  */
 
 md-dropdown {
-  min-width: 80px;
   margin: 0 12px;
 }
 
@@ -16,18 +15,21 @@ md-dropdown {
 }
 
 :host {
-  padding-left: 12px;
   display: flex;
 }
-.block-container.bordered {
-  border: 1px dashed #aaaaaa;
+
+.block-container {
+  width: 100%;
 }
 
 .disabled-picker {
-  padding: 2px;
-  color: var(--md-hyperlink-text-color, #005e7d);
-  margin-right: 8px;
-  font-weight: 600;
+  background-color: var(--md-secondary-bg-color);
+  padding: 1rem;
+  align-items: center;
+  display: flex;
+  color: var(--md-secondary-text-color);
+  margin-right: 1rem;
+  margin-bottom: 1rem;
 }
 
 .intend {

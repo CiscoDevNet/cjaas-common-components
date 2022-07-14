@@ -32,12 +32,10 @@ export namespace ConditionBlock {
         return nothing;
       } else if (index > 1 && this.relation) {
         return html`
-          <div class="dot"></div>
           <div class="disabled-picker">${this.relation}</div>
         `;
       } else {
         return html`
-          <div class="dot"></div>
           <md-dropdown
             class="relation"
             .options=${["AND", "OR"]}
@@ -57,8 +55,8 @@ export namespace ConditionBlock {
       this.dispatchEvent(
         new CustomEvent("relation-updated", {
           detail: {
-            relation: this.relation
-          }
+            relation: this.relation,
+          },
         })
       );
     }
@@ -185,7 +183,7 @@ export namespace ConditionBlock {
         const oldCondition: string = this.conditions as string;
         this.conditions = {
           args: [oldCondition, _value],
-          logic: this.innerRelation as "AND" | "OR"
+          logic: this.innerRelation as "AND" | "OR",
         };
       }
     }
@@ -196,7 +194,7 @@ export namespace ConditionBlock {
 
         this.conditions = {
           args: [oldCondition.condition, _value],
-          logic: "AND"
+          logic: "AND",
         };
       } else {
         this.conditions = _value;
@@ -216,7 +214,7 @@ export namespace ConditionBlock {
         if (type === "INSERT") {
           this.conditions = {
             args: [_value],
-            logic: "AND"
+            logic: "AND",
           };
         }
       }
@@ -233,7 +231,7 @@ export namespace ConditionBlock {
         index + 1,
         {
           args: [""],
-          logic: "AND"
+          logic: "AND",
         },
         "INSERT"
       );
@@ -252,8 +250,8 @@ export namespace ConditionBlock {
         this.dispatchEvent(
           new CustomEvent("delete-block", {
             detail: {
-              index: this.index
-            }
+              index: this.index,
+            },
           })
         );
       }
@@ -294,17 +292,17 @@ export namespace ConditionBlock {
       if (typeof this.conditions === "string" && this.root) {
         return {
           logic: "SINGLE",
-          condition: this.conditions
+          condition: this.conditions,
         };
       } else if (typeof this.conditions === "string") {
         return {
           args: [this.conditions],
-          logic: relation
+          logic: relation,
         };
       } else if ((this.conditions as SingleLineCondition)?.logic === "SINGLE") {
         return {
           args: (this.conditions as SingleLineCondition).condition,
-          logic: relation
+          logic: relation,
         };
       } else {
         return this.conditions;
@@ -316,8 +314,8 @@ export namespace ConditionBlock {
         new CustomEvent("updated-condition", {
           detail: {
             fromIndex: this.index,
-            fromBlock: true
-          }
+            fromBlock: true,
+          },
         })
       );
     }

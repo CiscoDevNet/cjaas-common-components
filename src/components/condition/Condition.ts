@@ -101,28 +101,43 @@ export namespace Condition {
       `;
     }
 
-    render() {
+    renderConditionTools() {
       return html`
-        <div class="condition-row">
-          <div class="dot"></div>
-          ${this.getOperatorTemplate()}
-          <span>if</span>
-          ${this.optionsList
-            ? html`
-                ${this.getFieldPickerTemplate()} ${this.getComparatorTemplate()} ${this.getValueTemplate()}
-              `
-            : nothing}
+        <div class="tools-container">
           <div class="add-below-icon" title="Add New Condition">
             <md-tooltip message="Add Condition" placement="top">
-              <md-icon name="icon-add_24" size="18" @click=${() => this.addNewCondition()}></md-icon>
+              <md-button class="add-icon" circle hasIcon @click=${() => this.addNewCondition()}>
+                <md-icon slot="icon" name="icon-plus_16"></md-icon>
+              </md-button>
             </md-tooltip>
           </div>
           <div class="icon" title="Add New Condition Block">
             <md-tooltip message="Add Condition Block" placement="top">
-              <md-icon name="icon-condition_16" size="18" @click=${() => this.addNewConditionBlock()}></md-icon>
+              <md-button class="add-icon" circle hasIcon @click=${() => this.addNewConditionBlock()}>
+                <md-icon slot="icon" name="icon-condition_16" size="12"></md-icon>
+              </md-button>
             </md-tooltip>
           </div>
           ${this.getDeleteTemplate()}
+        </div>
+      `;
+    }
+
+    render() {
+      return html`
+        <div part="condition-row" class="condition-row">
+          <div class="left-block">${this.index === 0 ? "IF" : this.getOperatorTemplate()}</div>
+          <!-- <div class="dot"></div> -->
+          <div class="main-content">
+            <!-- ${this.getOperatorTemplate()} -->
+            <!-- <span>if</span> -->
+            ${this.optionsList
+              ? html`
+                  ${this.getFieldPickerTemplate()} ${this.getComparatorTemplate()} ${this.getValueTemplate()}
+                `
+              : nothing}
+          </div>
+          ${this.renderConditionTools()}
         </div>
       `;
     }
@@ -136,9 +151,15 @@ export namespace Condition {
       if (this.showDelete) {
         return html`
           <md-tooltip message="Delete Condition" placement="top">
-            <div class="delete-icon" title="Delete Condition" @click=${() => this.deleteCondition()}>
-              <md-icon name="icon-delete_24" size="18"></md-icon>
-            </div>
+            <md-button
+              class="delete-icon"
+              title="Delete Condition"
+              circle
+              hasIcon
+              @click=${() => this.deleteCondition()}
+            >
+              <md-icon slot="icon" name="icon-minus_16"></md-icon>
+            </md-button>
           </md-tooltip>
         `;
       }

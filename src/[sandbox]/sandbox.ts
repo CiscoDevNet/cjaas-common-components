@@ -9,6 +9,7 @@ import { conditionTemplate } from "./examples/condition";
 import { conditionBlockTemplate } from "./examples/condition-block";
 import { identityTemplate } from "./examples/identity";
 import { eventTogglesTemplate } from "./examples/eventToggles";
+import { formRowTemplate } from "./examples/formRow";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
 
@@ -115,6 +116,10 @@ export class Sandbox extends LitElement {
           <div class="container" aria-label="cjaas-event-toggles">
             <h2>cjaas-event-toggles</h2>
             ${eventTogglesTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-form-row">
+            <h2>cjaas-form-row</h2>
+            ${formRowTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>
