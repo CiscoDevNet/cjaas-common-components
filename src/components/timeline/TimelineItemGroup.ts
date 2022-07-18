@@ -59,6 +59,11 @@ export namespace TimelineItemGroup {
      */
     @property({ attribute: false })
     eventIconTemplate: Timeline.TimelineCustomizations = iconData;
+    /**
+     * @prop badgeKeyword
+     * set badge icon based on declared keyword from dataset
+     */
+    @property({ type: String, attribute: "icon-keyword-lookup" }) iconKeywordLookup = "channelType";
 
     static get styles() {
       return styles;
@@ -91,6 +96,7 @@ export namespace TimelineItemGroup {
     renderSingleton(event: Timeline.CustomerEvent) {
       return html`
         <cjaas-timeline-item
+          class="has-line"
           .event=${event}
           event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
           sub-title=${event.renderData?.subTitle || ""}
@@ -100,7 +106,7 @@ export namespace TimelineItemGroup {
           .person=${event.person || null}
           group-item
           .eventIconTemplate=${this.eventIconTemplate}
-          class="has-line"
+          icon-keyword-lookup=${this.iconKeywordLookup}
         ></cjaas-timeline-item>
       `;
     }
@@ -118,6 +124,7 @@ export namespace TimelineItemGroup {
               group-icon-map-keyword=${this.groupIcon}
               .data=${{ "Event Group": this.eventTitle }}
               .eventIconTemplate=${this.eventIconTemplate}
+              icon-keyword-lookup=${this.iconKeywordLookup}
             ></cjaas-timeline-item>
           `
         : html`

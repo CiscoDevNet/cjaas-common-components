@@ -132,7 +132,7 @@ export namespace Timeline {
      * @prop badgeKeyword
      * set badge icon based on declared keyword from dataset
      */
-    @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
+    @property({ type: String, attribute: "icon-keyword-lookup" }) iconKeywordLookup = "channelType";
     // Data Property Input from Application
     /**
      * @prop historicEvents
@@ -394,7 +394,7 @@ export namespace Timeline {
                   ?is-date-cluster=${true}
                   group-icon-map-keyword="multi events single day"
                   .eventIconTemplate=${this.eventIconTemplate}
-                  .badgeKeyword=${this.badgeKeyword}
+                  icon-keyword-lookup=${this.iconKeywordLookup}
                 ></cjaas-timeline-item>
               `
             : this.populateEvents(groupedItem.events)}
@@ -475,6 +475,7 @@ export namespace Timeline {
               .activeDates=${this.activeDates}
               .activeTypes=${this.activeTypes}
               .eventIconTemplate=${this.eventIconTemplate}
+              icon-keyword-lookup=${this.iconKeywordLookup}
             ></cjaas-timeline-item-group>
           `
         : html`
@@ -565,7 +566,7 @@ export namespace Timeline {
           id=${event?.id}
           .person=${event?.person || null}
           .eventIconTemplate=${this.eventIconTemplate}
-          .badgeKeyword=${this.badgeKeyword}
+          icon-keyword-lookup=${this.iconKeywordLookup}
           ?expanded="${this.expandDetails}"
           class="has-line"
         ></cjaas-timeline-item>

@@ -9,7 +9,6 @@ export const timelineTemplate = html`
     .historicEvents=${historicalEvents}
     event-filters
     .newestEvents=${fiveNewEvents}
-    badge-keyword="channelType"
     time-frame="All"
   ></cjaas-timeline>
 
@@ -32,5 +31,15 @@ export const timelineTemplate = html`
     event-filters
     .newestEvents=${emptyMock}
     getEventsInProgress
+  ></cjaas-timeline>
+
+  <h3>iconKeywordLookup set</h3>
+  <cjaas-timeline
+    limit=${2}
+    .historicEvents=${historicalEvents}
+    event-filters
+    .newestEvents=${fiveNewEvents}
+    icon-keyword-lookup="currentState"
+    time-frame="All"
   ></cjaas-timeline>
 `;

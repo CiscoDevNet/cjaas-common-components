@@ -63,13 +63,11 @@ export namespace TimelineItem {
      * @prop badgeKeyword
      * set badge icon based on declared keyword from dataset
      */
-    @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
+    @property({ type: String, attribute: "icon-keyword-lookup" }) iconKeywordLookup = "channelType";
 
     @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
 
     @property({ type: Boolean, attribute: "is-date-cluster" }) isDateCluster = false;
-
-    @property({ type: String, attribute: "group-icon-map-keyword" }) groupIconMapKeyword = "";
 
     static get styles() {
       return styles;
@@ -230,11 +228,7 @@ export namespace TimelineItem {
       if (this.data) {
         const isAgent = this.data?.currentState ? "agent" : "";
 
-        if (this.groupIconMapKeyword) {
-          iconKeyword = this.groupIconMapKeyword;
-        } else {
-          iconKeyword = this.data[this.badgeKeyword] || isAgent || "";
-        }
+        iconKeyword = this.data[this.iconKeywordLookup] || isAgent || "";
         iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
           name: "icon-activities_16",
           color: "orange", // TODO CHANGE
