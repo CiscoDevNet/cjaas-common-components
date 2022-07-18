@@ -120,6 +120,7 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
     result = TEMP_ICON_MAP[eventName];
   }
 
+  console.log("getIconData result", eventName, iconMap, result);
   return result;
 }
 

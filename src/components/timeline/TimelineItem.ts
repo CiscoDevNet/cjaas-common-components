@@ -69,6 +69,8 @@ export namespace TimelineItem {
 
     @property({ type: Boolean, attribute: "is-date-cluster" }) isDateCluster = false;
 
+    @property({ type: String, attribute: "group-icon" }) groupIcon = "";
+
     static get styles() {
       return styles;
     }
@@ -228,7 +230,16 @@ export namespace TimelineItem {
       if (this.data) {
         const isAgent = this.data?.currentState ? "agent" : "";
 
-        iconKeyword = this.data[this.iconKeywordLookup] || isAgent || "";
+        let iconKeyword = "";
+        if (this.isDateCluster) {
+          iconKeyword = "date_cluster";
+        } else if (this.groupIcon) {
+          iconKeyword = this.groupIcon;
+        } else {
+          iconKeyword = this.data[this.iconKeywordLookup] || isAgent || "";
+        }
+        // iconKeyword = this.isDateCluster ? "date_cluster" : this.data[this.iconKeywordLookup] || isAgent || "";
+        console.log("iconKewordLookup in TimelineItem", this.iconKeywordLookup, iconKeyword);
         iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
           name: "icon-activities_16",
           color: "orange", // TODO CHANGE

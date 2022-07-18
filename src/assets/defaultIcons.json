@@ -89,7 +89,7 @@
     "name": "icon-report_16",
     "color": "gold"
   },
-  "multi events single day": {
+  "date_cluster": {
     "name": "icon-calendar-day_12",
     "color": "yellow"
   }

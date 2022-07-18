@@ -121,10 +121,9 @@ export namespace TimelineItemGroup {
               time=${this.time}
               class="has-line"
               ?is-cluster=${true}
-              group-icon-map-keyword=${this.groupIcon}
               .data=${{ "Event Group": this.eventTitle }}
               .eventIconTemplate=${this.eventIconTemplate}
-              icon-keyword-lookup=${this.iconKeywordLookup}
+              group-icon=${this.groupIcon}
             ></cjaas-timeline-item>
           `
         : html`

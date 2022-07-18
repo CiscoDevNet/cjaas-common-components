@@ -390,9 +390,8 @@ export namespace Timeline {
                   event-title=${`${events.length} ${eventsKeyword} from ${printableDate}`}
                   .data=${{ Date: readableDate }}
                   .time=${date}
-                  ?is-cluster=${true}
-                  ?is-date-cluster=${true}
-                  group-icon-map-keyword="multi events single day"
+                  is-cluster
+                  is-date-cluster
                   .eventIconTemplate=${this.eventIconTemplate}
                   icon-keyword-lookup=${this.iconKeywordLookup}
                 ></cjaas-timeline-item>
@@ -465,8 +464,8 @@ export namespace Timeline {
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
-              cluster-sub-title=${`${cluster.length} events`}
               event-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
+              cluster-sub-title=${`${cluster.length} events`}
               group-icon=${clusterInfo.channelType}
               time=${cluster[0].time}
               class="has-line"
@@ -475,7 +474,6 @@ export namespace Timeline {
               .activeDates=${this.activeDates}
               .activeTypes=${this.activeTypes}
               .eventIconTemplate=${this.eventIconTemplate}
-              icon-keyword-lookup=${this.iconKeywordLookup}
             ></cjaas-timeline-item-group>
           `
         : html`
