@@ -7,13 +7,14 @@
  */
 
 import { customElementWithCheck } from "@/mixins";
-import { LitElement, html, property, PropertyValues } from "lit-element";
+import { LitElement, html, property, PropertyValues, internalProperty, query } from "lit-element";
 import { ifDefined } from "lit-html/directives/if-defined";
 import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-avatar";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
+import { Input } from "@momentum-ui/web-components";
 
 export namespace ProfileView {
   interface ContactChannel {
@@ -26,6 +27,13 @@ export namespace ProfileView {
     label?: string;
     imgSrc?: string;
   }
+
+  export enum EditablePropertyNames {
+    None = "none",
+    FirstName = "First Name",
+    LastName = "Last Name",
+  }
+
   @customElementWithCheck("cjaas-profile")
   export class ELEMENT extends LitElement {
     /**
@@ -64,9 +72,50 @@ export namespace ProfileView {
      */
     @property({ type: String, attribute: "error-message" }) errorMessage = "";
 
+    @property({ type: String, attribute: "name-api-error-message" }) nameApiErrorMessage = "";
+
+    @property({ type: String, attribute: "first-name" }) firstName = "";
+    @property({ type: String, attribute: "last-name" }) lastName = "";
+
+    // @internalProperty() activePropertyEdit: EditablePropertyNames = EditablePropertyNames.None;
+    @internalProperty() activePropertyEdit = "";
+
+    // @internalProperty() editHeaderNamesIconVisible = false;
+    @internalProperty() editingNames = false;
+
+    @internalProperty() firstNameInputValue = "";
+    @internalProperty() lastNameInputValue = "";
+
+    @internalProperty() firstNameInvalid = false;
+    @internalProperty() lastNameInvalid = false;
+
+    @internalProperty() firstNameErrorMessage = "";
+    @internalProperty() lastNameErrorMessage = "";
+
+    @internalProperty() firstNameInputMessageArray: Array<Input.Message> = [];
+    @internalProperty() lastNameInputMessageArray: Array<Input.Message> = [];
+
+    @property({ type: Boolean, attribute: "names-loading" }) namesLoading = false;
+
+    @query("#edit-property-input") editInputField!: HTMLInputElement;
+
+    @query("#first-name-input") firstNameInput!: HTMLInputElement;
+    @query("#last-name-input") lastNameInput!: HTMLInputElement;
+
+    nonAlphaNameErrorMessage = "Only support alpha characters.";
+    undefinedNameErrorMessage = (nameType: "first" | "last") => `${nameType} name is required.`;
+
     connectedCallback() {
       super.connectedCallback();
       this.extractDataPoints();
+    }
+
+    firstUpdated(changedProperties: PropertyValues) {
+      super.firstUpdated(changedProperties);
+
+      if (!this.firstName && !this.lastName) {
+        this.editingNames = true;
+      }
     }
 
     updated(changedProperties: PropertyValues) {
@@ -74,6 +123,69 @@ export namespace ProfileView {
       if (changedProperties.has("profileData")) {
         this.extractDataPoints(true);
         this.requestUpdate();
+      }
+
+      if (changedProperties.has("firstName") || changedProperties.has("lastName")) {
+        this.nameApiErrorMessage = "";
+        this.lastNameInvalid = false;
+        this.firstNameInvalid = false;
+        this.editingNames = !(this.firstName && this.lastName);
+      }
+
+      if (changedProperties.has("firstName")) {
+        this.firstNameErrorMessage = "";
+        this.firstNameInputValue = this.firstName;
+      }
+
+      if (changedProperties.has("lastName")) {
+        this.lastNameErrorMessage = "";
+        this.lastNameInputValue = this.lastName;
+      }
+
+      if (changedProperties.has("firstNameInputValue")) {
+        this.firstNameErrorMessage = "";
+        this.nameApiErrorMessage = "";
+      }
+
+      if (changedProperties.has("lastNameInputValue")) {
+        this.lastNameErrorMessage = "";
+        this.nameApiErrorMessage = "";
+      }
+
+      if (changedProperties.has("firstNameErrorMessage")) {
+        if (this.firstNameErrorMessage) {
+          const errorMessage: Input.Message = {
+            type: "error",
+            message: this.firstNameErrorMessage,
+          };
+          this.firstNameInputMessageArray = [errorMessage];
+        } else {
+          this.firstNameInputMessageArray = [];
+        }
+      }
+
+      if (changedProperties.has("lastNameErrorMessage")) {
+        if (this.lastNameErrorMessage) {
+          const errorMessage: Input.Message = {
+            type: "error",
+            message: this.lastNameErrorMessage,
+          };
+          this.lastNameInputMessageArray = [errorMessage];
+        } else {
+          this.lastNameInputMessageArray = [];
+        }
+      }
+
+      if (changedProperties.has("nameApiErrorMessage")) {
+        if (this.nameApiErrorMessage) {
+          const errorMessage: Input.Message = {
+            type: "error",
+            message: this.nameApiErrorMessage,
+          };
+          this.firstNameInputMessageArray = [errorMessage];
+        } else {
+          this.firstNameInputMessageArray = [];
+        }
       }
     }
 
@@ -156,21 +268,201 @@ export namespace ProfileView {
       }
     }
 
+    //   <!-- <h5 title="Name" class="customer-name">
+    //   ${this.contactData?.name}
+    // </h5> -->
+
     getTopContent() {
       return html`
         <section part="top-content" class="top-content">
           ${html`
-            ${this.renderAvatar()}
-            <h5 title="Name" class="customer-name">
-              ${this.contactData?.name}
-            </h5>
-            ${this.renderCustomerLabel()} ${this.emailContactItem()}
+            ${this.renderHeaderNames()} ${this.renderCustomerLabel()} ${this.emailContactItem()}
           `}
         </section>
       `;
     }
 
+    validateName(type: "first" | "last", nameValue: string) {
+      const re = new RegExp("^[a-zA-Z]+$"); // only alpha characters
+
+      if (type === "first") {
+        this.firstNameInvalid = !nameValue || !re.test(nameValue);
+      }
+
+      if (type === "last") {
+        this.lastNameInvalid = !nameValue || !re.test(nameValue);
+      }
+    }
+
+    firstNameInputChange(event: CustomEvent) {
+      this.firstNameInputValue = event?.detail?.value?.trim();
+      this.validateName("first", this.firstNameInputValue);
+    }
+
+    lastNameInputChange(event: CustomEvent) {
+      this.lastNameInputValue = event?.detail?.value?.trim();
+
+      this.validateName("last", this.lastNameInputValue);
+    }
+
+    // class=${`cell edit-names-button ${this.editHeaderNamesIconVisible ? "make-visible" : ""}`}
+    renderHeaderNames() {
+      if (this.editingNames) {
+        return html`
+          <h5 class="customer-name-header-row input-fields">
+            <md-input
+              id="first-name-input"
+              class="cell first-name-input name-input"
+              value=${this.firstNameInputValue}
+              placeholder="First Name"
+              .messageArr=${this.firstNameInputMessageArray}
+              @input-change=${this.firstNameInputChange}
+            ></md-input>
+            <md-input
+              id="last-name-input"
+              class=${`cell last-name-input name-input ${this.nameApiErrorMessage ? "input-error" : ""}`}
+              value=${this.lastNameInputValue}
+              placeholder="Last Name"
+              .messageArr=${this.lastNameInputMessageArray}
+              @input-change=${this.lastNameInputChange}
+            ></md-input>
+            ${this.namesLoading
+              ? html`
+                  <div class="name-spinner-wrapper">
+                    <md-spinner size=${16}></md-spinner>
+                  </div>
+                `
+              : html`
+                  <md-button
+                    class=${`cell names-control-button cancel-names-button`}
+                    iconActive
+                    circle
+                    @click=${this.submitNames}
+                    ><md-icon name="check-circle_16"></md-icon
+                  ></md-button>
+                `}
+          </h5>
+        `;
+      } else {
+        return html`
+          <h5 class="customer-name-header-row text">
+            ${this.firstNameInputValue} ${this.lastNameInputValue}
+            <md-button class=${`cell edit-names-button`} iconActive circle @click=${this.editNames}
+              ><md-icon name="edit_12"></md-icon
+            ></md-button>
+          </h5>
+        `;
+      }
+    }
+
+    editNames() {
+      this.editingNames = true;
+    }
+
+    submitNames() {
+      if (
+        this.firstNameInputValue &&
+        this.lastNameInputValue &&
+        this.firstName === this.firstNameInputValue &&
+        this.lastName === this.lastNameInputValue
+      ) {
+        this.editingNames = false;
+        return;
+      }
+
+      if (this.firstNameInvalid || !this.firstNameInputValue) {
+        this.firstNameErrorMessage = this.firstNameInputValue
+          ? this.nonAlphaNameErrorMessage
+          : this.undefinedNameErrorMessage("first");
+      }
+
+      if (this.lastNameInvalid || !this.lastNameInputValue) {
+        this.lastNameErrorMessage = this.lastNameInputValue
+          ? this.nonAlphaNameErrorMessage
+          : this.undefinedNameErrorMessage("last");
+      }
+
+      if (!this.firstNameErrorMessage && !this.lastNameErrorMessage) {
+        this.namesLoading = true;
+
+        this.dispatchEvent(
+          new CustomEvent("edit-names", {
+            detail: {
+              firstName: this.firstNameInputValue,
+              lastName: this.lastNameInputValue,
+            },
+          })
+        );
+      }
+    }
+
+    editProperty(propertyName: string) {
+      this.activePropertyEdit = propertyName;
+    }
+
+    handleInputEdit(event: CustomEvent) {
+      const { code } = event?.detail?.srcEvent;
+
+      if (code === "Enter") {
+        const newPropretyValue = this.editInputField?.value;
+        // this.activePropertyEdit = "";
+      }
+    }
+
     basicProfileProperties = ["Name", "First Name", "Last Name", "Email", "Phone"];
+
+    renderEditButton(propertyName: string, propertyValue: string) {
+      // const makeVisible = (propertyName === "First Name" || propertyName === "Last Name") && !propertyValue;
+      const makeVisible = propertyName === "First Name" || propertyName === "Last Name";
+
+      if (this.activePropertyEdit === propertyName) {
+        return html`
+          <div class="input-edit-button-group">
+            <!-- <md-button
+               class=${`cell edit-property-button ${makeVisible ? "make-visible" : ""}`}
+               iconActive
+               circle
+               @click=${() => (this.activePropertyEdit = "")}
+               ><md-icon name="check-circle_16"></md-icon
+             ></md-button> -->
+            <md-button
+              class=${`cell edit-property-button ${makeVisible ? "make-visible" : ""}`}
+              iconActive
+              circle
+              @click=${() => (this.activePropertyEdit = "")}
+              ><md-icon name="cancel_16"></md-icon
+            ></md-button>
+          </div>
+        `;
+      } else {
+        return html`
+          <md-button
+            class=${`cell edit-property-button ${makeVisible ? "make-visible" : ""}`}
+            iconActive
+            circle
+            @click=${this.editProperty.bind(this, propertyName)}
+            ><md-icon name="edit_16"></md-icon
+          ></md-button>
+        `;
+      }
+    }
+
+    renderPropertyValueDisplay(propertyName: string, propertyValue: string) {
+      if (this.activePropertyEdit === propertyName) {
+        return html`
+          <md-input
+            id="edit-property-input"
+            class="cell property-input"
+            value=${propertyValue}
+            @input-keydown=${this.handleInputEdit}
+          ></md-input>
+        `;
+      } else {
+        return html`
+          <div class="cell property-text property-value">${propertyValue}</div>
+        `;
+      }
+    }
 
     getTable() {
       return html`
@@ -179,19 +471,24 @@ export namespace ProfileView {
             ?.filter((x: any) => x.query.type === "table" || x.query?.widgetAttributes?.type === "table")
             .map((x: any) => {
               const { displayName } = x?.query;
+              const propertyValue = this.getValue(x);
               if (
                 this.basicProfileProperties.includes(displayName) ||
                 (this.getValue(x) !== "-" && displayName !== "imgSrc")
               ) {
                 return html`
-                  <div class="cell">${displayName}</div>
-                  <div class="cell">${this.getValue(x)}</div>
+                  <div class="cell property-text property-name">${displayName}</div>
+                  <div class="cell property-value">${propertyValue}</div>
                 `;
               }
             })}
         </div>
       `;
     }
+
+    // editable profile properties
+    // ${this.renderPropertyValueDisplay(displayName, propertyValue)}
+    // ${this.renderEditButton(displayName, propertyValue)}
 
     getValue(x: any) {
       let result = null;

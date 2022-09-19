@@ -11,6 +11,20 @@
   font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.alias-grid {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 3rem;
+  margin: 1rem;
+  font-size: 14px;
+  color: var(--md-secondary-text-color, #545454);
+
+  .cell {
+    vertical-align: top;
+    margin: 0.5rem 0;
+  }
+}
+
 .flex {
   display: flex;
   align-items: flex-start;
@@ -28,6 +42,19 @@
 
 .alias-input-row {
   margin-top: 0.5rem;
+  gap: 1rem;
+}
+
+#alias-input {
+  height: 64px;
+}
+
+#alias-input::part(message) {
+  padding-left: 0.5rem;
+}
+
+.label-input-group {
+  flex-direction: column;
 }
 
 .aliases {
@@ -81,9 +108,19 @@
     color: var(--md-secondary-text-color, #545454);
     padding: 0.3rem 1rem;
     font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
+
+    .alias-item-text {
+
+      .alias-type-value {
+        color: var(--md-primary-text-color);
+      }
+      display: flex;
+      gap: 2rem;
+    }
   }
 
   li:hover {
@@ -96,7 +133,6 @@
 }
 
 .alias-input::part(input) {
-  height: 2rem;
   font-size: 14px;
 }
 
@@ -123,4 +159,10 @@
 
 .alias-text-item {
   color: var(--md-primary-text-color);
+}
+
+.name-property-name {
+  margin-top: 0.25rem;
+  margin-right: 0.5rem;
+  width: 5.2rem;
 }

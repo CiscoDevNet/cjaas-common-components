@@ -4,12 +4,12 @@ import { html } from "lit-element";
 
 export const profileTemplate = html`
   <h4>Default display, Comprehensive data</h4>
-  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock}> </cjaas-profile>
-  <h4>Default display, Only Profile data w/ contactData inferred from profileData</h4>
+  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} ?names-loading=${false}> </cjaas-profile>
+  <!-- <h4>Default display, Only Profile data w/ contactData inferred from profileData</h4>
   <cjaas-profile .profileData=${profileMock}> </cjaas-profile>
   <h4>Default display, with limited data</h4>
-  <cjaas-profile .profileData=${limitedProfileMock}> </cjaas-profile>
-  <h4>Default display, Loading</h4>
+  <cjaas-profile .profileData=${limitedProfileMock}> </cjaas-profile> -->
+  <!-- <h4>Default display, Loading</h4>
   <cjaas-profile getProfileDataInProgress .contactData=${contactDataMock} .profileData=${profileMock}> </cjaas-profile>
   <h4>Snapshot display, contactData provided</h4>
   <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} snapshot> </cjaas-profile>
@@ -40,5 +40,5 @@ export const profileTemplate = html`
     getProfileDataInProgress
     error-message="Profile not found for Elena"
     customer="Bruce"
-  ></cjaas-profile>
+  ></cjaas-profile> -->
 `;
