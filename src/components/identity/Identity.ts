@@ -58,10 +58,10 @@ export namespace Identity {
 
     @query("#alias-input") aliasInput!: Input.ELEMENT;
 
-    invalidEmailMessage = "Invalid email address.";
-    invalidPhoneMessage = "Invalid phone number.";
-    invalidCustomerId = "Invalid CustomerId. AlphaNumeric characters only";
-    noAliasTypeMessage = "Alias type selection is required.";
+    invalidEmailMessage = "Invalid email address";
+    invalidPhoneMessage = "Invalid phone number";
+    invalidCustomerId = "AlphaNumeric characters only";
+    noAliasTypeMessage = "Alias type selection is required";
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
