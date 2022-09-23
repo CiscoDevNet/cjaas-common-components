@@ -37,6 +37,28 @@ const mockedConnectedTask = (time: string, channelType = "chat") => {
   };
 };
 
+const noOriginTask = (time: string, channelType = "chat") => {
+  return {
+    data: {
+      channelType,
+      createdTime: 1651187948923,
+      destination: "+19997770103",
+      direction: "INBOUND",
+      outboundType: null,
+      queueId: "ee472d93-7b28-483e-9cd9-6ed59db2dc9a",
+      taskId: "94d8835d-c749-11ec-8573-7becd36cb400",
+    },
+    dataContentType: "string",
+    id: "c9ae34eb-914a-40e9-92b3-522cf3f3ccc7",
+    person: mockOriginByType(channelType),
+    previously: "",
+    source: "wxcc",
+    specVersion: "1.0",
+    time,
+    type: "task:connected",
+  };
+};
+
 const mockedStateChangeTask = (
   time: string,
   currentState = "wrapup",
@@ -147,8 +169,14 @@ const mockedEndedTask = (time: string, channelType = "chat") => {
       url: "https://www.google.com",
       email: "bob@gmail.com",
       taskId: "94d8835d-c749-11ec-8573-7becd36cb425",
+      updated: true,
+      count: 12,
       terminatingParty: "Agent",
       workflowManager: null,
+      subData: {
+        birthday: "12-12-12",
+        death: "10-10-20",
+      },
     },
     dataContentType: "string",
     id: "4e7e48eb-e5ef-4b17-9a29-908ff4e1de03",
@@ -703,6 +731,7 @@ export const historicalEvents: Timeline.CustomerEvent[] = [
   mockedEndedTask(isoTwoDaysStr, "telephony"),
   mockedConnectedTask(isoTwoDaysStr, "telephony"),
   mockedConnectTask(isoTwoDaysStr, "telephony"),
+  noOriginTask(isoTwoDaysStr, "telephony"),
   mockedStateChangeTask(isoTwoDaysStr, "connected"),
 
   mockedStateChangeTask(isoTwoDaysStr, "wrapup", "123-456"),

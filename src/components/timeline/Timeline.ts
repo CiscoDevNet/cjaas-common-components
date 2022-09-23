@@ -459,7 +459,7 @@ export namespace Timeline {
 
     renderCluster(cluster: CustomerEvent[], clusterInfo: ClusterInfoObject, keyId: number) {
       const clusterId = this.getClusterId(clusterInfo?.id, keyId);
-      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType);
+      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType) || "event";
 
       return this.collapsed.has(clusterId)
         ? html`
@@ -555,21 +555,23 @@ export namespace Timeline {
     }
 
     renderEventBlock(event: CustomerEvent) {
-      return html`
-        <cjaas-timeline-item
-          .event=${event}
-          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
-          sub-title=${event?.renderData?.subTitle || ""}
-          time=${event?.time}
-          .data=${event?.data}
-          id=${event?.id}
-          .person=${event?.person || null}
-          .eventIconTemplate=${this.eventIconTemplate}
-          .badgeKeyword=${this.badgeKeyword}
-          ?expanded="${this.expandDetails}"
-          class="has-line"
-        ></cjaas-timeline-item>
-      `;
+      if (event?.data?.origin) {
+        return html`
+          <cjaas-timeline-item
+            .event=${event}
+            event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+            sub-title=${event?.renderData?.subTitle || ""}
+            time=${event?.time}
+            .data=${event?.data}
+            id=${event?.id}
+            .person=${event?.person || null}
+            .eventIconTemplate=${this.eventIconTemplate}
+            .badgeKeyword=${this.badgeKeyword}
+            ?expanded="${this.expandDetails}"
+            class="has-line"
+          ></cjaas-timeline-item>
+        `;
+      }
     }
 
     renderLoadMoreAction() {

@@ -99,10 +99,10 @@ export namespace TimelineItem {
       } else {
         return html`
           ${Object.keys(data).map((x: string) => {
-            if (typeof data[x] === "string") {
+            if (typeof data[x] !== "object") {
               if (data[x]) {
                 let renderValue = data[x] || "-";
-                if (linkify.test(data[x], "url")) {
+                if (typeof data[x] === "string" && linkify.test(data[x], "url")) {
                   renderValue = html`
                     <a href=${data[x]} target="_blank">${renderValue}</a>
                   `;
