@@ -28,10 +28,7 @@ export function getTimelineEventFromMessage(message: any) {
   return event;
 }
 
-export function formattedOrigin(origin: string | undefined, channelType: string) {
-  if (!origin) {
-    return origin;
-  }
+export function formattedOrigin(origin: string, channelType: string) {
   const hasPlusSign = (origin as string)?.charAt(0) === "+";
   if (channelType === "telephony" || hasPlusSign) {
     const parsedNumber = parsePhoneNumber(origin);
