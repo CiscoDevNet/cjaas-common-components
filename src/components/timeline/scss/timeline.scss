@@ -252,3 +252,22 @@ md-button-group {
 md-toggle-switch {
   padding-left: 2px;
 }
+
+.date-range-picker-container {
+  display: flex;
+  gap: 1rem;
+}
+
+md-menu-overlay::part(overlay-content) {
+  width: unset;
+  padding: 1rem;
+}
+
+#my-date-picker {
+  border: solid 1px;
+  border-color: var(--md-secondary-text-color, #3b3b3b);
+  background-color: var(--md-primary-bg-color, #ffffff);
+  color: var(--md-primary-text-color, #121212);
+  width: 280px;
+  padding: 0.2rem;
+}

@@ -6,7 +6,7 @@
  *
  */
 
-import { LitElement, html, property, internalProperty, PropertyValues } from "lit-element";
+import { LitElement, html, property, internalProperty, PropertyValues, query } from "lit-element";
 import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
@@ -24,8 +24,9 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import { Button } from "@momentum-ui/web-components";
+import "lit-flatpickr";
 import iconData from "@/assets/defaultIcons.json";
+import { LitFlatpickr } from "lit-flatpickr";
 
 export namespace Timeline {
   export interface ImiDataPayload {
@@ -183,6 +184,11 @@ export namespace Timeline {
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
      */
+
+    @property({ type: String, attribute: "start-range-date" }) startRangeDate = "2022-10-04T15:56:43.187Z";
+
+    @property({ type: String, attribute: "end-date-range" }) endRangeDate = "2022-10-08T15:56:43.187Z";
+
     @internalProperty() collapsed: Set<string> = new Set();
 
     @internalProperty() dateRangeOldestDate: DateTime = DateTime.now().minus({ year: 10 });
@@ -191,6 +197,10 @@ export namespace Timeline {
      * Toggle expanded event details
      */
     @internalProperty() expandDetails = false;
+
+    @internalProperty() isDateRangePickerVisible = false;
+
+    @query("#my-date-picker") datePickerElement!: LitFlatpickr;
 
     filteredByTypeList: CustomerEvent[] | null = null;
 
@@ -487,54 +497,83 @@ export namespace Timeline {
           `;
     }
 
+    openDateRangeMenuOverlay() {
+      this.isDateRangePickerVisible = true;
+    }
+
+    handleDateRangeSelection() {
+      const dateRangeDates = this.datePickerElement?.getSelectedDates();
+
+      if (dateRangeDates.length === 2) {
+        this.startRangeDate = dateRangeDates[0].toISOString();
+        this.endRangeDate = dateRangeDates[1].toISOString();
+      }
+    }
+
     renderDateRangeButtons(aTimeFrame: TimeFrame) {
       const timeFrameArray = Object.values(TimeFrame);
       const index = timeFrameArray?.indexOf(aTimeFrame);
 
       return html`
-        <md-button-group .active=${index}>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-all"
-            type="button"
-            @click=${() => this.toggleActive(0)}
-            value="All"
-          >
-            All
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-24-hours"
-            type="button"
-            @click=${() => this.toggleActive(1)}
-            value="Last 24 Hours"
-          >
-            Last 24 Hours
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-7-days"
-            type="button"
-            @click=${() => this.toggleActive(2)}
-            value="Last 7 Days"
-          >
-            Last 7 Days
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-30-days"
-            type="button"
-            @click=${() => this.toggleActive(3)}
-            value="Last 30 Days"
-          >
-            Last 30 Days
-          </button>
-        </md-button-group>
+        <lit-flatpickr
+          id="my-date-picker"
+          altInput
+          altFormat="F j, Y"
+          dateFormat="Y-m-d"
+          .theme=${"light"}
+          minDate="2022-09-25"
+          maxDate="2023-12-31"
+          .defaultDate=${[this.startRangeDate, this.endRangeDate]}
+          mode="range"
+          placeholder="Select Date Range"
+          .onClose=${this.handleDateRangeSelection.bind(this)}
+        ></lit-flatpickr>
       `;
+
+      // return html`
+      //   <md-button-group .active=${index}>
+      //     <button
+      //       class="button-group-button"
+      //       slot="button"
+      //       id="filter-last-all"
+      //       type="button"
+      //       @click=${() => this.toggleActive(0)}
+      //       value="All"
+      //     >
+      //       All
+      //     </button>
+      //     <button
+      //       class="button-group-button"
+      //       slot="button"
+      //       id="filter-last-24-hours"
+      //       type="button"
+      //       @click=${() => this.toggleActive(1)}
+      //       value="Last 24 Hours"
+      //     >
+      //       Last 24 Hours
+      //     </button>
+      //     <button
+      //       class="button-group-button"
+      //       slot="button"
+      //       id="filter-last-7-days"
+      //       type="button"
+      //       @click=${() => this.toggleActive(2)}
+      //       value="Last 7 Days"
+      //     >
+      //       Last 7 Days
+      //     </button>
+      //     <button
+      //       class="button-group-button"
+      //       slot="button"
+      //       id="filter-last-30-days"
+      //       type="button"
+      //       @click=${() => this.toggleActive(3)}
+      //       value="Last 30 Days"
+      //     >
+      //       Last 30 Days
+      //     </button>
+      //   </md-button-group>
+      // `;
     }
 
     renderFilterButton() {
@@ -629,9 +668,13 @@ export namespace Timeline {
     }
 
     filterByDateRange() {
-      return this.historicEvents?.filter(item => {
-        return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
-      });
+      if (this.startRangeDate && this.endRangeDate) {
+        return this.historicEvents?.filter(item => {
+          return item.time < this.endRangeDate && item.time > this.startRangeDate;
+        });
+      } else {
+        return this.historicEvents;
+      }
     }
 
     renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
