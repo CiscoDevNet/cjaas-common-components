@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.3.8",
+  "version": "4.3.10-dev2",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -36,8 +36,8 @@
     "jest-config": "^26.4.2",
     "lit-element": "2.3.1",
     "lit-html": "1.2.1",
-    "@types/express-serve-static-core": "4.17.30",
-    "node-downloader-helper": "1.0.19"
+    "lit-virtualizer": "0.4.2",
+    "@types/express-serve-static-core": "4.17.30"
   },
   "peerDependencies": {
     "@momentum-ui/core": "19.15.23",
@@ -46,7 +46,8 @@
     "@momentum-ui/utils": "6.2.15",
     "@momentum-ui/web-components": "2.7.6",
     "lit-element": "2.3.1",
-    "lit-html": "1.2.1"
+    "lit-html": "1.2.1",
+    "lit-virtualizer": "0.4.2"
   },
   "dependencies": {
     "@interactjs/actions": "1.10.3",
@@ -115,7 +116,7 @@
     "extract-loader": "^4.0.3",
     "file-loader": "^4.3.0",
     "fs-extra": "^9.0.1",
-    "fs-path": "^0.0.24",
+    "fs-path": "0.0.25",
     "handlebars": "^4.7.6",
     "html-webpack-plugin": "^3.2.0",
     "husky": "3.1.0",

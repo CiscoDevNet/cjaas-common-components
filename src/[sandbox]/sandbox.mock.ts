@@ -359,22 +359,6 @@ export const limitedProfileMock = [
     result: [""],
     journeyevents: null,
   },
-  {
-    query: {
-      version: "0.1",
-      event: "Quote",
-      metadata: "imgSrc",
-      displayName: "imgSrc",
-      limit: 1,
-      aggregationMode: "Value",
-      tag: "imgSrc",
-      type: "table",
-    },
-    result: [
-      "https://packagingnewsonline.com/wp-content/uploads/2021/06/Bruce-Springsteen-the-story-behind-the-iconic-cover-of-Born.jpg",
-    ],
-    journeyevents: null,
-  },
 ];
 
 export const profileMock = [
