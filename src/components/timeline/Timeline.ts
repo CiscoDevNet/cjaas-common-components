@@ -26,7 +26,6 @@ import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import "lit-flatpickr";
 import iconData from "@/assets/defaultIcons.json";
-import { LitFlatpickr } from "lit-flatpickr";
 
 export namespace Timeline {
   export interface ImiDataPayload {
@@ -73,7 +72,7 @@ export namespace Timeline {
     previously: string;
     source: string;
     specVersion: string;
-    time: string;
+    time: string | DateTime;
     type: string;
   }
 
@@ -185,9 +184,17 @@ export namespace Timeline {
      * Dataset tracking event clusters that are renderd in collapsed view
      */
 
-    @property({ type: String, attribute: "start-range-date" }) startRangeDate = "2022-10-04T15:56:43.187Z";
+    /**
+     * @prop startRangeDate
+     * Default selected start date for range picker. ISO format (ex. 2022-10-18T15:56:43.187Z)
+     */
+    @property({ type: String, attribute: "start-range-date" }) startRangeDate = "";
 
-    @property({ type: String, attribute: "end-date-range" }) endRangeDate = "2022-10-08T15:56:43.187Z";
+    /**
+     * @prop endRangeDate
+     * Default selected start date for range picker. ISO format (ex. 2022-10-18T15:56:43.187Z)
+     */
+    @property({ type: String, attribute: "end-date-range" }) endRangeDate = "";
 
     @internalProperty() collapsed: Set<string> = new Set();
 
@@ -200,7 +207,7 @@ export namespace Timeline {
 
     @internalProperty() isDateRangePickerVisible = false;
 
-    @query("#my-date-picker") datePickerElement!: LitFlatpickr;
+    @query("#my-date-picker") datePickerElement!: any;
 
     filteredByTypeList: CustomerEvent[] | null = null;
 
@@ -511,8 +518,8 @@ export namespace Timeline {
     }
 
     renderDateRangeButtons(aTimeFrame: TimeFrame) {
-      const timeFrameArray = Object.values(TimeFrame);
-      const index = timeFrameArray?.indexOf(aTimeFrame);
+      const defaultDates =
+        this.startRangeDate && this.endRangeDate ? [this.startRangeDate, this.endRangeDate] : undefined;
 
       return html`
         <lit-flatpickr
@@ -521,13 +528,12 @@ export namespace Timeline {
           altFormat="F j, Y"
           dateFormat="Y-m-d"
           .theme=${"light"}
-          minDate="2022-09-25"
-          maxDate="2023-12-31"
-          .defaultDate=${[this.startRangeDate, this.endRangeDate]}
+          .defaultDate=${defaultDates}
           mode="range"
           placeholder="Select Date Range"
           .onClose=${this.handleDateRangeSelection.bind(this)}
-        ></lit-flatpickr>
+        >
+        </lit-flatpickr>
       `;
 
       // return html`
@@ -670,7 +676,8 @@ export namespace Timeline {
     filterByDateRange() {
       if (this.startRangeDate && this.endRangeDate) {
         return this.historicEvents?.filter(item => {
-          return item.time < this.endRangeDate && item.time > this.startRangeDate;
+          const isoDate = item?.time && DateTime.isDateTime(item.time) ? item.time.toUTC().toISO() : item.time;
+          return isoDate < this.endRangeDate && isoDate > this.startRangeDate;
         });
       } else {
         return this.historicEvents;
@@ -704,11 +711,30 @@ export namespace Timeline {
       }
     }
 
+    cancelDateRange() {
+      this.datePickerElement.clear();
+      this.startRangeDate = "";
+      this.endRangeDate = "";
+    }
+
+    renderDateRangeCancelButton() {
+      if (this.startRangeDate && this.endRangeDate) {
+        return html`
+          <md-button class="cancel-date-range-button" circle @click=${this.cancelDateRange}
+            ><md-icon name="cancel_12"></md-icon
+          ></md-button>
+        `;
+      } else {
+        return nothing;
+      }
+    }
+
     render() {
       // Groups items by date
       const filterByDateRangeResult = this.filterByDateRange();
       this.filteredByTypeList = this.filterByType(filterByDateRangeResult) || null;
       const limitedList = (this.filteredByTypeList || []).slice(0, this.limit);
+
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
 
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
@@ -721,7 +747,7 @@ export namespace Timeline {
           <section class="controls" part="controls">
             <div class="row first-row">
               <div class="flex-apart">
-                ${this.renderDateRangeButtons(this.timeFrame)}
+                ${this.renderDateRangeButtons(this.timeFrame)} ${this.renderDateRangeCancelButton()}
               </div>
               <div class="filter-button-wrapper">
                 ${this.renderFilterButton()}

@@ -1,6 +1,7 @@
 import { ProfileView } from "../components/profile/Profile";
 import { MultiLineCondition } from "@/components/condition-block/ConditionBlock";
 import { Timeline } from "@/components/timeline/Timeline";
+import { DateTime } from "luxon";
 
 const mockOriginByType = (channelType: string) => {
   switch (channelType) {
@@ -135,7 +136,7 @@ const mockParkedTask = (time: string, channelType = "chat") => {
   };
 };
 
-const mockedEndedTask = (time: string, channelType = "chat") => {
+const mockedEndedTask = (time: string | DateTime, channelType = "chat") => {
   return {
     data: {
       channelType,
@@ -695,6 +696,9 @@ export const mockOptionsList = [
 
 export const emptyMock: Timeline.CustomerEvent[] = [];
 
+const dateTimeObject = DateTime.now();
+console.log(dateTimeObject, DateTime.isDateTime(dateTimeObject), dateTimeObject.toUTC().toISO());
+
 const nowDate = new Date();
 const isoNowStr = nowDate.toISOString(); // "2022-01-15T16:17:30.814Z";
 const isTwentyMinutesStr = new Date(nowDate.setMinutes(nowDate.getMinutes() - 20)).toISOString();
@@ -706,7 +710,7 @@ const isoTwoDaysStr = new Date(nowDate.setHours(nowDate.getHours() - 48)).toISOS
 
 export const historicalEvents: Timeline.CustomerEvent[] = [
   // mockedStateChangeTask(isoNowStr, "wrapup"),
-  mockedEndedTask(isoTwoDaysStr, "telephony"),
+  mockedEndedTask(dateTimeObject, "telephony"),
   mockedConnectedTask(isoTwoDaysStr, "telephony"),
   mockedConnectTask(isoTwoDaysStr, "telephony"),
   mockedStateChangeTask(isoTwoDaysStr, "connected"),

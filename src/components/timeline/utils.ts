@@ -147,13 +147,15 @@ export function getTimeStamp(date: DateTime, isDateCluster = false) {
   }
 }
 
-export function getRelativeDate(timestamp: string) {
+export function getRelativeDate(date: string | DateTime) {
+  const isoTimestamp = date && DateTime.isDateTime(date) ? date.toUTC().toISO() : date;
+
   // TODO Error Handling for variation of format that returns "NULL"
   const dt = DateTime.local();
   const nowIsoString = dt.toISO();
 
   // const relativeValue = DateTime.fromISO(timestamp || nowIsoString).toRelativeCalendar(); // Previous Implementation
-  const relativeValue = DateTime.fromISO(timestamp || nowIsoString);
+  const relativeValue = DateTime.fromISO(isoTimestamp || nowIsoString);
   return relativeValue;
 }
 

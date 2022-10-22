@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.3.10-dev3",
+  "version": "4.3.10-dev10",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -36,7 +36,6 @@
     "jest-config": "^26.4.2",
     "lit-element": "2.3.1",
     "lit-html": "1.2.1",
-    "lit-flatpickr": "^0.4.0",
     "@types/express-serve-static-core": "4.17.30"
   },
   "peerDependencies": {
@@ -46,8 +45,7 @@
     "@momentum-ui/utils": "6.2.15",
     "@momentum-ui/web-components": "2.4.11-dev1",
     "lit-element": "2.3.1",
-    "lit-html": "1.2.1",
-    "lit-flatpickr": "^0.4.0"
+    "lit-html": "1.2.1"
   },
   "dependencies": {
     "@interactjs/actions": "1.10.3",
@@ -60,7 +58,6 @@
     "highlight.js": "^10.5.0",
     "libphonenumber-js": "^1.10.6",
     "linkifyjs": "^3.0.5",
-    "lit-flatpickr": "^0.4.0",
     "luxon": "^1.25.0",
     "nanoid": "^3.1.16",
     "papaparse": "^5.3.0",
@@ -125,6 +122,7 @@
     "jest-config": "26.4.2",
     "lit": "^2.0.0-rc.2",
     "lit-element": "2.3.1",
+    "lit-flatpickr": "^0.4.0",
     "lit-html": "1.2.1",
     "lit-scss-loader": "^1.0.0",
     "lodash.groupby": "^4.6.0",
