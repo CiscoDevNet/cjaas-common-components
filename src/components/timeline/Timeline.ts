@@ -20,10 +20,12 @@ import "@/components/event-toggles/EventToggles";
 import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
+import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
+import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import "lit-flatpickr";
 import iconData from "@/assets/defaultIcons.json";
 
@@ -108,11 +110,6 @@ export namespace Timeline {
      * Show/hide event filters UI
      */
     @property({ type: Boolean, attribute: "is-event-filter-visible" }) isEventFilterVisible = false;
-    /**
-     * @attr is-date-filter-visible
-     * Show/hide date filters UI
-     */
-    @property({ type: Boolean, attribute: "is-date-filter-visible" }) isDateFilterVisible = false;
     /**
      * @attr time-frame
      * Determine default time frame on start
@@ -504,10 +501,6 @@ export namespace Timeline {
           `;
     }
 
-    openDateRangeMenuOverlay() {
-      this.isDateRangePickerVisible = true;
-    }
-
     handleDateRangeSelection() {
       const dateRangeDates = this.datePickerElement?.getSelectedDates();
 
@@ -521,20 +514,24 @@ export namespace Timeline {
       const defaultDates =
         this.startRangeDate && this.endRangeDate ? [this.startRangeDate, this.endRangeDate] : undefined;
 
-      return html`
-        <lit-flatpickr
-          id="my-date-picker"
-          altInput
-          altFormat="F j, Y"
-          dateFormat="Y-m-d"
-          .theme=${"light"}
-          .defaultDate=${defaultDates}
-          mode="range"
-          placeholder="Select Date Range"
-          .onClose=${this.handleDateRangeSelection.bind(this)}
-        >
-        </lit-flatpickr>
-      `;
+      if (this.isDateRangePickerVisible) {
+        return html`
+          <lit-flatpickr
+            id="my-date-picker"
+            altInput
+            altFormat="F j, Y"
+            dateFormat="Y-m-d"
+            .theme=${"light"}
+            .defaultDate=${defaultDates}
+            mode="range"
+            placeholder="Select Date Range"
+            .onClose=${this.handleDateRangeSelection.bind(this)}
+          >
+          </lit-flatpickr>
+        `;
+      } else {
+        return nothing;
+      }
 
       // return html`
       //   <md-button-group .active=${index}>
@@ -711,10 +708,26 @@ export namespace Timeline {
       }
     }
 
+    openDatePicker() {
+      console.log("openDatePicker");
+      this.isDateRangePickerVisible = !this.isDateRangePickerVisible;
+    }
+
+    renderDateRangePickerButton() {
+      return html`
+        <md-tooltip message="Filter events by date range">
+          <md-button class="calendar-icon-button" circle variant="secondary" @click=${this.openDatePicker}>
+            <md-icon class="calendar-icon" name="calendar-month_16"></md-icon>
+          </md-button>
+        </md-tooltip>
+      `;
+    }
+
     cancelDateRange() {
       this.datePickerElement.clear();
       this.startRangeDate = "";
       this.endRangeDate = "";
+      this.isDateRangePickerVisible = false;
     }
 
     renderDateRangeCancelButton() {
@@ -747,14 +760,14 @@ export namespace Timeline {
           <section class="controls" part="controls">
             <div class="row first-row">
               <div class="flex-apart">
-                ${this.renderDateRangeButtons(this.timeFrame)} ${this.renderDateRangeCancelButton()}
+                ${this.renderDateRangePickerButton()} ${this.renderNewEventQueueToggle()}
               </div>
               <div class="filter-button-wrapper">
                 ${this.renderFilterButton()}
               </div>
             </div>
             <div class="row second-row">
-              ${this.renderNewEventQueueToggle()}
+              ${this.renderDateRangeButtons(this.timeFrame)}${this.renderDateRangeCancelButton()}
             </div>
           </section>
           <section class="stream" part="stream">
