@@ -8,7 +8,7 @@ const standardCustomElement = (tagName: string, descriptor: any) => {
       if (!window.customElements.get(tagName)) {
         window.customElements.define(tagName, clazz);
       }
-    }
+    },
   };
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "4.3.9",
+  "version": "4.3.10-dev12",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -35,7 +35,8 @@
     "jest": "^26.4.2",
     "jest-config": "^26.4.2",
     "lit-element": "2.3.1",
-    "lit-html": "1.2.1"
+    "lit-html": "1.2.1",
+    "@types/express-serve-static-core": "4.17.30"
   },
   "peerDependencies": {
     "@momentum-ui/core": "19.15.4",
@@ -99,6 +100,7 @@
     "@types/webpack-node-externals": "^1.7.1",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
+    "@types/express-serve-static-core": "4.17.30",
     "alias-resolve-loader": "^2.0.4",
     "babel-jest": "26.3.0",
     "babel-loader": "^8.1.0",
@@ -112,7 +114,7 @@
     "extract-loader": "^4.0.3",
     "file-loader": "^4.3.0",
     "fs-extra": "^9.0.1",
-    "fs-path": "^0.0.24",
+    "fs-path": "0.0.25",
     "handlebars": "^4.7.6",
     "html-webpack-plugin": "^3.2.0",
     "husky": "3.1.0",
@@ -120,6 +122,7 @@
     "jest-config": "26.4.2",
     "lit": "^2.0.0-rc.2",
     "lit-element": "2.3.1",
+    "lit-flatpickr": "^0.4.0",
     "lit-html": "1.2.1",
     "lit-scss-loader": "^1.0.0",
     "lodash.groupby": "^4.6.0",
