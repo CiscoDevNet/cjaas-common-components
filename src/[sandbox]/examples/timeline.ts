@@ -1,14 +1,22 @@
 import "@/components/timeline/Timeline";
 import { html } from "lit-element";
-import { emptyMock, historicalEvents, fiveNewEvents } from "../sandbox.mock";
+import { emptyMock, testingHistoricalEvents } from "../sandbox.mock";
 
 export const timelineTemplate = html`
-  <h3>Default: with newestEvents</h3>
+  <h3>Default: with new structured historical events</h3>
   <cjaas-timeline
     limit=${8}
-    .historicEvents=${historicalEvents}
+    .historicEvents=${testingHistoricalEvents}
     event-filters
-    .newestEvents=${fiveNewEvents}
+    badge-keyword="channelType"
+    time-frame="All"
+  ></cjaas-timeline>
+
+  <!-- <h3>Default: with newestEvents</h3>
+  <cjaas-timeline
+    limit=${8}
+    .historicEvents=${testingHistoricalEvents}
+    event-filters
     badge-keyword="channelType"
     time-frame="All"
   ></cjaas-timeline>
@@ -32,5 +40,5 @@ export const timelineTemplate = html`
     event-filters
     .newestEvents=${emptyMock}
     getEventsInProgress
-  ></cjaas-timeline>
+  ></cjaas-timeline> -->
 `;

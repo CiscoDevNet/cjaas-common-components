@@ -1,7 +1,7 @@
 import { customElementWithCheck } from "@/mixins";
 import { internalProperty, LitElement, property, PropertyValues, query } from "lit-element";
 import { html } from "lit-html";
-import { parsePhoneNumber } from "libphonenumber-js";
+import { ParseError, parsePhoneNumberWithError } from "libphonenumber-js";
 import * as linkify from "linkifyjs";
 
 import "@momentum-ui/web-components/dist/comp/md-progress-bar";
@@ -36,6 +36,13 @@ export enum ReadableAliasTypes {
   Unselected = "",
 }
 
+export enum PhoneErrors {
+  NOT_A_NUMBER = "Not a number",
+  INVALID_COUNTRY = "Invalid country code",
+  TOO_SHORT = "Too short",
+  TOO_LONG = "Too long",
+}
+
 export namespace Identity {
   @customElementWithCheck("cjaas-identity")
   export class ELEMENT extends LitElement {
@@ -55,6 +62,7 @@ export namespace Identity {
 
     @internalProperty() aliasValidationErrorMessage = "";
     @internalProperty() inputMessageArray: Array<Input.Message> = [];
+    @internalProperty() invalidParsedPhoneErrorMessage = "";
 
     @query("#alias-input") aliasInput!: Input.ELEMENT;
 
@@ -125,15 +133,30 @@ export namespace Identity {
       this.aliasLastNameInputValue = event?.detail?.value?.trim();
     }
 
+    validatePhoneNumber(value: string) {
+      let parsedNumber;
+
+      try {
+        parsedNumber = parsePhoneNumberWithError(value, "US");
+        this.invalidParsedPhoneErrorMessage = "";
+      } catch (error) {
+        if (error instanceof ParseError) {
+          this.invalidParsedPhoneErrorMessage = error.message;
+        } else {
+          throw error;
+        }
+      }
+
+      const isPhoneNumberValid = parsedNumber?.isValid();
+      return isPhoneNumberValid || false;
+    }
+
     validateAlias(type: RawAliasTypes, value: string) {
       if (type === RawAliasTypes.Email) {
         const isEmailValid = linkify.test(value, "email");
         return isEmailValid;
       } else if (type === RawAliasTypes.Phone) {
-        const hasPlusSign = /^\+/.test(value);
-        const parsedNumber = parsePhoneNumber(value);
-        const isPhoneNumberValid = hasPlusSign && parsedNumber.isValid();
-        return isPhoneNumberValid;
+        return this.validatePhoneNumber(value);
       } else if (type === RawAliasTypes.CustomerId) {
         const re = new RegExp("^[a-zA-Z0-9]*$"); // alphaNumeric only
         const isCustomerIdValid = re.test(value);
@@ -141,6 +164,27 @@ export namespace Identity {
       }
 
       return false;
+    }
+
+    readablePhoneError(error: string): string {
+      let result = ": ";
+      switch (error) {
+        case "INVALID_COUNTRY":
+          result += PhoneErrors.INVALID_COUNTRY;
+          break;
+        case "NOT_A_NUMBER":
+          result += PhoneErrors.NOT_A_NUMBER;
+          break;
+        case "TOO_SHORT":
+          result += PhoneErrors.TOO_SHORT;
+          break;
+        case "TOO_LONG":
+          result += PhoneErrors.TOO_LONG;
+          break;
+        default:
+          result = "";
+      }
+      return result;
     }
 
     addAlias() {
@@ -154,7 +198,9 @@ export namespace Identity {
         if (!this.selectedRawAliasType) {
           this.aliasValidationErrorMessage = this.noAliasTypeMessage;
         } else if (this.selectedRawAliasType === RawAliasTypes.Phone) {
-          this.aliasValidationErrorMessage = this.invalidPhoneMessage;
+          this.aliasValidationErrorMessage = `${this.invalidPhoneMessage}${this.readablePhoneError(
+            this.invalidParsedPhoneErrorMessage
+          )}`;
         } else if (this.selectedRawAliasType === RawAliasTypes.Email) {
           this.aliasValidationErrorMessage = this.invalidEmailMessage;
         } else if (this.selectedRawAliasType === RawAliasTypes.CustomerId) {
@@ -201,10 +247,6 @@ export namespace Identity {
         default:
           return ReadableAliasTypes.Unselected;
       }
-    }
-
-    saveAliasName() {
-      console.log("save alias name");
     }
 
     static get styles() {
@@ -268,6 +310,8 @@ export namespace Identity {
     }
 
     handleDropdownSelection(event: CustomEvent) {
+      this.aliasValidationErrorMessage = "";
+      this.aliasInput.value = "";
       this.selectedRawAliasType = this.getRawAliasType(event?.detail?.option);
     }
 
@@ -275,11 +319,11 @@ export namespace Identity {
       if (this.selectedRawAliasType === RawAliasTypes.Email) {
         return "ex. jon@gmail.com";
       } else if (this.selectedRawAliasType === RawAliasTypes.Phone) {
-        return "ex. +1 (800) 122-8787";
+        return "ex. +18003008000";
       } else if (this.selectedRawAliasType === RawAliasTypes.CustomerId) {
-        return "ex. abc123";
+        return "ex. 123";
       } else {
-        return "Enter an alias";
+        return "Enter a new alias";
       }
     }
 

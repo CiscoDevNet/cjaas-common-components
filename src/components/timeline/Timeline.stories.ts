@@ -11,7 +11,7 @@ import { withKnobs } from "@storybook/addon-knobs";
 import { html } from "lit-element";
 import "@/components/timeline/Timeline";
 import "@/components/timeline/TimelineItem";
-import { historicalEvents } from "@/[sandbox]/sandbox.mock";
+import { testingHistoricalEvents } from "@/[sandbox]/sandbox.mock";
 
 export default {
   title: "Timeline",
@@ -19,13 +19,13 @@ export default {
   decorators: [withKnobs, withA11y],
   parameters: {
     a11y: {
-      element: "cjaas-timeline"
-    }
-  }
+      element: "cjaas-timeline",
+    },
+  },
 };
 
 export const Timeline = () => {
   return html`
-    <cjaas-timeline id="cjaas-timeline" .historicEvents=${historicalEvents} limit="4"> </cjaas-timeline>
+    <cjaas-timeline id="cjaas-timeline" .historicEvents=${testingHistoricalEvents} limit="4"> </cjaas-timeline>
   `;
 };

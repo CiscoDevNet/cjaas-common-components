@@ -7,11 +7,11 @@
  */
 
 /** This mixin help to manage slottable nodes (light DOM children) that become the contents of `<slot>` element.
- * 
- * @property({ type: Array, attribute: false }) slotted <--- when an element is inserted in a slot.
- * 
+ *
+ * property({ type: Array, attribute: false }) slotted <--- when an element is inserted in a slot.
+ *
  * Example:
- * 
+ *
  * @customElements("custom-element")
  * class CustomElement extends SlottedMixin(LitElement) {
  *  @query('slot[name="custom"]') tabSlot?: HTMLSlotElement;
@@ -46,7 +46,7 @@ export abstract class SlotableClass extends LitElement {
   protected handleSlotted?(): void;
   protected slottedChanged?(): void;
   protected filterSlotted?(): HTMLElement[];
-  readonly slotElement?: HTMLSlotElement | null;
+  // readonly slotElement?: HTMLSlotElement | null;
 }
 
 export const SlottedMixin = <T extends AnyConstructor<SlotableClass>>(
@@ -74,9 +74,9 @@ export const SlottedMixin = <T extends AnyConstructor<SlotableClass>>(
 
     @query("slot") _slotElement?: HTMLSlotElement;
 
-    get slotElement() {
-      return this._slotElement;
-    }
+    // get slotElement() {
+    //   return this._slotElement;
+    // }
 
     private handleSlotChange = () => {
       this._isSlotted = true;
@@ -92,8 +92,8 @@ export const SlottedMixin = <T extends AnyConstructor<SlotableClass>>(
 
     protected firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
-      if (this.slotElement) {
-        this.slotElement.addEventListener("slotchange", this.handleSlotChange);
+      if (this._slotElement) {
+        this._slotElement.addEventListener("slotchange", this.handleSlotChange);
       }
     }
 

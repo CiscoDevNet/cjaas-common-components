@@ -77,7 +77,8 @@ md-input.property-input::part(input) {
 
   h5 {
     margin: 0.75rem 0 0.5rem;
-    font-size: 0.875rem;
+    // font-size: 0.875rem;
+    font-size: 1rem;
 
     &.customer-label {
       color: var(--md-secondary-text-color, #545454);
@@ -210,6 +211,7 @@ md-loading {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-left: 0.5rem;
   }
 }
 
@@ -221,4 +223,9 @@ md-input::part(message) {
 .input-error::part(input) {
   background-color: var(--input-error-bg-color,#ffe8e3);
   border-color: var(--input-error-hover-border-color,#f7644a);
+}
+
+.button-row {
+  display: flex;
+  gap: 0;
 }

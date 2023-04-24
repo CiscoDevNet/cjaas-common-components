@@ -24,7 +24,6 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import { Button } from "@momentum-ui/web-components";
 import iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
@@ -63,17 +62,33 @@ export namespace Timeline {
     type?: string;
   }
 
+  // export interface CustomerEvent {
+  //   data: Record<string, any>;
+  //   renderData?: Record<string, any>;
+  //   dataContentType: string;
+  //   id: string;
+  //   person: string;
+  //   previously: string;
+  //   source: string;
+  //   specVersion: string;
+  //   time: string;
+  //   type: string;
+  // }
+
   export interface CustomerEvent {
     data: Record<string, any>;
     renderData?: Record<string, any>;
-    dataContentType: string;
     id: string;
-    person: string;
-    previously: string;
-    source: string;
-    specVersion: string;
-    time: string;
+    specversion: string;
     type: string;
+    source: string;
+    time: string;
+    identity: string;
+    identitytype: "email" | "phone" | "customerId";
+    previousidentity: null;
+    datacontenttype: string;
+
+    person?: string;
   }
 
   export interface ClusterInfoObject {
