@@ -1,6 +1,6 @@
 import { customElementWithCheck } from "@/mixins";
 import { internalProperty, LitElement, property, PropertyValues, query } from "lit-element";
-import { html } from "lit-html";
+import { html, nothing } from "lit-html";
 import { ParseError, parsePhoneNumberWithError } from "libphonenumber-js";
 import * as linkify from "linkifyjs";
 
@@ -53,6 +53,7 @@ export namespace Identity {
     @property({ type: Boolean }) disableAddButton = false;
     @property({ attribute: false }) aliasObjects: undefined | Array<AliasObject> = undefined;
     @property({ type: String, attribute: "error-message", reflect: true }) errorMessage = "";
+    @property({ type: Boolean, attribute: "read-only" }) readOnly = false;
 
     @internalProperty() newAliasInputValue = "";
     @internalProperty() aliasFirstNameInputValue = "";
@@ -275,7 +276,9 @@ export namespace Identity {
       }
     }
 
-    renderAliasList() {
+    renderDeleteAliasUI(aliasObject: AliasObject) {
+      const { type: rawType, value } = aliasObject;
+
       const renderInlineDeleteIcon = (type: string, alias: string) => html`
         <md-tooltip class="delete-icon-tooltip cell" message="Delete Alias">
           <md-icon
@@ -286,18 +289,22 @@ export namespace Identity {
         ></md-tooltip>
       `;
 
+      return this.aliasDeleteInProgress[value] ? this.renderInlineSpinner() : renderInlineDeleteIcon(rawType, value);
+    }
+
+    renderAliasList() {
       const aliases = (this.aliasObjects?.slice().reverse() || []).map((aliasObject: AliasObject) => {
         const { type: rawType, value } = aliasObject;
         return html`
           <p class="alias-type-label cell">${this.getReadableAliasType(rawType)}</p>
           <p class="alias-type-value cell">${value}</p>
 
-          ${this.aliasDeleteInProgress[value] ? this.renderInlineSpinner() : renderInlineDeleteIcon(rawType, value)}
+          ${this.readOnly ? nothing : this.renderDeleteAliasUI(aliasObject)}
         `;
       });
 
       return html`
-        <div class="alias-grid" part="list">
+        <div class=${`alias-grid ${this.readOnly ? "read-only" : ""}`} part="list">
           ${aliases}
         </div>
       `;
@@ -327,44 +334,54 @@ export namespace Identity {
       }
     }
 
-    render() {
-      const renderNullCustomerView = html`
-        <p class="alias-text">No customer provided. Cannot execute any alias related actions.</p>
-      `;
-
-      const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
+    renderAliasAddRow() {
       const aliasTypeOptions = [
         this.getReadableAliasType(RawAliasTypes.Phone),
         this.getReadableAliasType(RawAliasTypes.Email),
         this.getReadableAliasType(RawAliasTypes.CustomerId),
       ];
 
+      return html`
+        <div class="flex alias-input-row">
+          <md-dropdown
+            class="alias-type-dropdown"
+            .options=${aliasTypeOptions}
+            title=${"Select type..."}
+            @dropdown-selected=${this.handleDropdownSelection}
+          ></md-dropdown>
+          <md-input
+            class="alias-input"
+            placeholder=${this.getPlaceholderText()}
+            id="alias-input"
+            value=${this.newAliasInputValue}
+            @input-change=${this.aliasInputChange}
+            @input-keydown=${this.aliasInputKeydown}
+            .messageArr=${this.inputMessageArray}
+          ></md-input>
+          <md-button
+            .disabled=${this.aliasAddInProgress || !this.newAliasInputValue}
+            variant="secondary"
+            @click=${this.addAlias}
+          >
+            ${this.aliasAddInProgress ? this.renderInlineSpinner() : "Add"}
+          </md-button>
+        </div>
+      `;
+    }
+
+    render() {
+      const renderNullCustomerView = html`
+        <p class="alias-text">No customer provided. Cannot execute any alias related actions.</p>
+      `;
+
+      const readOnlyTooltipMessage = `Aliases are alternate ways to identify a customer.`;
+      const editableTooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
+
+      const tooltipMessage = this.readOnly ? readOnlyTooltipMessage : editableTooltipMessage;
+
       if (this.customer) {
         return html`
-          <div class="flex alias-input-row">
-            <md-dropdown
-              class="alias-type-dropdown"
-              .options=${aliasTypeOptions}
-              title=${"Select type..."}
-              @dropdown-selected=${this.handleDropdownSelection}
-            ></md-dropdown>
-            <md-input
-              class="alias-input"
-              placeholder=${this.getPlaceholderText()}
-              id="alias-input"
-              value=${this.newAliasInputValue}
-              @input-change=${this.aliasInputChange}
-              @input-keydown=${this.aliasInputKeydown}
-              .messageArr=${this.inputMessageArray}
-            ></md-input>
-            <md-button
-              .disabled=${this.aliasAddInProgress || !this.newAliasInputValue}
-              variant="secondary"
-              @click=${this.addAlias}
-            >
-              ${this.aliasAddInProgress ? this.renderInlineSpinner() : "Add"}
-            </md-button>
-          </div>
+          ${this.readOnly ? nothing : this.renderAliasAddRow()}
           <div part="aliases-container" class="aliases">
             <div part="alias-header-container" class="header-container">
               <h3 class="aliases-header">Aliases</h3>

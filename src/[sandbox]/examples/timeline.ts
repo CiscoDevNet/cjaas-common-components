@@ -12,7 +12,7 @@ export const timelineTemplate = html`
     time-frame="All"
   ></cjaas-timeline>
 
-  <!-- <h3>Default: with newestEvents</h3>
+  <h3>Default: with newestEvents</h3>
   <cjaas-timeline
     limit=${8}
     .historicEvents=${testingHistoricalEvents}
@@ -40,5 +40,5 @@ export const timelineTemplate = html`
     event-filters
     .newestEvents=${emptyMock}
     getEventsInProgress
-  ></cjaas-timeline> -->
+  ></cjaas-timeline>
 `;

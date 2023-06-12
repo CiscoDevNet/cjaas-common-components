@@ -18,12 +18,12 @@ const identityData: IdentityData = {
 
 const aliasObjects = [
   {
-    type: "Email",
+    type: "email",
     value: "egiere@gmail.com",
   },
   {
-    type: "Unknown",
-    value: "elena",
+    type: "phone",
+    value: "+16303030840",
   },
 ];
 
@@ -34,7 +34,8 @@ const aliasDeleteInProgress = {
 export const identityTemplate = html`
   <h3>Default</h3>
   <cjaas-identity .identityData=${identityData} .aliasObjects=${aliasObjects} customer="Alex Ross"></cjaas-identity>
-  <!-- 
+
+  <!--
   <h3>No Aliases</h3>
   <cjaas-identity .customer=${"Alex Ross"}> </cjaas-identity>
 
