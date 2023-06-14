@@ -7,7 +7,7 @@
  */
 
 import { LitElement, html, property } from "lit-element";
-import { nothing } from "lit-html";
+import { nothing, TemplateResult } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
@@ -25,6 +25,11 @@ export namespace TimelineItem {
      * @attr id
      */
     @property({ type: String }) id = "";
+    /**
+     * @attr event
+     */
+    @property() event: Timeline.CustomerEvent | undefined = undefined;
+
     /**
      * @attr eventTitle
      */
@@ -71,6 +76,8 @@ export namespace TimelineItem {
 
     @property({ type: String, attribute: "group-icon-map-keyword" }) groupIconMapKeyword = "";
 
+    @property({ type: Boolean, attribute: "enable-sub-text-links" }) enableSubTextLinks = false;
+
     static get styles() {
       return styles;
     }
@@ -87,6 +94,32 @@ export namespace TimelineItem {
       navigator.clipboard.writeText(copyText);
     };
 
+    parseSubTextUrlRecursively(stringValue: string): TemplateResult {
+      if (!stringValue.includes("](")) {
+        return html`
+          <span>${stringValue}</span>
+        `;
+      }
+
+      const firstBracketIndex = stringValue.indexOf("[");
+      const endBracket = stringValue.indexOf("]");
+      const endParentheses = stringValue.indexOf(")");
+
+      const urlText = stringValue.slice(firstBracketIndex + 1, endBracket);
+      const urlAddress = stringValue.slice(endBracket + 2, endParentheses);
+
+      const textBefore = stringValue.slice(0, firstBracketIndex);
+      const textAfter = stringValue.slice(endParentheses + 1);
+
+      const renderValue = html`
+        <span>${textBefore}</span><a href=${urlAddress} target="_blank">${urlText}</a>
+      `;
+
+      return html`
+        ${renderValue} ${this.parseSubTextUrlRecursively(textAfter)}
+      `;
+    }
+
     /**
      * @method createTableRecursive
      * @param data
@@ -100,17 +133,26 @@ export namespace TimelineItem {
         return html`
           ${Object.keys(data).map((x: string) => {
             if (typeof data[x] !== "object") {
-              if (data[x]) {
-                let renderValue = data[x] || "-";
-                if (typeof data[x] === "string" && linkify.test(data[x], "url")) {
-                  renderValue = html`
-                    <a href=${data[x]} target="_blank">${renderValue}</a>
-                  `;
+              const dataValue = data[x];
+
+              if (dataValue) {
+                let renderValue = dataValue || "-";
+
+                if (typeof dataValue === "string") {
+                  if (linkify.test(dataValue, "url")) {
+                    renderValue = html`
+                      <a href=${dataValue} target="_blank">${renderValue}</a>
+                    `;
+                  } else if (this.enableSubTextLinks) {
+                    renderValue = this.parseSubTextUrlRecursively(dataValue);
+                  }
                 }
-                /* eslint disable */
+
                 return html`
                   <div title=${x} class="cell">${x}</div>
-                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${renderValue}</div>
+                  <div title=${String(dataValue)} class="cell" @click=${(e: Event) => this.copyValue(e)}>
+                    ${renderValue}
+                  </div>
                 `;
               }
             } else {
@@ -233,7 +275,7 @@ export namespace TimelineItem {
         if (this.groupIconMapKeyword) {
           iconKeyword = this.groupIconMapKeyword;
         } else {
-          iconKeyword = this.data[this.badgeKeyword] || isAgent || "";
+          iconKeyword = this.data[this.badgeKeyword] || this.event?.identitytype || isAgent || "";
         }
         iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
           name: "icon-activities_16",

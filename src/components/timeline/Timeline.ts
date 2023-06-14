@@ -62,6 +62,21 @@ export namespace Timeline {
     type?: string;
   }
 
+  export interface CustomerEvent {
+    specversion: string;
+    type: string;
+    source: string;
+    id: string;
+    time: string;
+    identity: string;
+    identitytype: "email" | "phone" | "customerId";
+    previousidentity?: null;
+    datacontenttype: string;
+    person?: string;
+    data: Record<string, any>;
+    renderData?: Record<string, any>;
+  }
+
   // export interface CustomerEvent {
   //   data: Record<string, any>;
   //   renderData?: Record<string, any>;
@@ -74,22 +89,6 @@ export namespace Timeline {
   //   time: string;
   //   type: string;
   // }
-
-  export interface CustomerEvent {
-    data: Record<string, any>;
-    renderData?: Record<string, any>;
-    id: string;
-    specversion: string;
-    type: string;
-    source: string;
-    time: string;
-    identity: string;
-    identitytype: "email" | "phone" | "customerId";
-    previousidentity: null;
-    datacontenttype: string;
-
-    person?: string;
-  }
 
   export interface ClusterInfoObject {
     id: string;
@@ -194,6 +193,13 @@ export namespace Timeline {
      * @prop eventIconTemplate
      */
     @property({ type: String, attribute: "error-message" }) errorMessage = "";
+
+    /**
+     * Feature flag to enable sub text url links
+     * @prop parseSubTextUrls
+     */
+    @property({ type: Boolean, attribute: "enable-sub-text-links" }) enableSubTextLinks = "";
+
     /**
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
@@ -407,6 +413,7 @@ export namespace Timeline {
                   .time=${date}
                   ?is-cluster=${true}
                   ?is-date-cluster=${true}
+                  ?enable-sub-text-links=${this.enableSubTextLinks}
                   group-icon-map-keyword="multi events single day"
                   .eventIconTemplate=${this.eventIconTemplate}
                   .badgeKeyword=${this.badgeKeyword}
@@ -487,6 +494,7 @@ export namespace Timeline {
               class="has-line"
               .events=${cluster}
               ?grouped=${this.collapseView}
+              ?enable-sub-text-links=${this.enableSubTextLinks}
               .activeDates=${this.activeDates}
               .activeTypes=${this.activeTypes}
               .eventIconTemplate=${this.eventIconTemplate}
@@ -573,7 +581,9 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          event-title=${event?.renderData?.title ||
+            formattedOrigin(event?.data?.origin, event?.data?.channelType) ||
+            formattedOrigin(event?.identity, event?.identitytype)}
           sub-title=${event?.renderData?.subTitle || ""}
           time=${event?.time}
           .data=${event?.data}
@@ -582,6 +592,7 @@ export namespace Timeline {
           .eventIconTemplate=${this.eventIconTemplate}
           .badgeKeyword=${this.badgeKeyword}
           ?expanded="${this.expandDetails}"
+          ?enable-sub-text-links=${this.enableSubTextLinks}
           class="has-line"
         ></cjaas-timeline-item>
       `;

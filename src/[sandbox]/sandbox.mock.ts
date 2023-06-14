@@ -16,23 +16,19 @@ const mockOriginByType = (channelType: string) => {
 
 export const testingHistoricalEvents: Timeline.CustomerEvent[] = [
   {
-    id: "id",
     specversion: "1.0",
     type: "task:new",
     source: "wxcc",
-    time: "1681253705928",
+    time: new Date().toISOString(),
+    id: "0af16ac7-49a9-4fe2-a679-bd0fbec18fbd",
     identity: "rossgeller@gmail.com",
-    person: "rossgeller@gmail.com",
     identitytype: "email",
-    previousidentity: null,
     datacontenttype: "application/json",
     data: {
-      queueId: "AXZvA7uJ1OI4n5klHgJA",
-      origin: "rossgeller@gmail.com",
-      destination: "1234567890",
-      channelType: "email",
-      taskId: "2d302b94-8806-4348-ad84-2fc72b112c37",
-      direction: "INBOUND",
+      summary:
+        "I have some sample text here to read more about it, please navigate to the following. If you don't want to click, then don't. let's see if I can make the text go to the next line successfully! Good luck.",
+      // origin: "elenagiere@gmail.com",
+      // channelType: "email",
     },
   },
 ];

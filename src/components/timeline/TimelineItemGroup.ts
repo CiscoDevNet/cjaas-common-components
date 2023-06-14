@@ -60,6 +60,8 @@ export namespace TimelineItemGroup {
     @property({ attribute: false })
     eventIconTemplate: Timeline.TimelineCustomizations = iconData;
 
+    @property({ type: Boolean, attribute: "enable-sub-text-links" }) enableSubTextLinks = false;
+
     static get styles() {
       return styles;
     }
@@ -99,6 +101,7 @@ export namespace TimelineItemGroup {
           .id=${event.id}
           .person=${event.person || null}
           group-item
+          ?enable-sub-text-links=${this.enableSubTextLinks}
           .eventIconTemplate=${this.eventIconTemplate}
           class="has-line"
         ></cjaas-timeline-item>
@@ -117,6 +120,7 @@ export namespace TimelineItemGroup {
               ?is-cluster=${true}
               group-icon-map-keyword=${this.groupIcon}
               .data=${{ "Event Group": this.eventTitle }}
+              ?enable-sub-text-links=${this.enableSubTextLinks}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item>
           `
