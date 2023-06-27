@@ -173,37 +173,6 @@ export namespace TimelineItem {
     };
 
     renderSubTitle() {
-      // let label;
-      // let dataPoint;
-
-      // if (this.data) {
-      //   const dataPoints = Object.keys(this.data);
-      //   let usableDataPointIndex = 0;
-      //   label = dataPoints[usableDataPointIndex];
-      //   dataPoint = this.data[label];
-      //   const dataPointIsString = false;
-
-      //   while (!dataPointIsString) {
-      //     if (typeof dataPoint === "string") {
-      //       break;
-      //     } else {
-      //       if (dataPoint === undefined) {
-      //         return nothing;
-      //       }
-      //       usableDataPointIndex++;
-      //       label = dataPoints[usableDataPointIndex];
-      //       dataPoint = this.data[label];
-      //     }
-      //   }
-      // }
-
-      // return html`
-      //   <div class="sub-title">
-      //     <span>${label || "NA"}: </span>
-      //     ${dataPoint || "NA"}
-      //   </div>
-      // `;
-
       return html`
         <div class="sub-title">
           ${this.subTitle}
@@ -213,27 +182,6 @@ export namespace TimelineItem {
 
     renderShowcase = () => {
       const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isDateCluster);
-
-      // const parsedIconMap = JSON.parse(JSON.stringify(this.eventIconTemplate)).default;
-      // const npsScore = this.data["NPS"];
-      // if (this.title.toLowerCase().includes("survey")) {
-      //   return html`
-      //     <div class="nps" style="background-color: var(--response-${npsScore});">
-      //       ${npsScore || "-"}
-      //     </div>
-      //   `;
-      // }
-      // try {
-      //   const { showcase } = parsedIconMap![this.title];
-      //   if (showcase && this.data[showcase]) {
-      //     return this.data[showcase];
-      //   } else {
-      //     return timeStamp;
-      //   }
-      // } catch {
-      //   if (this.title.includes("events")) return;
-      // }
-
       const dateAndTimeArray = timeStamp?.split(",");
 
       let renderTimeRow = nothing;
@@ -275,11 +223,16 @@ export namespace TimelineItem {
         if (this.groupIconMapKeyword) {
           iconKeyword = this.groupIconMapKeyword;
         } else {
-          iconKeyword = this.data[this.badgeKeyword] || this.event?.identitytype || isAgent || "";
+          iconKeyword =
+            this.event?.renderingData?.iconType ||
+            this.data[this.badgeKeyword] ||
+            this.event?.identitytype ||
+            isAgent ||
+            "";
         }
         iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
           name: "icon-activities_16",
-          color: "orange", // TODO CHANGE
+          color: "orange",
         };
       }
 

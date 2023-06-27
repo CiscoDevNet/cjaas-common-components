@@ -17,11 +17,11 @@ import { Key } from "@/constants";
 Event Toggles Component
 Used by Timeline based components to dynamically render filter toggles for the types of events in an event Stream.
 INPUTS:
-.eventTypes: Array<string>
-.activeTypes: Array<string>
+.allFilterTypes: Array<string>
+.activeFilterTypes: Array<string>
 OUTPUT:
 @active-type-update custom event: Array<string>
-Pass in the eventTypes and activeTypes fetched in the consuming widget with the property selector.
+Pass in the allFilterTypes and activeFilterTypes fetched in the consuming widget with the property selector.
 Listen for the @active-type-update custom event in order to reflect and control filtering from the wrapping widget.
 */
 
@@ -29,15 +29,15 @@ export namespace EventToggles {
   @customElementWithCheck("cjaas-event-toggles")
   export class ELEMENT extends LitElement {
     /**
-     * @prop eventTypes
+     * @prop allFilterTypes
      * Dataset of unique event types
      */
-    @property({ type: Array, attribute: false }) eventTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) allFilterTypes: Array<string> = [];
     /**
-     * @prop activeTypes
+     * @prop activeFilterTypes
      * Dataset of selected event types showing in timeline
      */
-    @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) activeFilterTypes: Array<string> = [];
 
     @internalProperty() isFilterOpen = false;
 
@@ -88,13 +88,13 @@ export namespace EventToggles {
     comboboxChangeSelected(e: CustomEvent) {
       this.comboBoxSearchValue = "";
 
-      this.activeTypes = e?.detail?.selected;
+      this.activeFilterTypes = e?.detail?.selected;
       this.dispatchEvent(
         new CustomEvent("active-type-update", {
           bubbles: true,
           composed: true,
           detail: {
-            activeTypes: this.activeTypes,
+            activeFilterTypes: this.activeFilterTypes,
           },
         })
       );
@@ -109,8 +109,8 @@ export namespace EventToggles {
       // animate combo box with translateX
       const classList = { expanded: this.isFilterOpen };
       const tooltipMessage =
-        this.activeTypes?.length > 0
-          ? `Filter Event Types (${this.activeTypes?.length} applied)`
+        this.activeFilterTypes?.length > 0
+          ? `Filter Event Types (${this.activeFilterTypes?.length} applied)`
           : `Filter Event Types`;
 
       return html`
@@ -120,19 +120,19 @@ export namespace EventToggles {
           class=${classMap(classList)}
           input-value=${this.comboBoxSearchValue}
           @combobox-input=${this.handleComboBoxInput}
-          .options=${this.eventTypes}
+          .options=${this.allFilterTypes}
           option-value="event"
           is-multi
-          .selectedOptions=${this.activeTypes}
+          .selectedOptions=${this.activeFilterTypes}
           .noClearIcon=${true}
           .visibleOptions=${3}
           shape="pill"
           @change-selected=${(e: CustomEvent) => this.comboboxChangeSelected(e)}
-          @remove-all-selected=${() => (this.activeTypes = [])}
+          @remove-all-selected=${() => (this.activeFilterTypes = [])}
         ></md-combobox>
         <md-tooltip class="filter-tooltip" .message=${tooltipMessage} placement="bottom">
           <md-button
-            variant=${this.activeTypes?.length ? "green" : "secondary"}
+            variant=${this.activeFilterTypes?.length ? "green" : "secondary"}
             circle
             @click=${() => {
               this.isFilterOpen = !this.isFilterOpen;

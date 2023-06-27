@@ -11,7 +11,7 @@ export const timelineTemplate = html`
     badge-keyword="channelType"
     time-frame="All"
   ></cjaas-timeline>
-
+  <!--
   <h3>Default: with newestEvents</h3>
   <cjaas-timeline
     limit=${8}
@@ -40,5 +40,5 @@ export const timelineTemplate = html`
     event-filters
     .newestEvents=${emptyMock}
     getEventsInProgress
-  ></cjaas-timeline>
+  ></cjaas-timeline> -->
 `;

@@ -16,19 +16,32 @@ const mockOriginByType = (channelType: string) => {
 
 export const testingHistoricalEvents: Timeline.CustomerEvent[] = [
   {
+    id: "59eeeed7-4000-4393-a515-41f1666d722a",
     specversion: "1.0",
-    type: "task:new",
-    source: "wxcc",
-    time: new Date().toISOString(),
-    id: "0af16ac7-49a9-4fe2-a679-bd0fbec18fbd",
-    identity: "rossgeller@gmail.com",
+    type: "task:ended",
+    source: "/com/cisco/wxcc/f37e1f81-ba0b-45b2-a4f5-ca7603dcf88f",
+    time: "2023-06-14T23:44:07.914Z",
+    identity: "egiere@cisco.com",
     identitytype: "email",
+    previousidentity: null,
     datacontenttype: "application/json",
     data: {
-      summary:
-        "I have some sample text here to read more about it, please navigate to the following. If you don't want to click, then don't. let's see if I can make the text go to the next line successfully! Good luck.",
-      // origin: "elenagiere@gmail.com",
-      // channelType: "email",
+      reason: "Agent Left",
+      queueId: "439d7630-d188-4199-b49b-ddf8214423cf",
+      terminatingParty: "Agent",
+      origin: "egiere@cisco.com",
+      workflowManager: "IMI",
+      destination: "kolli_email_imi_EP",
+      createdTime: 1686786247795,
+      channelType: "email",
+      taskId: "748e2c18-0730-4e32-898c-31bcc2325ed9",
+      direction: "INBOUND",
+    },
+    renderingData: {
+      title: "Event Title",
+      subTitle: "my sub title goes here",
+      iconType: "agent",
+      filterTypes: ["WXCC", "email"],
     },
   },
 ];

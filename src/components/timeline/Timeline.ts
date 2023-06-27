@@ -62,6 +62,20 @@ export namespace Timeline {
     type?: string;
   }
 
+  export interface CustomUIDataPayload {
+    title?: string;
+    subTitle?: string;
+    iconType?: string;
+    filterTypes?: Array<string>;
+  }
+
+  export interface RenderingDataObject {
+    title?: string;
+    subTitle?: string;
+    iconType?: string;
+    filterTypes?: Array<string>;
+  }
+
   export interface CustomerEvent {
     specversion: string;
     type: string;
@@ -74,21 +88,9 @@ export namespace Timeline {
     datacontenttype: string;
     person?: string;
     data: Record<string, any>;
-    renderData?: Record<string, any>;
+    renderingData?: RenderingDataObject;
+    customUIData?: CustomUIDataPayload;
   }
-
-  // export interface CustomerEvent {
-  //   data: Record<string, any>;
-  //   renderData?: Record<string, any>;
-  //   dataContentType: string;
-  //   id: string;
-  //   person: string;
-  //   previously: string;
-  //   source: string;
-  //   specVersion: string;
-  //   time: string;
-  //   type: string;
-  // }
 
   export interface ClusterInfoObject {
     id: string;
@@ -167,7 +169,7 @@ export namespace Timeline {
      * @prop filterTypes
      * Dataset of all unique filter types
      */
-    @property({ type: Array, attribute: false }) filterTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) allFilterTypes: Array<string> = [];
     /**
      * @prop channelTaskTypes
      * Dataset of all unique channel & task Ids
@@ -177,7 +179,7 @@ export namespace Timeline {
      * @prop activeTypes
      * Dataset tracking all visible event types (in event filter)
      */
-    @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) activeFilterTypes: Array<string> = [];
     /**
      * @prop activeDates
      * Dataset tracking all visible dates (in date filter)
@@ -198,7 +200,7 @@ export namespace Timeline {
      * Feature flag to enable sub text url links
      * @prop parseSubTextUrls
      */
-    @property({ type: Boolean, attribute: "enable-sub-text-links" }) enableSubTextLinks = "";
+    @property({ type: Boolean, attribute: "enable-sub-text-links" }) enableSubTextLinks = false;
 
     /**
      * @prop collapsed
@@ -225,48 +227,11 @@ export namespace Timeline {
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
       if (changedProperties.has("historicEvents")) {
-        this.formatEvents(this.historicEvents);
         this.createSets();
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.consolidateEvents();
       }
-    }
-
-    /**
-     * @method formatEvents
-     */
-    formatEvents(allEvents: Array<CustomerEvent> | null): void {
-      allEvents?.map((event: CustomerEvent) => {
-        const [eventType, eventSubType] = event?.type.split(":");
-        const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
-        const agentState = event?.data?.currentState;
-        const formattedAgentState = agentState
-          ? agentState?.charAt(0)?.toUpperCase() + agentState?.slice(1)
-          : undefined;
-        const { channelType, currentState } = event?.data;
-
-        switch (eventType) {
-          case EventType.Agent:
-            event.renderData = {
-              title: `Agent ${formattedAgentState || "Event"}`,
-              filterType: currentState ? `agent ${currentState}` : "",
-            };
-            break;
-          case EventType.Task:
-            event.renderData = {
-              subTitle: `${eventSubType || ""} ${channelTypeText || ""}`,
-              filterType: channelType,
-            };
-            break;
-          default:
-            event.renderData = {
-              subTitle: `${channelTypeText || ""}`,
-              filterType: channelType || "misc",
-            };
-            break;
-        }
-      });
     }
 
     /**
@@ -276,15 +241,14 @@ export namespace Timeline {
      * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
     createSets() {
-      const eventTypeArray: Set<string> = new Set(); // ex. task:connected
-      const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
+      const uniqueFilterTypes: Set<string> = new Set(); // ex. chat, telephony, email, agent connected, etc
 
       (this.historicEvents || []).forEach(event => {
-        eventTypeArray.add(event?.type);
-        filterOptionsArray.add(event?.renderData?.filterType);
+        event?.renderingData?.filterTypes?.forEach((eventFilterType: string) => {
+          uniqueFilterTypes.add(eventFilterType);
+        });
       });
-      this.eventTypes = Array.from(eventTypeArray);
-      this.filterTypes = Array.from(filterOptionsArray);
+      this.allFilterTypes = Array.from(uniqueFilterTypes);
     }
 
     getClusterId(text: string, key: number) {
@@ -496,7 +460,7 @@ export namespace Timeline {
               ?grouped=${this.collapseView}
               ?enable-sub-text-links=${this.enableSubTextLinks}
               .activeDates=${this.activeDates}
-              .activeTypes=${this.activeTypes}
+              .activeTypes=${this.activeFilterTypes}
               .eventIconTemplate=${this.eventIconTemplate}
             ></cjaas-timeline-item-group>
           `
@@ -561,13 +525,13 @@ export namespace Timeline {
     }
 
     renderFilterButton() {
-      if (this.filterTypes && this.activeTypes) {
+      if (this.allFilterTypes && this.activeFilterTypes) {
         return html`
           <cjaas-event-toggles
-            .eventTypes=${this.filterTypes}
-            .activeTypes=${this.activeTypes}
+            .allFilterTypes=${this.allFilterTypes}
+            .activeFilterTypes=${this.activeFilterTypes}
             @active-type-update=${(e: CustomEvent) => {
-              this.activeTypes = e.detail.activeTypes;
+              this.activeFilterTypes = e.detail.activeFilterTypes;
               this.requestUpdate();
             }}
           ></cjaas-event-toggles>
@@ -581,10 +545,8 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event?.renderData?.title ||
-            formattedOrigin(event?.data?.origin, event?.data?.channelType) ||
-            formattedOrigin(event?.identity, event?.identitytype)}
-          sub-title=${event?.renderData?.subTitle || ""}
+          event-title=${formattedOrigin(event?.renderingData?.title || "", event?.renderingData?.iconType || "") || ""}
+          sub-title=${event?.renderingData?.subTitle || ""}
           time=${event?.time}
           .data=${event?.data}
           id=${event?.id}
@@ -618,7 +580,6 @@ export namespace Timeline {
 
     renderEmptyState() {
       const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-
       if (!this.historicEvents || this.historicEvents.length === 0) {
         return html`
           <div class="empty-state">
@@ -642,11 +603,22 @@ export namespace Timeline {
       }
     }
 
-    filterByType(list: CustomerEvent[] | undefined | null) {
-      if (this.activeTypes.length) {
-        return list?.filter(item => this.activeTypes.includes(item?.renderData?.filterType)) || null;
+    intersect(array1: Array<string>, array2: Array<string>) {
+      const setA = new Set(array1);
+      const setB = new Set(array2);
+      const intersection = new Set([...setA].filter(x => setB.has(x)));
+      return Array.from(intersection);
+    }
+
+    filterByType(eventList: CustomerEvent[] | undefined | null) {
+      if (this.activeFilterTypes.length) {
+        return eventList?.filter((event: CustomerEvent) => {
+          return event?.renderingData?.filterTypes
+            ? this.intersect(this.activeFilterTypes, event?.renderingData?.filterTypes).length
+            : false;
+        });
       } else {
-        return list;
+        return eventList;
       }
     }
 
