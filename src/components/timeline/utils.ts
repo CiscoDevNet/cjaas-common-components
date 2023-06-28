@@ -31,13 +31,20 @@ export function getTimelineEventFromMessage(message: any) {
 export function formattedOrigin(origin: string, channelType: string) {
   const hasPlusSign = (origin as string)?.charAt(0) === "+";
   if (channelType === "telephony" || hasPlusSign) {
-    const parsedNumber = parsePhoneNumber(origin);
+    try {
+      const parsedNumber = parsePhoneNumber(origin);
 
-    if (parsedNumber?.country === "US") {
-      const national = parsedNumber?.formatNational() && `+1 ${parsedNumber?.formatNational()}`;
-      return national || parsedNumber?.formatInternational() || origin;
-    } else {
-      return parsedNumber?.formatInternational() || origin;
+      if (parsedNumber?.country === "US") {
+        const national = parsedNumber?.formatNational() && `+1 ${parsedNumber?.formatNational()}`;
+        return national || parsedNumber?.formatInternational() || origin;
+      } else {
+        return parsedNumber?.formatInternational() || origin;
+      }
+    } catch (error) {
+      console.warn(
+        "[JDS WIDGET] your event payload shows `channelType` as `telephony`. With that, the `origin` property should be a valid phone number."
+      );
+      return origin;
     }
   } else {
     return origin;

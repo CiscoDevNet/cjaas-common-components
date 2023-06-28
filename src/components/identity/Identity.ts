@@ -1,7 +1,7 @@
 import { customElementWithCheck } from "@/mixins";
 import { internalProperty, LitElement, property, PropertyValues, query } from "lit-element";
-import { html } from "lit-html";
-import { parsePhoneNumber } from "libphonenumber-js";
+import { html, nothing } from "lit-html";
+import { ParseError, parsePhoneNumberWithError } from "libphonenumber-js";
 import * as linkify from "linkifyjs";
 
 import "@momentum-ui/web-components/dist/comp/md-progress-bar";
@@ -36,6 +36,13 @@ export enum ReadableAliasTypes {
   Unselected = "",
 }
 
+export enum PhoneErrors {
+  NOT_A_NUMBER = "Not a number",
+  INVALID_COUNTRY = "Invalid country code",
+  TOO_SHORT = "Too short",
+  TOO_LONG = "Too long",
+}
+
 export namespace Identity {
   @customElementWithCheck("cjaas-identity")
   export class ELEMENT extends LitElement {
@@ -46,6 +53,7 @@ export namespace Identity {
     @property({ type: Boolean }) disableAddButton = false;
     @property({ attribute: false }) aliasObjects: undefined | Array<AliasObject> = undefined;
     @property({ type: String, attribute: "error-message", reflect: true }) errorMessage = "";
+    @property({ type: Boolean, attribute: "read-only" }) readOnly = false;
 
     @internalProperty() newAliasInputValue = "";
     @internalProperty() aliasFirstNameInputValue = "";
@@ -55,6 +63,7 @@ export namespace Identity {
 
     @internalProperty() aliasValidationErrorMessage = "";
     @internalProperty() inputMessageArray: Array<Input.Message> = [];
+    @internalProperty() invalidParsedPhoneErrorMessage = "";
 
     @query("#alias-input") aliasInput!: Input.ELEMENT;
 
@@ -125,15 +134,30 @@ export namespace Identity {
       this.aliasLastNameInputValue = event?.detail?.value?.trim();
     }
 
+    validatePhoneNumber(value: string) {
+      let parsedNumber;
+
+      try {
+        parsedNumber = parsePhoneNumberWithError(value, "US");
+        this.invalidParsedPhoneErrorMessage = "";
+      } catch (error) {
+        if (error instanceof ParseError) {
+          this.invalidParsedPhoneErrorMessage = error.message;
+        } else {
+          throw error;
+        }
+      }
+
+      const isPhoneNumberValid = parsedNumber?.isValid();
+      return isPhoneNumberValid || false;
+    }
+
     validateAlias(type: RawAliasTypes, value: string) {
       if (type === RawAliasTypes.Email) {
         const isEmailValid = linkify.test(value, "email");
         return isEmailValid;
       } else if (type === RawAliasTypes.Phone) {
-        const hasPlusSign = /^\+/.test(value);
-        const parsedNumber = parsePhoneNumber(value);
-        const isPhoneNumberValid = hasPlusSign && parsedNumber.isValid();
-        return isPhoneNumberValid;
+        return this.validatePhoneNumber(value);
       } else if (type === RawAliasTypes.CustomerId) {
         const re = new RegExp("^[a-zA-Z0-9]*$"); // alphaNumeric only
         const isCustomerIdValid = re.test(value);
@@ -141,6 +165,27 @@ export namespace Identity {
       }
 
       return false;
+    }
+
+    readablePhoneError(error: string): string {
+      let result = ": ";
+      switch (error) {
+        case "INVALID_COUNTRY":
+          result += PhoneErrors.INVALID_COUNTRY;
+          break;
+        case "NOT_A_NUMBER":
+          result += PhoneErrors.NOT_A_NUMBER;
+          break;
+        case "TOO_SHORT":
+          result += PhoneErrors.TOO_SHORT;
+          break;
+        case "TOO_LONG":
+          result += PhoneErrors.TOO_LONG;
+          break;
+        default:
+          result = "";
+      }
+      return result;
     }
 
     addAlias() {
@@ -154,7 +199,9 @@ export namespace Identity {
         if (!this.selectedRawAliasType) {
           this.aliasValidationErrorMessage = this.noAliasTypeMessage;
         } else if (this.selectedRawAliasType === RawAliasTypes.Phone) {
-          this.aliasValidationErrorMessage = this.invalidPhoneMessage;
+          this.aliasValidationErrorMessage = `${this.invalidPhoneMessage}${this.readablePhoneError(
+            this.invalidParsedPhoneErrorMessage
+          )}`;
         } else if (this.selectedRawAliasType === RawAliasTypes.Email) {
           this.aliasValidationErrorMessage = this.invalidEmailMessage;
         } else if (this.selectedRawAliasType === RawAliasTypes.CustomerId) {
@@ -203,10 +250,6 @@ export namespace Identity {
       }
     }
 
-    saveAliasName() {
-      console.log("save alias name");
-    }
-
     static get styles() {
       return styles;
     }
@@ -233,7 +276,9 @@ export namespace Identity {
       }
     }
 
-    renderAliasList() {
+    renderDeleteAliasUI(aliasObject: AliasObject) {
+      const { type: rawType, value } = aliasObject;
+
       const renderInlineDeleteIcon = (type: string, alias: string) => html`
         <md-tooltip class="delete-icon-tooltip cell" message="Delete Alias">
           <md-icon
@@ -244,18 +289,22 @@ export namespace Identity {
         ></md-tooltip>
       `;
 
+      return this.aliasDeleteInProgress[value] ? this.renderInlineSpinner() : renderInlineDeleteIcon(rawType, value);
+    }
+
+    renderAliasList() {
       const aliases = (this.aliasObjects?.slice().reverse() || []).map((aliasObject: AliasObject) => {
         const { type: rawType, value } = aliasObject;
         return html`
           <p class="alias-type-label cell">${this.getReadableAliasType(rawType)}</p>
           <p class="alias-type-value cell">${value}</p>
 
-          ${this.aliasDeleteInProgress[value] ? this.renderInlineSpinner() : renderInlineDeleteIcon(rawType, value)}
+          ${this.readOnly ? nothing : this.renderDeleteAliasUI(aliasObject)}
         `;
       });
 
       return html`
-        <div class="alias-grid" part="list">
+        <div class=${`alias-grid ${this.readOnly ? "read-only" : ""}`} part="list">
           ${aliases}
         </div>
       `;
@@ -268,6 +317,8 @@ export namespace Identity {
     }
 
     handleDropdownSelection(event: CustomEvent) {
+      this.aliasValidationErrorMessage = "";
+      this.aliasInput.value = "";
       this.selectedRawAliasType = this.getRawAliasType(event?.detail?.option);
     }
 
@@ -275,12 +326,47 @@ export namespace Identity {
       if (this.selectedRawAliasType === RawAliasTypes.Email) {
         return "ex. jon@gmail.com";
       } else if (this.selectedRawAliasType === RawAliasTypes.Phone) {
-        return "ex. +1 (800) 122-8787";
+        return "ex. +18003008000";
       } else if (this.selectedRawAliasType === RawAliasTypes.CustomerId) {
-        return "ex. abc123";
+        return "ex. 123";
       } else {
-        return "Enter an alias";
+        return "Enter a new alias";
       }
+    }
+
+    renderAliasAddRow() {
+      const aliasTypeOptions = [
+        this.getReadableAliasType(RawAliasTypes.Phone),
+        this.getReadableAliasType(RawAliasTypes.Email),
+        this.getReadableAliasType(RawAliasTypes.CustomerId),
+      ];
+
+      return html`
+        <div class="flex alias-input-row">
+          <md-dropdown
+            class="alias-type-dropdown"
+            .options=${aliasTypeOptions}
+            title=${"Select type..."}
+            @dropdown-selected=${this.handleDropdownSelection}
+          ></md-dropdown>
+          <md-input
+            class="alias-input"
+            placeholder=${this.getPlaceholderText()}
+            id="alias-input"
+            value=${this.newAliasInputValue}
+            @input-change=${this.aliasInputChange}
+            @input-keydown=${this.aliasInputKeydown}
+            .messageArr=${this.inputMessageArray}
+          ></md-input>
+          <md-button
+            .disabled=${this.aliasAddInProgress || !this.newAliasInputValue}
+            variant="secondary"
+            @click=${this.addAlias}
+          >
+            ${this.aliasAddInProgress ? this.renderInlineSpinner() : "Add"}
+          </md-button>
+        </div>
+      `;
     }
 
     render() {
@@ -288,39 +374,14 @@ export namespace Identity {
         <p class="alias-text">No customer provided. Cannot execute any alias related actions.</p>
       `;
 
-      const tooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
-      const aliasTypeOptions = [
-        this.getReadableAliasType(RawAliasTypes.Phone),
-        this.getReadableAliasType(RawAliasTypes.Email),
-        this.getReadableAliasType(RawAliasTypes.CustomerId),
-      ];
+      const readOnlyTooltipMessage = `Aliases are alternate ways to identify a customer.`;
+      const editableTooltipMessage = `Aliases are alternate ways to identify a customer. Adding aliases can help you form a more complete profile of your customer.`;
+
+      const tooltipMessage = this.readOnly ? readOnlyTooltipMessage : editableTooltipMessage;
 
       if (this.customer) {
         return html`
-          <div class="flex alias-input-row">
-            <md-dropdown
-              class="alias-type-dropdown"
-              .options=${aliasTypeOptions}
-              title=${"Select type..."}
-              @dropdown-selected=${this.handleDropdownSelection}
-            ></md-dropdown>
-            <md-input
-              class="alias-input"
-              placeholder=${this.getPlaceholderText()}
-              id="alias-input"
-              value=${this.newAliasInputValue}
-              @input-change=${this.aliasInputChange}
-              @input-keydown=${this.aliasInputKeydown}
-              .messageArr=${this.inputMessageArray}
-            ></md-input>
-            <md-button
-              .disabled=${this.aliasAddInProgress || !this.newAliasInputValue}
-              variant="secondary"
-              @click=${this.addAlias}
-            >
-              ${this.aliasAddInProgress ? this.renderInlineSpinner() : "Add"}
-            </md-button>
-          </div>
+          ${this.readOnly ? nothing : this.renderAliasAddRow()}
           <div part="aliases-container" class="aliases">
             <div part="alias-header-container" class="header-container">
               <h3 class="aliases-header">Aliases</h3>

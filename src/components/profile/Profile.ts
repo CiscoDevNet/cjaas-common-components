@@ -102,8 +102,8 @@ export namespace ProfileView {
     @query("#first-name-input") firstNameInput!: HTMLInputElement;
     @query("#last-name-input") lastNameInput!: HTMLInputElement;
 
-    nonAlphaNameErrorMessage = "Only support alpha characters.";
-    undefinedNameErrorMessage = (nameType: "first" | "last") => `${nameType} name is required.`;
+    nonAlphaNameErrorMessage = "Alpha characters only";
+    undefinedNameErrorMessage = (nameType: "First" | "Last") => `${nameType} name required`;
 
     connectedCallback() {
       super.connectedCallback();
@@ -326,21 +326,7 @@ export namespace ProfileView {
               .messageArr=${this.lastNameInputMessageArray}
               @input-change=${this.lastNameInputChange}
             ></md-input>
-            ${this.namesLoading
-              ? html`
-                  <div class="name-spinner-wrapper">
-                    <md-spinner size=${16}></md-spinner>
-                  </div>
-                `
-              : html`
-                  <md-button
-                    class=${`cell names-control-button cancel-names-button`}
-                    iconActive
-                    circle
-                    @click=${this.submitNames}
-                    ><md-icon name="check-circle_16"></md-icon
-                  ></md-button>
-                `}
+            ${this.renderNameButtonIcons()}
           </h5>
         `;
       } else {
@@ -351,6 +337,28 @@ export namespace ProfileView {
               ><md-icon name="edit_12"></md-icon
             ></md-button>
           </h5>
+        `;
+      }
+    }
+
+    renderNameButtonIcons() {
+      if (this.namesLoading) {
+        return html`
+          <div class="name-spinner-wrapper">
+            <md-spinner size=${16}></md-spinner>
+          </div>
+        `;
+      } else {
+        return html`
+          <span class="button-row">
+            <md-button
+              class=${`cell names-control-button cancel-names-button`}
+              iconActive
+              circle
+              @click=${this.submitNames}
+              ><md-icon name="check-circle_16"></md-icon
+            ></md-button>
+          </span>
         `;
       }
     }
@@ -373,13 +381,13 @@ export namespace ProfileView {
       if (this.firstNameInvalid || !this.firstNameInputValue) {
         this.firstNameErrorMessage = this.firstNameInputValue
           ? this.nonAlphaNameErrorMessage
-          : this.undefinedNameErrorMessage("first");
+          : this.undefinedNameErrorMessage("First");
       }
 
       if (this.lastNameInvalid || !this.lastNameInputValue) {
         this.lastNameErrorMessage = this.lastNameInputValue
           ? this.nonAlphaNameErrorMessage
-          : this.undefinedNameErrorMessage("last");
+          : this.undefinedNameErrorMessage("Last");
       }
 
       if (!this.firstNameErrorMessage && !this.lastNameErrorMessage) {
@@ -497,7 +505,7 @@ export namespace ProfileView {
         try {
           result = x.result.map(x.query.formatValue).join(", ");
         } catch (err) {
-          console.log("CJAAS Profile: Unable to format table value", err);
+          console.log("JDS Profile: Unable to format table value", err);
         }
       }
 

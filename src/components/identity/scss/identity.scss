@@ -23,6 +23,10 @@
     vertical-align: top;
     margin: 0.5rem 0;
   }
+
+  &.read-only {
+    grid-template-columns: auto 1fr;
+  }
 }
 
 .flex {

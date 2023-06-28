@@ -14,6 +14,29 @@ const mockOriginByType = (channelType: string) => {
   }
 };
 
+export const testingHistoricalEvents: Timeline.CustomerEvent[] = [
+  {
+    id: "id",
+    specversion: "1.0",
+    type: "task:new",
+    source: "wxcc",
+    time: "1681253705928",
+    identity: "rossgeller@gmail.com",
+    person: "rossgeller@gmail.com",
+    identitytype: "email",
+    previousidentity: null,
+    datacontenttype: "application/json",
+    data: {
+      queueId: "AXZvA7uJ1OI4n5klHgJA",
+      origin: "rossgeller@gmail.com",
+      destination: "1234567890",
+      channelType: "email",
+      taskId: "2d302b94-8806-4348-ad84-2fc72b112c37",
+      direction: "INBOUND",
+    },
+  },
+];
+
 const mockedConnectedTask = (time: string, channelType = "chat") => {
   return {
     data: {
@@ -703,23 +726,24 @@ const isoTwoHourStr = new Date(nowDate.setHours(nowDate.getHours() - 2)).toISOSt
 const isoThreeHourStr = new Date(nowDate.setHours(nowDate.getHours() - 3)).toISOString();
 
 const isoTwoDaysStr = new Date(nowDate.setHours(nowDate.getHours() - 48)).toISOString();
+console.log("isoTwoDaysStr", isoTwoDaysStr);
 
-export const historicalEvents: Timeline.CustomerEvent[] = [
-  // mockedStateChangeTask(isoNowStr, "wrapup"),
-  mockedEndedTask(isoTwoDaysStr, "telephony"),
-  mockedConnectedTask(isoTwoDaysStr, "telephony"),
-  mockedConnectTask(isoTwoDaysStr, "telephony"),
-  mockedStateChangeTask(isoTwoDaysStr, "connected"),
+// export const historicalEvents: Timeline.CustomerEvent[] = [
+//   // mockedStateChangeTask(isoNowStr, "wrapup"),
+//   mockedEndedTask(isoTwoDaysStr, "telephony"),
+//   mockedConnectedTask(isoTwoDaysStr, "telephony"),
+//   mockedConnectTask(isoTwoDaysStr, "telephony"),
+//   mockedStateChangeTask(isoTwoDaysStr, "connected"),
 
-  mockedStateChangeTask(isoTwoDaysStr, "wrapup", "123-456"),
-  mockedNewTask(isoTwoDaysStr, "email", "123-456"),
-  // mockedStateChangeTask(isoTwoDaysStr, "wrapup"),
-  mockedStateChangeTask(isoTwoDaysStr, "wrapup", "456-789"),
-  mockedNewTask(isoTwoDaysStr, "chat", "456-789"),
-];
+//   mockedStateChangeTask(isoTwoDaysStr, "wrapup", "123-456"),
+//   mockedNewTask(isoTwoDaysStr, "email", "123-456"),
+//   // mockedStateChangeTask(isoTwoDaysStr, "wrapup"),
+//   mockedStateChangeTask(isoTwoDaysStr, "wrapup", "456-789"),
+//   mockedNewTask(isoTwoDaysStr, "chat", "456-789"),
+// ];
 
-export const fiveNewEvents: Timeline.CustomerEvent[] = [
-  mockedStateChangeTask(isoNowStr, "wrapup", "999"),
-  mockedNewTask(isoNowStr, "email", "999"),
-  mockedStateChangeTask(isoNowStr, "connected", "999"),
-];
+// export const fiveNewEvents: Timeline.CustomerEvent[] = [
+//   mockedStateChangeTask(isoNowStr, "wrapup", "999"),
+//   mockedNewTask(isoNowStr, "email", "999"),
+//   mockedStateChangeTask(isoNowStr, "connected", "999"),
+// ];
