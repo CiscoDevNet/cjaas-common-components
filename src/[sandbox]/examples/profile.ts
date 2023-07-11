@@ -1,10 +1,51 @@
 import "@/components/profile/Profile";
-import { profileMock, contactDataMock, limitedProfileMock } from "../sandbox.mock";
+import { profileMock, contactDataMock, limitedProfileMock, profileRealDataMockTwo } from "../sandbox.mock";
 import { html } from "lit-element";
 
 export const profileTemplate = html`
-  <h4>Default display, Comprehensive data</h4>
-  <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} ?names-loading=${false}> </cjaas-profile>
+  <h4>UX Refresh Profile Section Default</h4>
+  <cjaas-profile
+    .profileData=${profileRealDataMockTwo}
+    ?names-loading=${false}
+    first-name="Michael"
+    last-name="Littlefoot"
+  >
+  </cjaas-profile>
+
+  <h4>UX Refresh Profile Section: Names loading</h4>
+  <cjaas-profile .profileData=${profileRealDataMockTwo} names-loading first-name="Michael" last-name="Littlefoot">
+  </cjaas-profile>
+
+  <h4>UX Refresh Profile Section: Profile Data Loading</h4>
+  <cjaas-profile
+    .profileData=${profileRealDataMockTwo}
+    getProfileDataInProgress
+    first-name="Michael"
+    last-name="Littlefoot"
+  >
+  </cjaas-profile>
+
+  <h4>UX Refresh Profile Section: Profile API failure</h4>
+  <cjaas-profile
+    .profileData=${profileRealDataMockTwo}
+    error-message="Failed to load data"
+    first-name="Michael"
+    last-name="Littlefoot"
+  >
+  </cjaas-profile>
+
+  <h4>UX Refresh Profile Section: Alias First & Last Name Get Failure</h4>
+  <cjaas-profile
+    .profileData=${profileRealDataMockTwo}
+    name-api-error-message="Failed to fetch name"
+    first-name="Michael"
+    last-name="Littlefoot"
+  >
+  </cjaas-profile>
+
+  <!-- <h4>v9.0.0 old Default display, Comprehensive data</h4> -->
+  <!-- <cjaas-profile .contactData=${contactDataMock} .profileData=${profileMock} ?names-loading=${false}> </cjaas-profile> -->
+
   <!-- <h4>Default display, Only Profile data w/ contactData inferred from profileData</h4>
   <cjaas-profile .profileData=${profileMock}> </cjaas-profile>
   <h4>Default display, with limited data</h4>

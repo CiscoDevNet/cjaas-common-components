@@ -747,3 +747,205 @@ console.log("isoTwoDaysStr", isoTwoDaysStr);
 //   mockedNewTask(isoNowStr, "email", "999"),
 //   mockedStateChangeTask(isoNowStr, "connected", "999"),
 // ];
+
+export const profileDataRealMockOne = [
+  {
+    query: {
+      metaData: "origin",
+      lookBackPeriod: 10,
+      displayName: "No of times contacted in the last 10 days",
+      widgetAttributes: {
+        type: "table",
+      },
+      limit: 10000,
+      metaDataType: "string",
+      lookBackDurationType: "days",
+      event: "task:new",
+      version: "0.1",
+      aggregationMode: "Count",
+      verbose: "true",
+    },
+    journeyEvents: [
+      {
+        organizationId: null,
+        workspaceId: null,
+        id: "id",
+        specVersion: "1.0",
+        type: "task:new",
+        source: "/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220",
+        time: "2023-06-26T17:00:50.879Z",
+        identity: "egiere@cisco.com",
+        identityType: "email",
+        previousIdentity: null,
+        dataContentType: "application/json",
+        data: {
+          origin: "egiere@cisco.com",
+          workflowManager: "IMI",
+          destination: "kolli_email_imi_EP",
+          createdTime: 1687798850771,
+          channelType: "email",
+          taskId: "e9e506b3-8631-4afe-b365-9193c96ad407",
+          direction: "INBOUND",
+        },
+      },
+      {
+        organizationId: null,
+        workspaceId: null,
+        id: "id",
+        specVersion: "1.0",
+        type: "task:new",
+        source: "/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220",
+        time: "2023-06-26T16:49:26.462Z",
+        identity: "egiere@cisco.com",
+        identityType: "email",
+        previousIdentity: null,
+        dataContentType: "application/json",
+        data: {
+          origin: "egiere@cisco.com",
+          workflowManager: "IMI",
+          destination: "kolli_email_imi_EP",
+          createdTime: 1687798166378,
+          channelType: "email",
+          taskId: "e2c17bf5-d3c3-4dce-8eda-c167bd41f014",
+          direction: "INBOUND",
+        },
+      },
+      {
+        organizationId: null,
+        workspaceId: null,
+        id: "id",
+        specVersion: "1.0",
+        type: "task:new",
+        source: "/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220",
+        time: "2023-06-26T16:29:04.397Z",
+        identity: "egiere@cisco.com",
+        identityType: "email",
+        previousIdentity: null,
+        dataContentType: "application/json",
+        data: {
+          origin: "egiere@cisco.com",
+          workflowManager: "IMI",
+          destination: "kolli_email_imi_EP",
+          createdTime: 1687796944297,
+          channelType: "email",
+          taskId: "d2599c8b-9ce9-4718-a9d0-5a8ae1d85eff",
+          direction: "INBOUND",
+        },
+      },
+    ],
+    result: ["3"],
+  },
+];
+
+export const profileRealDataMockTwo = [
+  {
+    result: "2",
+    queryTemplate: {
+      metaData: "origin",
+      lookBackPeriod: 10,
+      displayName: "No of times contacted in the last 10 days",
+      widgetAttributes: {
+        type: "table",
+      },
+      limit: 10000,
+      metaDataType: "string",
+      lookBackDurationType: "days",
+      event: "task:new",
+      version: "0.1",
+      aggregationMode: "Count",
+      verbose: "true",
+    },
+    journeyEvents: [
+      '{"organizationId":null,"workspaceId":null,"id":"id","specVersion":"1.0","type":"task:new","source":"/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220","time":"2023-07-06T16:50:22.883Z","identity":"egiere@cisco.com","identityType":"email","previousIdentity":null,"dataContentType":"application/json","data":{"origin":"egiere@cisco.com","workflowManager":"IMI","destination":"kolli_email_imi_EP","createdTime":1688662222796,"channelType":"email","taskId":"e95fc820-59d2-45eb-9714-7e4808032c53","direction":"INBOUND"}}',
+      '{"organizationId":null,"workspaceId":null,"id":"id","specVersion":"1.0","type":"task:new","source":"/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220","time":"2023-07-06T16:44:53.095Z","identity":"egiere@cisco.com","identityType":"email","previousIdentity":null,"dataContentType":"application/json","data":{"origin":"egiere@cisco.com","workflowManager":"IMI","destination":"JDS_Chat_EP","createdTime":1688661892988,"channelType":"chat","taskId":"721827f6-213e-4677-bcf3-f0cefed879e7","direction":"INBOUND"}}',
+    ],
+    error: "",
+  },
+  {
+    result: "2",
+    queryTemplate: {
+      metaData: "origin",
+      lookBackPeriod: 24,
+      displayName: "No of times contacted in the last 24 hours",
+      widgetAttributes: {
+        type: "table",
+      },
+      limit: 1000,
+      metaDataType: "string",
+      lookBackDurationType: "hours",
+      event: "task:new",
+      version: "0.1",
+      aggregationMode: "Count",
+      verbose: "true",
+    },
+    journeyEvents: [
+      '{"organizationId":null,"workspaceId":null,"id":"id","specVersion":"1.0","type":"task:new","source":"/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220","time":"2023-07-06T16:50:22.883Z","identity":"egiere@cisco.com","identityType":"email","previousIdentity":null,"dataContentType":"application/json","data":{"origin":"egiere@cisco.com","workflowManager":"IMI","destination":"kolli_email_imi_EP","createdTime":1688662222796,"channelType":"email","taskId":"e95fc820-59d2-45eb-9714-7e4808032c53","direction":"INBOUND"}}',
+      '{"organizationId":null,"workspaceId":null,"id":"id","specVersion":"1.0","type":"task:new","source":"/com/cisco/wxcc/99813d8c-d76b-4d95-a4d5-da41d1554220","time":"2023-07-06T16:44:53.095Z","identity":"egiere@cisco.com","identityType":"email","previousIdentity":null,"dataContentType":"application/json","data":{"origin":"egiere@cisco.com","workflowManager":"IMI","destination":"JDS_Chat_EP","createdTime":1688661892988,"channelType":"chat","taskId":"721827f6-213e-4677-bcf3-f0cefed879e7","direction":"INBOUND"}}',
+    ],
+    error: "",
+  },
+];
+
+// export const testingHistoricalEvents: Timeline.CustomerEvent[] = [
+//   {
+//     id: "id",
+//     specversion: "1.0",
+//     type: "task:new",
+//     source: "wxcc",
+//     time: "1681253705928",
+//     identity: "rossgeller@gmail.com",
+//     person: "rossgeller@gmail.com",
+//     identitytype: "email",
+//     previousidentity: null,
+//     datacontenttype: "application/json",
+//     data: {
+//       queueId: "AXZvA7uJ1OI4n5klHgJA",
+//       origin: "rossgeller@gmail.com",
+//       destination: "1234567890",
+//       channelType: "email",
+//       taskId: "2d302b94-8806-4348-ad84-2fc72b112c37",
+//       direction: "INBOUND",
+//     },
+//   },
+// ];
+
+// export interface CustomerEvent {
+//   data: Record<string, any>;
+//   renderData?: Record<string, any>;
+//   id: string;
+//   specversion: string;
+//   type: string;
+//   source: string;
+//   time: string;
+//   identity: string;
+//   identitytype: "email" | "phone" | "customerId";
+//   previousidentity: null;
+//   datacontenttype: string;
+
+//   person?: string;
+// }
+
+const mockV2ConnectedTask = (time: string, channelType = "chat") => {
+  return {
+    id: "id",
+    specversion: "1.0",
+    type: "task:new",
+    source: "wxcc",
+    time,
+    identity: "rossgeller@gmail.com",
+    person: "rossgeller@gmail.com",
+    identitytype: "email",
+    previousidentity: null,
+    datacontenttype: "application/json",
+    data: {
+      queueId: "AXZvA7uJ1OI4n5klHgJA",
+      origin: mockOriginByType(channelType),
+      destination: "1234567890",
+      channelType: "email",
+      taskId: "2d302b94-8806-4348-ad84-2fc72b112c37",
+      direction: "INBOUND",
+    },
+  } as Timeline.CustomerEvent;
+};
+
+export const testingHistoricalEventsV2: Timeline.CustomerEvent[] = [mockV2ConnectedTask(isoNowStr)];

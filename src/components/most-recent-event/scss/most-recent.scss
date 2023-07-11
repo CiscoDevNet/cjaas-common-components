@@ -1,0 +1,50 @@
+.most-recent-section {
+  background-color: var(--md-tertiary-bg-color, #EDEDED);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+
+  .header {
+    margin: 0;
+    font-weight: 400;
+    font-size: 12px;
+    margin-bottom: 0.5rem;
+    color: var(--md-secondary-text-color, #545454);
+  }
+
+  .event-details-container {
+    display: flex;
+    gap: 1.5rem;
+
+    .vertical-date {
+      font-weight: 500;
+      font-size: 1rem;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .right-details-block {
+
+      .row {
+        line-height: 21px;
+      }
+      .first-row {
+        font-size: 14px;
+        font-weight: 500;
+
+        .most-recent-icon::part(icon) {
+          line-height: 16px;
+        }
+
+        .title {
+          padding-left: 0.5rem;
+        }
+      }
+
+      .second-row {
+        color: var(--md-secondary-text-color, #545454);
+        margin-top: 0.5rem;
+      }
+    }
+  }
+}

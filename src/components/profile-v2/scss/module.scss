@@ -6,9 +6,9 @@
  *
  */
 
-@import "@/wc_scss/tools/functions/core";
 @import "@/wc_scss/colors/settings-base.scss";
 @import "@/wc_scss/colors/settings";
 @import "@/wc_scss/cjaas-styles/table-mixin";
+@import "@/wc_scss/cjaas-styles/css-grid-mixin";
 @import "@/wc_scss/cjaas-styles/variables";
-@import "./timer";
+@import "./profile-view";
