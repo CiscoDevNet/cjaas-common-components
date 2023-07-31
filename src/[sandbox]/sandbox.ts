@@ -11,10 +11,10 @@ import { conditionTemplate } from "./examples/condition";
 import { conditionBlockTemplate } from "./examples/condition-block";
 import { identityTemplate } from "./examples/identity";
 import { eventTogglesTemplate } from "./examples/eventToggles";
-import { mostRecentEventTemplate } from "./examples/most-recent-event";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
 import { errorNotificationTemplate } from "./examples/error-notification";
+import { timelineItemV2Template } from "./examples/timeline-item-v2";
 
 @customElement("momentum-ui-web-components-sandbox")
 export class Sandbox extends LitElement {
@@ -92,13 +92,13 @@ export class Sandbox extends LitElement {
             <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
+          <div class="container" aria-label="cjaas-timeline-item-v2">
+            <h2>cjaas-timeline-item-v2</h2>
+            ${timelineItemV2Template}
+          </div>
           <div class="container" aria-label="cjaas-timeline-v2">
             <h2>cjaas-timeline-v2</h2>
             ${timelineV2Template}
-          </div>
-          <div class="container" aria-label="most-recent-event">
-            <h2>cjaas-most-recent-event</h2>
-            ${mostRecentEventTemplate}
           </div>
           <div class="container" aria-label="cjaas-profile">
             <h2>cjaas-profile</h2>

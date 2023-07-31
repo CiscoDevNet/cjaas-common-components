@@ -6,33 +6,34 @@
  *
  */
 
-import { LitElement, html, property } from "lit-element";
-import { nothing } from "lit-html";
+import { LitElement, html, property, PropertyValues, internalProperty } from "lit-element";
 import { classMap } from "lit-html/directives/class-map";
 import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
-import { getIconData, getTimeStamp } from "./utils";
+import { lookupIcon } from "./utils";
 import { customElementWithCheck } from "@/mixins";
-import * as iconData from "@/assets/defaultIcons.json";
-import * as linkify from "linkifyjs";
+import * as iconData from "@/assets/defaultIconsV2.json";
 import { TimelineV2 } from "./TimelineV2";
+import { nothing } from "lit-html";
+
+const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
 export namespace TimelineItemV2 {
   export type ShowcaseList = string[];
   @customElementWithCheck("cjaas-timeline-item-v2")
   export class ELEMENT extends LitElement {
     /**
-     * @attr id
+     * @attr title
      */
-    @property({ type: String }) id = "";
+    @property({ type: String, attribute: "title" }) title = "";
     /**
-     * @attr eventTitle
+     * @attr description
      */
-    @property({ type: String, attribute: "event-title" }) eventTitle = "";
+    @property({ type: String }) description = "";
     /**
-     * @attr sub-title
+     * @attr icon-type
      */
-    @property({ type: String, attribute: "sub-title" }) subTitle = "";
+    @property({ type: String, attribute: "icon-type" }) iconType = "meetings_16";
     /**
      * @attr time
      */
@@ -42,175 +43,125 @@ export namespace TimelineItemV2 {
      */
     @property() data: any = null;
     /**
-     * @attr person
+     * @prop isMostRecent
      */
-    @property({ type: String }) person: string | null = null;
-    /**
-     * @attr expanded
-     */
-    @property({ type: Boolean, reflect: true }) expanded = false;
-    /**
-     * @attr groupItem
-     */
-    @property({ type: Boolean, attribute: "group-item" }) groupItem = false;
+    @property({ type: Boolean, attribute: "is-most-recent" }) isMostRecent = false;
+
+    @property({ type: Boolean, attribute: "is-ongoing" }) isOngoing = false;
+
+    @property({ type: Boolean, attribute: "empty-most-recent" }) emptyMostRecent = false;
+
     /**
      * Property to pass in data template to set color and icon settings and showcased data
      * @prop eventIconTemplate
      */
     @property({ attribute: false }) eventIconTemplate: TimelineV2.TimelineCustomizations = iconData;
 
-    /**
-     * @prop badgeKeyword
-     * set badge icon based on declared keyword from dataset
-     */
-    @property({ type: String, attribute: "badge-keyword" }) badgeKeyword = "channelType";
+    @internalProperty() formattedTime = "";
+    @internalProperty() formattedMonth = "";
+    @internalProperty() formattedDay = "";
 
-    @property({ type: Boolean, attribute: "is-cluster" }) isCluster = false;
+    updated(changedProperties: PropertyValues) {
+      super.updated(changedProperties);
 
-    @property({ type: Boolean, attribute: "is-date-cluster" }) isDateCluster = false;
+      if (changedProperties.has("time")) {
+        this.formattedTime = this.formatTime(this.time);
+      }
+    }
 
-    @property({ type: String, attribute: "group-icon-map-keyword" }) groupIconMapKeyword = "";
+    formatTime(time: string) {
+      const dateTimeObject = DateTime.fromISO(time);
+      this.formattedDay = dateTimeObject?.day.toString() || "";
+      this.formattedMonth = dateTimeObject?.monthShort;
+
+      return dateTimeObject.toLocaleString({ hour: "2-digit", minute: "2-digit" });
+    }
 
     static get styles() {
       return styles;
     }
 
-    /**
-     * @method copyValue
-     * @param {Event} e
-     * Copies text to clipboard
-     */
-    copyValue = (e: Event) => {
-      /* Get the text field */
-      const copyText = (e.target as HTMLElement).innerText as string;
-      /* Copy the text inside the text field */
-      navigator.clipboard.writeText(copyText);
-    };
-
-    /**
-     * @method createTableRecursive
-     * @param data
-     * @returns Template
-     * Builds the timeline item's data table
-     */
-    createTableRecursive(data: any): any {
-      if (!data) {
-        return nothing;
-      } else {
-        return html`
-          ${Object.keys(data).map((x: string) => {
-            if (typeof data[x] !== "object") {
-              if (data[x]) {
-                let renderValue = data[x] || "-";
-                if (typeof data[x] === "string" && linkify.test(data[x], "url")) {
-                  renderValue = html`
-                    <a href=${data[x]} target="_blank">${renderValue}</a>
-                  `;
-                }
-                /* eslint disable */
-                return html`
-                  <div title=${x} class="cell">${x}</div>
-                  <div title=${data[x]} class="cell" @click=${(e: Event) => this.copyValue(e)}>${renderValue}</div>
-                `;
-              }
-            } else {
-              return this.createTableRecursive(data[x]);
-            }
-          })}
-        `;
-      }
-    }
-
-    renderExpandedDetails = () => {
-      if (this.data === nothing) return nothing;
-      return html`
-        <div class="details grid">
-          ${this.createTableRecursive(this.data)}
-        </div>
-      `;
-    };
-
-    renderSubTitle() {
-      return html`
-        <div class="sub-title">
-          ${this.subTitle}
-        </div>
-      `;
-    }
-
-    renderTimestamp = () => {
-      const timeStamp = getTimeStamp(DateTime.fromISO(this.time) || DateTime.local(), this.isDateCluster);
-
-      const dateAndTimeArray = timeStamp?.split(",");
-
-      let renderTimeRow = nothing;
-      if (dateAndTimeArray && dateAndTimeArray?.length > 1) {
-        renderTimeRow = html`
-          <div class="time-row">
-            <span class="time-value">${dateAndTimeArray?.[1]}</span>
-          </div>
-        `;
-      }
-
-      return html`
-        <div class="date-time-container">
-          <p class="date">${dateAndTimeArray?.[0]}</p>
-          ${renderTimeRow}
-        </div>
-      `;
-    };
-
-    expandDetails = () => {
-      this.expanded = !this.expanded;
-    };
-
     private get groupClassMap() {
       return {
-        "group-item": this.groupItem,
-        "cluster-item": this.isCluster,
-        expanded: this.expanded,
+        "most-recent": this.isMostRecent,
+        "empty-most-recent": this.emptyMostRecent,
       };
     }
 
-    render() {
-      let iconData;
+    getIconName(iconType: string) {
       let iconKeyword;
-
+      let iconData;
       if (this.data) {
-        const isAgent = this.data?.currentState ? "agent" : "";
-
-        if (this.groupIconMapKeyword) {
-          iconKeyword = this.groupIconMapKeyword;
-        } else {
-          iconKeyword = this.data[this.badgeKeyword] || isAgent || "";
-        }
-        iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
-          name: "icon-activities_16",
-          color: "orange", // TODO CHANGE
-        };
+        iconKeyword = iconType || this.data?.channelType || "";
+        iconData = lookupIcon(iconKeyword, this.eventIconTemplate!);
       }
+      return iconData?.name;
+    }
 
+    renderEventIcon(iconName: string, size = 16) {
       return html`
-        <div class="timeline-item ${classMap(this.groupClassMap)}">
-          <div class="top-content" @click=${this.expandDetails}>
-            <md-badge class="badge" .circle=${true} size="40" .color=${iconData?.color}>
-              ${iconData?.name
-                ? html`
-                    <md-icon class="badge-icon" .name=${iconData?.name}></md-icon>
-                  `
-                : html`
-                    <img src=${iconData?.src} />
-                  `}
-            </md-badge>
-            <div class="info-section">
-              <div class="title">${this.eventTitle}</div>
-              ${this.subTitle ? this.renderSubTitle() : nothing}
-            </div>
-            <div class="time-stamp">${this.renderTimestamp()}</div>
-          </div>
-          ${this.expanded ? this.renderExpandedDetails() : nothing}
-        </div>
+        <md-icon class="event-icon" .name=${iconName} size=${size}></md-icon>
       `;
+    }
+
+    renderLeftSection(iconName: string) {
+      if (this.isMostRecent) {
+        return html`
+          <div class="left-section vertical-date">
+            <span class="month">${this.formattedMonth}</span><span class="day">${this.formattedDay}</span>
+          </div>
+        `;
+      } else {
+        return html`
+          <div class="left-section vertical-date">
+            ${this.renderEventIcon(iconName)}
+          </div>
+        `;
+      }
+    }
+
+    renderOngoingStatus() {
+      return html`
+        <md-badge class="event-status-badge" color="gold" small>Ongoing</md-badge>
+      `;
+    }
+
+    render() {
+      const iconName = this.getIconName(this.iconType);
+
+      if (this.emptyMostRecent) {
+        return html`
+          <div class="timeline-item ${classMap(this.groupClassMap)}">
+            <h3 class="most-recent-header">Most Recent</h3>
+            <div class="body">
+              <div class="image-wrapper">
+                <img src="${boxOpenImage}" class="failure-image" alt="failure-image" />
+              </div>
+              <span class="no-data-text">No Data</span>
+            </div>
+          </div>
+        `;
+      } else {
+        return html`
+          <div class="timeline-item ${classMap(this.groupClassMap)}">
+            <h3 class="most-recent-header">Most Recent</h3>
+            <div class="body">
+              ${this.renderLeftSection(iconName)}
+              <div class="right-section">
+                <div class="row first-row">
+                  ${this.isMostRecent ? this.renderEventIcon(iconName, 14) : nothing}
+                  <span class="title">${this.title}</span>
+                  ${this.isOngoing ? this.renderOngoingStatus() : nothing}
+                </div>
+                <div class="row second-row">
+                  <span class="time">${this.formattedTime}</span>
+                  <span class="description">${this.description}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
     }
   }
 }

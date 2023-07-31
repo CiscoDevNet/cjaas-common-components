@@ -17,7 +17,6 @@ import { customElementWithCheck } from "@/mixins";
 import "@/components/timeline-v2/TimelineItemV2";
 import "@/components/timeline-v2/TimelineItemGroupV2";
 import "@/components/event-toggles/EventToggles";
-import "@/components/most-recent-event/MostRecentEvent";
 import styles from "./scss/module.scss";
 import "@momentum-ui/web-components/dist/comp/md-badge";
 import "@momentum-ui/web-components/dist/comp/md-button";
@@ -25,7 +24,10 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import iconData from "@/assets/defaultIcons.json";
+import iconData from "@/assets/defaultIconsV2.json";
+import _ from "lodash";
+
+const desertEmptyImage = "https://cjaas.cisco.com/assets/img/desert-open-results-192.png";
 
 export namespace TimelineV2 {
   export interface ImiDataPayload {
@@ -38,11 +40,26 @@ export namespace TimelineV2 {
     Task = "task",
   }
 
-  export enum TimeFrame {
-    "All" = "All",
-    "24-Hours" = "24-Hours",
-    "7-Days" = "7-Days",
-    "30-Days" = "30-Days",
+  export enum ChannelTypeOptions {
+    "AllChannels" = "All Channels",
+    "Voice" = "Voice",
+    "Chat" = "Chat",
+    "Email" = "Email",
+    "Messenger" = "Messenger",
+  }
+
+  export enum TimeRangeOption {
+    "AllTime" = "All Time",
+    "Last10Days" = "Last 10 Days",
+    "Last30Days" = "Last 30 Days",
+    "Last6Months" = "Last 6 Months",
+    "Last12Months" = "Last 12 Months",
+  }
+
+  export enum ChannelType {
+    "telephony" = "telephony",
+    "chat" = "chat",
+    "email" = "email",
   }
 
   export interface WxccDataPayload {
@@ -62,19 +79,6 @@ export namespace TimelineV2 {
     workflowManager?: string | null; // task new
     type?: string;
   }
-
-  // export interface CustomerEvent {
-  //   data: Record<string, any>;
-  //   renderData?: Record<string, any>;
-  //   dataContentType: string;
-  //   id: string;
-  //   person: string;
-  //   previously: string;
-  //   source: string;
-  //   specVersion: string;
-  //   time: string;
-  //   type: string;
-  // }
 
   export interface CustomerEvent {
     data: Record<string, any>;
@@ -133,7 +137,8 @@ export namespace TimelineV2 {
      * @attr time-frame
      * Determine default time frame on start
      */
-    @property({ type: String, attribute: "time-frame" }) timeFrame: TimeFrame = TimeFrame.All;
+    @property({ type: String, attribute: "time-range-option" }) timeRangeOption: TimeRangeOption =
+      TimeRangeOption.AllTime;
     /**
      * @attr live-stream
      * Toggle adding latest live events being added directly to timeline (instead of queue)
@@ -179,7 +184,8 @@ export namespace TimelineV2 {
      * @prop activeTypes
      * Dataset tracking all visible event types (in event filter)
      */
-    @property({ type: Array, attribute: false }) activeTypes: Array<string> = [];
+    @property({ type: Array, attribute: false }) selectedChannelType: ChannelTypeOptions =
+      ChannelTypeOptions.AllChannels;
     /**
      * @prop activeDates
      * Dataset tracking all visible dates (in date filter)
@@ -191,10 +197,15 @@ export namespace TimelineV2 {
      */
     @property({ attribute: false }) eventIconTemplate: TimelineCustomizations = iconData;
     /**
-     * Property to pass in data template to set color and icon settings and showcased data
+     * Timeline section error message to be displayed when API fails
      * @prop eventIconTemplate
      */
     @property({ type: String, attribute: "error-message" }) errorMessage = "";
+    /**
+     * Timeline section error tracking ID to be displayed when API fails
+     * @prop errorTrackingID
+     */
+    @property({ type: String, attribute: "error-tracking-id" }) errorTrackingID = "";
     /**
      * @prop collapsed
      * Dataset tracking event clusters that are renderd in collapsed view
@@ -208,60 +219,108 @@ export namespace TimelineV2 {
      */
     @internalProperty() expandDetails = false;
 
+    @internalProperty() mostRecentISOTimestamp = new Date().toISOString();
+
+    @internalProperty() mostRecentEvent: any = undefined;
+
+    @internalProperty() formattedEvents: Array<CustomerEvent> | null = null;
+
+    daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+    channelTypeOptions = [
+      ChannelTypeOptions.AllChannels,
+      ChannelTypeOptions.Voice,
+      ChannelTypeOptions.Chat,
+      ChannelTypeOptions.Email,
+      ChannelTypeOptions.Messenger,
+    ];
+
+    timeRangeOptions = [
+      TimeRangeOption.AllTime,
+      TimeRangeOption.Last10Days,
+      TimeRangeOption.Last30Days,
+      TimeRangeOption.Last6Months,
+      TimeRangeOption.Last12Months,
+    ];
+
+    formattedFilterTypes = {
+      [ChannelType.telephony]: "Voice",
+      [ChannelType.chat]: "Chat",
+      [ChannelType.email]: "Email",
+    };
+
     filteredByTypeList: CustomerEvent[] | null = null;
 
     newestEventsFilteredByType: Array<CustomerEvent> = [];
 
     firstUpdated(changedProperties: PropertyValues) {
       super.firstUpdated(changedProperties);
-      this.dateRangeOldestDate = this.calculateOldestEntry();
+      this.dateRangeOldestDate = this.calculateOldestEntry(this.timeRangeOption);
     }
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
       if (changedProperties.has("historicEvents")) {
-        this.formatEvents(this.historicEvents);
-        this.createSets();
+        this.formattedEvents = this.formatEvents(this.historicEvents);
+        this.createSets(this.formattedEvents);
       }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.consolidateEvents();
       }
     }
 
+    combineTaskIdEvents(events: Array<CustomerEvent>) {
+      const taskIdEvents: any = {};
+      events.forEach((event: CustomerEvent) => {
+        const eventTaskId = event?.data?.taskId;
+        if (!taskIdEvents[eventTaskId]) {
+          taskIdEvents[eventTaskId] = event;
+        } else {
+          taskIdEvents[eventTaskId] = _.merge(event, taskIdEvents[eventTaskId]);
+        }
+      });
+
+      return Object.values(taskIdEvents) as Array<CustomerEvent>;
+
+      // const set = new Set();
+      // return events.filter((event: CustomerEvent) => !set.has(event?.data?.taskId) && set.add(event?.data?.taskId));
+    }
+
     /**
      * @method formatEvents
      */
-    formatEvents(allEvents: Array<CustomerEvent> | null): void {
-      allEvents?.map((event: CustomerEvent) => {
+    formatEvents(allEvents: Array<CustomerEvent> | null): Array<CustomerEvent> | null {
+      this.mostRecentEvent = undefined;
+      // get the most recent event that isn't ongoing (last task:ended event)
+
+      const events = allEvents ? this.combineTaskIdEvents(allEvents) : null;
+      console.log("[JDS Widget} sorted events (by taskId)", events);
+
+      events?.map((event: CustomerEvent) => {
         const [eventType, eventSubType] = event?.type.split(":");
         const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
         const agentState = event?.data?.currentState;
         const formattedAgentState = agentState
           ? agentState?.charAt(0)?.toUpperCase() + agentState?.slice(1)
           : undefined;
-        const { channelType, currentState } = event?.data;
+        const { channelType } = event?.data;
 
-        switch (eventType) {
-          case EventType.Agent:
-            event.renderData = {
-              title: `Agent ${formattedAgentState || "Event"}`,
-              filterType: currentState ? `agent ${currentState}` : "",
-            };
-            break;
-          case EventType.Task:
-            event.renderData = {
-              subTitle: `${eventSubType || ""} ${channelTypeText || ""}`,
-              filterType: channelType,
-            };
-            break;
-          default:
-            event.renderData = {
-              subTitle: `${channelTypeText || ""}`,
-              filterType: channelType || "misc",
-            };
-            break;
+        const formatDirectionText = event?.data?.direction?.toLowerCase();
+
+        event.renderData = {
+          title: `${formatDirectionText} ${channelTypeText}`,
+          description: event?.data?.queueName || `Queue ID: ${event?.data?.queueId}`,
+          filterType: channelType === "telephony" ? "voice" : channelType,
+          iconType: channelType === "telephony" ? `${formatDirectionText}-call` : channelType,
+        };
+
+        if (!this.mostRecentEvent && event?.type === "task:ended") {
+          this.mostRecentEvent = event;
+          console.log("[JDS Widget] Most Recent Event", this.mostRecentEvent);
         }
       });
+
+      return events;
     }
 
     /**
@@ -270,11 +329,11 @@ export namespace TimelineV2 {
      * Sets `filterOptions` property to a unique set of filter options for filter feature.
      * Sets `eventTypes` property to a unique set of event types from current historicEvents.
      */
-    createSets() {
+    createSets(events: Array<CustomerEvent> | null) {
       const eventTypeArray: Set<string> = new Set(); // ex. task:connected
       const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
 
-      (this.historicEvents || []).forEach(event => {
+      (events || []).forEach(event => {
         eventTypeArray.add(event?.type);
         filterOptionsArray.add(event?.renderData?.filterType);
       });
@@ -301,26 +360,21 @@ export namespace TimelineV2 {
     }
 
     /**
-     * @method toggleActive
-     * @param {Number} index
-     */
-    toggleActive(index: number) {
-      this.timeFrame = Object.values(TimeFrame)[index];
-      this.dateRangeOldestDate = this.calculateOldestEntry();
-    }
-
-    /**
      * @method calculateOldestEntry
      * @returns {DateTime}
      */
-    calculateOldestEntry() {
-      switch (this.timeFrame) {
-        case TimeFrame["24-Hours"]:
-          return DateTime.now().minus({ day: 1 });
-        case TimeFrame["7-Days"]:
-          return DateTime.now().minus({ week: 1 });
-        case TimeFrame["30-Days"]:
-          return DateTime.now().minus({ month: 1 });
+    calculateOldestEntry(timeRangeOption: TimeRangeOption) {
+      switch (timeRangeOption) {
+        case TimeRangeOption["AllTime"]:
+          return DateTime.now().minus({ year: 10 });
+        case TimeRangeOption["Last10Days"]:
+          return DateTime.now().minus({ day: 10 });
+        case TimeRangeOption["Last30Days"]:
+          return DateTime.now().minus({ day: 30 });
+        case TimeRangeOption["Last6Months"]:
+          return DateTime.now().minus({ month: 6 });
+        case TimeRangeOption["Last12Months"]:
+          return DateTime.now().minus({ month: 12 });
         default:
           return DateTime.now().minus({ year: 10 });
       }
@@ -379,58 +433,48 @@ export namespace TimelineV2 {
       `;
     }
 
-    renderTimeBadge(readableDate: any, clusterId: string) {
+    renderTimestamp(dateString: any, clusterId: string) {
+      const dateFormat = "yyyy-MM-dd";
+      const todayDate = DateTime.now().toFormat(dateFormat);
+      const yesterdayDate = DateTime.fromFormat(todayDate, dateFormat)
+        .minus({ days: 1 })
+        .toFormat(dateFormat);
+
+      const readableDate = DateTime.fromISO(dateString).toFormat("D");
+
+      let dayNumber;
+      let dayName;
+      switch (dateString) {
+        case todayDate:
+          dayName = "Today";
+          break;
+        case yesterdayDate:
+          dayName = "Yesterday";
+          break;
+        default:
+          dayNumber = new Date(dateString).getDay();
+          dayName = this.daysOfTheWeek[dayNumber];
+          break;
+      }
+
       return html`
-        <md-tooltip message="Toggle to expand/collapse events on this date">
-          <md-badge .outlined=${true} class="date" @click=${() => this.collapseDate(clusterId)}>
-            <span class="badge-text">${readableDate}</span>
-          </md-badge>
-        </md-tooltip>
+        <p class="timestamp">
+          <span class="day">${dayName}</span>
+          <span class="date">${readableDate}</span>
+        </p>
       `;
     }
 
-    renderTimelineItems(groupedItem: { date: string; events: CustomerEvent[] }) {
+    renderEventsByDate(groupedItem: { date: string; events: CustomerEvent[] }, lastEventsByDate = false) {
       const { date, events } = groupedItem;
-      const eventsKeyword = events.length === 1 ? "event" : "events";
       const idString = "date " + groupedItem.date;
       const clusterId = this.getClusterId(idString, 1);
-      const readableDate = DateTime.fromISO(date).toFormat("D");
-      const printableDate = DateTime.fromISO(date).toFormat("DDD");
 
       return html`
-        <div class="timeline date-set has-line" id=${clusterId}>
-          ${this.renderTimeBadge(readableDate, clusterId)}
-          ${this.collapsed.has(clusterId)
-            ? html`
-                <cjaas-timeline-item-v2
-                  event-title=${`${events.length} ${eventsKeyword} from ${printableDate}`}
-                  .data=${{ Date: readableDate }}
-                  .time=${date}
-                  ?is-cluster=${true}
-                  ?is-date-cluster=${true}
-                  group-icon-map-keyword="multi events single day"
-                  .eventIconTemplate=${this.eventIconTemplate}
-                  .badgeKeyword=${this.badgeKeyword}
-                ></cjaas-timeline-item-v2>
-              `
-            : this.populateEvents(groupedItem.events)}
+        <div class=${`timeline date-set ${lastEventsByDate ? "last-data-set" : ""}`} id=${clusterId}>
+          ${this.renderTimestamp(date, clusterId)} ${this.populateEventsByDate(groupedItem.events, lastEventsByDate)}
         </div>
       `;
-    }
-
-    createClusterInfo(clusterArray: Array<CustomerEvent>) {
-      const firstRealEvent: CustomerEvent =
-        clusterArray.find((event: CustomerEvent) => event?.data?.channelType !== undefined) || clusterArray[0];
-
-      const { channelType, origin, taskId, currentState } = firstRealEvent?.data;
-      const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
-      const agentType = currentState ? "agent" : "";
-
-      return {
-        id: taskId || uuidv4(),
-        channelType: formattedChannelType || agentType,
-        origin,
-      };
     }
 
     /**
@@ -439,151 +483,33 @@ export namespace TimelineV2 {
      * @param {CustomerEvent[]} events
      * @returns map
      */
-    populateEvents(events: CustomerEvent[]) {
+    populateEventsByDate(events: CustomerEvent[], lastEventsByDate = false) {
       let index = 0; // Set index reference independent of Map function index ref
       return events.map(() => {
         if (index > events.length - 1) {
           return;
         }
 
-        const cluster = [events[index]]; // start new cluster
-        const clusterTaskId = events[index]?.data?.taskId || uuidv4();
         const keyId = index; // get num ref to make unique ID and memoize ref for singleton rendering
 
-        while (
-          index < events.length - 1 &&
-          events[index]?.data?.taskId &&
-          events[index + 1]?.data?.taskId &&
-          events[index]?.data?.taskId === events[index + 1]?.data?.taskId
-        ) {
-          cluster.push(events[index + 1]); // push the next event into ongoing cluster
-          index++;
-        }
-
         index++;
-        if (cluster.length > 1) {
-          if (this.collapseView) {
-            this.collapsed.add(this.getClusterId(clusterTaskId, keyId));
-          }
-          const clusterInfo = this.createClusterInfo(cluster);
-          return this.renderCluster(cluster, clusterInfo, keyId);
-        } else {
-          return this.renderEventBlock(events[keyId]);
-        }
+        return this.renderTimelineItem(events[keyId], lastEventsByDate && keyId >= events.length - 1);
       });
     }
 
-    renderCluster(cluster: CustomerEvent[], clusterInfo: ClusterInfoObject, keyId: number) {
-      const clusterId = this.getClusterId(clusterInfo?.id, keyId);
-      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType);
-
-      return this.collapsed.has(clusterId)
-        ? html`
-            <cjaas-timeline-item-group-v2
-              id=${clusterId}
-              cluster-sub-title=${`${cluster.length} events`}
-              event-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
-              group-icon=${clusterInfo.channelType}
-              time=${cluster[0].time}
-              class="has-line"
-              .events=${cluster}
-              ?grouped=${this.collapseView}
-              .activeDates=${this.activeDates}
-              .activeTypes=${this.activeTypes}
-              .eventIconTemplate=${this.eventIconTemplate}
-            ></cjaas-timeline-item-group-v2>
-          `
-        : html`
-            <span @click=${() => this.collapseDate(clusterId)}>collapse group</span>
-            ${cluster.map(event => {
-              return html`
-                ${this.renderEventBlock(event)}
-              `;
-            })}
-          `;
-    }
-
-    renderDateRangeButtons(aTimeFrame: TimeFrame) {
-      const timeFrameArray = Object.values(TimeFrame);
-      const index = timeFrameArray?.indexOf(aTimeFrame);
-
-      return html`
-        <md-button-group .active=${index}>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-all"
-            type="button"
-            @click=${() => this.toggleActive(0)}
-            value="All"
-          >
-            All
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-24-hours"
-            type="button"
-            @click=${() => this.toggleActive(1)}
-            value="Last 24 Hours"
-          >
-            Last 24 Hours
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-7-days"
-            type="button"
-            @click=${() => this.toggleActive(2)}
-            value="Last 7 Days"
-          >
-            Last 7 Days
-          </button>
-          <button
-            class="button-group-button"
-            slot="button"
-            id="filter-last-30-days"
-            type="button"
-            @click=${() => this.toggleActive(3)}
-            value="Last 30 Days"
-          >
-            Last 30 Days
-          </button>
-        </md-button-group>
-      `;
-    }
-
-    renderFilterButton() {
-      if (this.filterTypes && this.activeTypes) {
-        return html`
-          <cjaas-event-toggles
-            .eventTypes=${this.filterTypes}
-            .activeTypes=${this.activeTypes}
-            @active-type-update=${(e: CustomEvent) => {
-              this.activeTypes = e.detail.activeTypes;
-              this.requestUpdate();
-            }}
-          ></cjaas-event-toggles>
-        `;
-      } else {
-        nothing;
-      }
-    }
-
-    renderEventBlock(event: CustomerEvent) {
+    renderTimelineItem(event: CustomerEvent, lastItem = false) {
       return html`
         <cjaas-timeline-item-v2
           .event=${event}
-          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
-          sub-title=${event?.renderData?.subTitle || ""}
+          title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          description=${event?.renderData?.description || ""}
+          icon-type=${event?.renderData?.iconType}
           time=${event?.time}
           .data=${event?.data}
           id=${event?.id}
-          .person=${event?.person || null}
           .eventIconTemplate=${this.eventIconTemplate}
-          .badgeKeyword=${this.badgeKeyword}
-          ?expanded="${this.expandDetails}"
-          class="has-line"
+          class=${lastItem ? "" : "has-line"}
+          ?is-ongoing=${event?.type !== "task:ended"}
         ></cjaas-timeline-item-v2>
       `;
     }
@@ -607,35 +533,25 @@ export namespace TimelineV2 {
     }
 
     renderEmptyState() {
-      // const isFilteredListEmpty = !this.filteredByTypeList || this.filteredByTypeList.length === 0;
-
-      if (!this.historicEvents || this.historicEvents.length === 0) {
-        return html`
-          <div class="empty-state">
-            <div>
-              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
+      return html`
+        <div class="center-content-wrapper">
+          <div class="center-content empty-state">
+            <div class="image-wrapper">
+              <img src="${desertEmptyImage}" class="failure-image" alt="failure-image" />
             </div>
-            <span class="timeline-statement"
-              >${`No historic events to show.${this.liveStream ? " Listening for new events..." : ""}`}</span
-            >
+            <p class="no-matches-found-text">No Matches Found</p>
           </div>
-        `;
-      } else {
-        // if (isFilteredListEmpty) {
-        return html`
-          <div class="empty-state">
-            <div>
-              <md-icon class="empty-state-icon" name="icon-people-insight_24"></md-icon>
-            </div>
-            <span class="timeline-statement">No historic events exist within the current date range.</span>
-          </div>
-        `;
-      }
+        </div>
+      `;
     }
 
     filterByType(list: CustomerEvent[] | undefined | null) {
-      if (this.activeTypes.length) {
-        return list?.filter(item => this.activeTypes.includes(item?.renderData?.filterType)) || null;
+      if (this.selectedChannelType !== ChannelTypeOptions.AllChannels && this.selectedChannelType) {
+        return (
+          list?.filter(item =>
+            this.selectedChannelType.toLowerCase().includes(item?.renderData?.filterType.toLowerCase())
+          ) || null
+        );
       } else {
         return list;
       }
@@ -646,23 +562,35 @@ export namespace TimelineV2 {
     }
 
     filterByDateRange() {
-      return this.historicEvents?.filter(item => {
+      return this.formattedEvents?.filter(item => {
         return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
       });
     }
 
-    renderList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
+    handleTimelineTryAgain() {
+      this.dispatchEvent(new CustomEvent("timeline-error-try-again", {}));
+    }
+
+    renderTimelineItemList(dateGroupArray: Array<{ date: string; events: CustomerEvent[] }>) {
       if (this.errorMessage) {
         return html`
-          <div class="empty-state">
-            <span class="timeline-statement error">${this.errorMessage}</span>
+          <div class="center-content-wrapper">
+            <div class="center-content">
+              <cjaas-error-notification
+                title="Failed to load data"
+                tracking-id=${this.errorTrackingID}
+                @error-try-again=${this.handleTimelineTryAgain}
+              ></cjaas-error-notification>
+            </div>
           </div>
         `;
       }
       if (this.getEventsInProgress) {
         return html`
-          <div class="empty-state">
-            <md-spinner size="32"></md-spinner>
+          <div class="center-content-wrapper">
+            <div class="center-content">
+              <md-spinner size="32"></md-spinner>
+            </div>
           </div>
         `;
       } else if (dateGroupArray.length > 0) {
@@ -670,7 +598,7 @@ export namespace TimelineV2 {
           ${repeat(
             dateGroupArray,
             singleDaysEvents => singleDaysEvents.date,
-            singleDaysEvents => this.renderTimelineItems(singleDaysEvents)
+            (singleDaysEvents, index) => this.renderEventsByDate(singleDaysEvents, index === dateGroupArray.length - 1)
           )}
         `;
       } else {
@@ -678,11 +606,23 @@ export namespace TimelineV2 {
       }
     }
 
+    handleChannelTypeSelection(event: CustomEvent) {
+      const { option } = event?.detail;
+      this.selectedChannelType = option;
+    }
+
+    handleTimeRangeSelection(event: CustomEvent) {
+      const { option } = event?.detail;
+      this.timeRangeOption = option;
+      this.dateRangeOldestDate = this.calculateOldestEntry(this.timeRangeOption);
+    }
+
     render() {
       // Groups items by date
       const filterByDateRangeResult = this.filterByDateRange();
       this.filteredByTypeList = this.filterByType(filterByDateRangeResult) || null;
       const limitedList = (this.filteredByTypeList || []).slice(0, this.limit);
+
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
 
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
@@ -693,7 +633,21 @@ export namespace TimelineV2 {
       return html`
         <div class="timeline-section" part="timeline-wrapper">
           <div class="top-header-row">
-            <h3 class="contact-activities-header">Contacts & Activities</h3>
+            <h3 class="contact-activities-header">
+              Contacts & Activities<md-tooltip class="contact-activity-tooltip"
+                ><md-icon class="info-icon" name="info_16"></md-icon>
+                <div slot="tooltip-content">
+                  <p class="contact-tooltip-message">
+                    <b>Contacts:</b> View a comprehensive historical and realtime data of all Customer interactions with
+                    Agents, including calls, chats, emails and messengers.
+                  </p>
+                  <p class="activities-tooltip-message">
+                    <b>Activities:</b> Explore customer activities performed on third-party platforms or within our
+                    website, such as logging into the portal or account reactivation
+                  </p>
+                </div></md-tooltip
+              >
+            </h3>
             <div class="toggle-container">
               <span class="toggle-label">Livestream</span>
               <md-toggle-switch
@@ -706,28 +660,38 @@ export namespace TimelineV2 {
             </div>
           </div>
           <div class="most-recent-wrapper">
-            <cjaas-most-recent-event></cjaas-most-recent-event>
+            <cjaas-timeline-item-v2
+              title=${this.mostRecentEvent?.renderData?.title}
+              description=${this.mostRecentEvent?.renderData?.description}
+              time=${this.mostRecentEvent?.time}
+              icon-type=${this.mostRecentEvent?.renderData?.iconType}
+              .data=${this.mostRecentEvent?.data}
+              ?empty-most-recent=${!this.mostRecentEvent}
+              is-most-recent
+            ></cjaas-timeline-item-v2>
           </div>
           <div class="filter-row">
             <div class="filter-block">
-              <p class="filter-label">Event Types</p>
+              <p class="filter-label">Channel Types</p>
               <md-dropdown
-                class="filter-dropdown contacts-activities-dropdown"
-                defaultOption="Contacts and Activities"
+                class="filter-dropdown channels-dropdown"
+                .defaultOption=${this.channelTypeOptions[0]}
+                .options=${this.channelTypeOptions}
+                @dropdown-selected=${(event: CustomEvent) => this.handleChannelTypeSelection(event)}
               ></md-dropdown>
             </div>
             <div class="filter-block">
-              <p class="filter-label">Channels</p>
-              <md-dropdown class="filter-dropdown channels-dropdown" defaultOption="All Channels"></md-dropdown>
-            </div>
-            <div class="filter-block">
               <p class="filter-label">Time Range</p>
-              <md-dropdown class="filter-dropdown time-range-dropdown" defaultOption="All Time"></md-dropdown>
+              <md-dropdown
+                class="filter-dropdown time-range-dropdown"
+                .defaultOption=${this.timeRangeOption}
+                .options=${this.timeRangeOptions}
+                @dropdown-selected=${(event: CustomEvent) => this.handleTimeRangeSelection(event)}
+              ></md-dropdown>
             </div>
           </div>
-          <p class="timeline-timestamp">Today 07/06/2023</p>
           <section class="stream" part="stream">
-            ${this.renderList(dateGroupArray)}
+            ${this.renderTimelineItemList(dateGroupArray)}
             <div class="footer">
               ${this.renderLoadMoreAction()}
             </div>

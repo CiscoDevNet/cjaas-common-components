@@ -8,9 +8,10 @@
 
 @import "@/wc_scss/colors/settings-base.scss";
 @import "@/wc_scss/colors/settings";
+@import "@/wc_scss/typography/settings.scss";
 
 @import "./settings";
 @import "./mixins";
-@import "./timelineItem";
-@import "./timeline";
+@import "./timelineItemV2";
+@import "./timelineV2";
 @import "./timeline-item-group";

@@ -21,5 +21,4 @@ export { Condition } from "./components/condition/Condition";
 export { ConditionBlock } from "./components/condition-block/ConditionBlock";
 export { Identity } from "./components/identity/Identity";
 export { ErrorNotification } from "./components/error-notification/ErrorNotification";
-export { MostRecentEvent } from "./components/most-recent-event/MostRecentEvent";
 // eslint-disable-next-line prettier/prettier

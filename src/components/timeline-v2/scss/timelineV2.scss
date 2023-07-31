@@ -11,10 +11,6 @@
   display: block;
 }
 
-cjaas-timeline-item {
-  padding: 0.4rem; // to allow box shadow to appear for cluster item
-}
-
 .connection {
   margin-left: auto;
   width: 10px;
@@ -52,42 +48,40 @@ cjaas-timeline-item {
   margin-left: auto;
   margin-bottom: 10px;
 }
-.stream {
-  height: calc(100% - 12px);
-  overflow-y: scroll;
-  position: relative;
-  z-index: 1;
-}
+
 .block {
   display: block;
 }
-.has-line:not(:last-child)::after {
-  height: 16px;
-  content: " ";
-  width: 1px;
-  display: block;
-  left: 28px;
-  position: relative;
-  top: 100%;
-  background-color: var(--md-quaternary-bg-color, #DEDEDE);
-}
+
 .badge-text {
   color: var(--md-secondary-text-color, #545454);
   text-transform: capitalize;
 }
-.empty-state {
+
+.center-content-wrapper {
+  height: calc(100% - 1rem);
+  display: flex;
+  justify-content: center;
+
+  .empty-state {
+      flex-direction: row;
+      gap: 1rem;
+
+      .no-matches-found-text {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 18px;
+        color: var(--md-primary-text-color, #121212);
+      }
+  }
+}
+
+.center-content {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   font-size: 19px;
-  margin-top: 2rem;
-
-  .empty-state-icon::part(icon) {
-    height: 5rem;
-    font-size: 5rem;
-    color: var(--md-blue-50);
-  }
 
   .timeline-statement {
     &.error {
@@ -100,10 +94,11 @@ cjaas-timeline-item {
     font-size: 14px;
   }
 }
+
+
 .wrapper {
   height: calc(100% - 1rem);
   font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  // padding: 0.3rem 0.3rem 0 0;
   border: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
   border-radius: 10px;
   padding: 0.875rem 1rem;
@@ -121,10 +116,6 @@ cjaas-timeline-item {
     margin: 0;
     height: 20px;
   }
-}
-
-.events-list {
-  height: 85%;
 }
 
 md-badge.date::part(badge) {
@@ -256,16 +247,23 @@ md-toggle-switch {
   padding-left: 2px;
 }
 
-
-
-//// NEW STYLES
-
 .timeline-section {
-  height: calc(100% - 1rem);
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 2rem);
   font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  border: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
   border-radius: 10px;
   padding: 0.875rem 1rem;
+
+  .stream {
+    flex: 1;
+    overflow-y: scroll;
+    position: relative;
+    z-index: 1;
+    .has-line {
+      border-bottom: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
+    }
+  }
 
   .top-header-row {
     display: flex;
@@ -277,7 +275,15 @@ md-toggle-switch {
       font-weight: 500;
       line-height: 24px;
       margin: 0;
-      display: inline-block;
+
+      display: flex;
+      gap: 0.5rem;
+
+      .info-icon {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
     }
   }
 
@@ -286,9 +292,24 @@ md-toggle-switch {
   }
 
   .filter-row {
-    // margin-bottom: 0.75rem;
     display: flex;
     gap: 0.5rem;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: 600px) {
+      gap: 1rem;
+
+      .filter-block {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        .filter-label {
+          min-width: 100px;
+        }
+      }
+    }
 
     .filter-block {
       .filter-label {
@@ -297,11 +318,18 @@ md-toggle-switch {
         color: var(--md-secondary-text-color, #545454);
         margin: 0 0 4px;
       }
+      .filter-dropdown::part(dropdown-options) {
+        background-color: var(--md-primary-two-bg-color, #ffffff);
+        border: 1px solid var(--md-secondary-three-bg-color, #f7f7f7);
+        z-index: 2;
+      }
+
       .filter-dropdown::part(dropdown) {
         width: 240px
       }
       .filter-dropdown::part(dropdown-header) {
         border-radius: 25px;
+        background-color: var(--md-primary-one-bg-color, #ffffff);
       }
     }
   }
@@ -324,4 +352,20 @@ md-toggle-switch {
     height: 1.5rem;;
 
   }
+}
+
+.timestamp {
+  margin: .75rem 0 0.25rem;
+  color: var(--md-primary-text-color, #121212);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+
+  .day {
+    margin-right: 0.25rem;
+  }
+}
+
+.contact-tooltip-message {
+  margin-bottom: 1rem;
 }

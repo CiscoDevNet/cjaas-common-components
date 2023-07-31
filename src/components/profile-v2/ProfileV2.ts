@@ -6,19 +6,6 @@
  *
  */
 
-// Widget Consumption
-// <cjaas-profile
-//   .customer=${this.customer || ""}
-//   .profileData=${this.profileData}
-//   ?getProfileDataInProgress=${this.getProfileDataInProgress}
-//   error-message=${this.profileErrorMessage}
-//   first-name=${this.firstName}
-//   last-name=${this.lastName}
-//   @edit-names=${this.handleNamesUpdate}
-//   ?names-loading=${this.aliasNamesUpdateInProgress}
-//   name-api-error-message=${this.nameApiErrorMessage}
-// ></cjaas-profile>
-
 import { customElementWithCheck } from "@/mixins";
 import { LitElement, html, property, PropertyValues, internalProperty, query } from "lit-element";
 import styles from "./scss/module.scss";
@@ -28,7 +15,7 @@ import "@momentum-ui/web-components/dist/comp/md-icon";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-tooltip";
 import "@momentum-ui/web-components/dist/comp/md-button";
-import { Input } from "@momentum-ui/web-components";
+import { Input, Tooltip } from "@momentum-ui/web-components";
 import "@/components/error-notification/ErrorNotification";
 import { nothing } from "lit-html";
 import { repeat } from "lit-html/directives/repeat";
@@ -64,15 +51,10 @@ export namespace ProfileViewV2 {
      */
     @property({ type: String }) customer = "";
     /**
-     * @prop contactData
-     * Data object specific to contact details
+     * @prop profileDataPoints
+     * The profile Data Points provided from the template fetch, populated in the table view
      */
-    @property() contactData: ContactData | undefined = undefined;
-    /**
-     * @prop profileData
-     * The profile Data provided from the template fetch, populated in the table view
-     */
-    @property() profileData: any = undefined;
+    @property({ attribute: false }) profileDataPoints: Array<ProfileDataPoint> = [];
     /**
      * @prop getProfileDataInProgress
      * Whether or not to render loading spinner or not
@@ -84,13 +66,16 @@ export namespace ProfileViewV2 {
      */
     @property({ type: String, attribute: "error-message" }) errorMessage = "";
 
+    @property({ type: String, attribute: "profile-error-tracking-id" }) profileErrorTrackingID = "";
+
     @property({ type: String, attribute: "name-api-error-message" }) nameApiErrorMessage = "";
+
+    @property({ type: String, attribute: "name-error-tracking-id" }) nameErrorTrackingID = "";
 
     @property({ type: String, attribute: "first-name" }) firstName = "";
     @property({ type: String, attribute: "last-name" }) lastName = "";
 
-    @internalProperty() profileDataExists = false;
-    @internalProperty() activePropertyEdit = "";
+    @internalProperty() profileDataPointCount = 0;
     @internalProperty() editingNames = false;
 
     @internalProperty() firstNameInputValue = "";
@@ -105,41 +90,25 @@ export namespace ProfileViewV2 {
     @internalProperty() firstNameInputMessageArray: Array<Input.Message> = [];
     @internalProperty() lastNameInputMessageArray: Array<Input.Message> = [];
 
-    @internalProperty() profileDataPoints: Array<ProfileDataPoint> = [];
-
     @property({ type: Boolean, attribute: "names-loading" }) namesLoading = false;
 
     @query("#edit-property-input") editInputField!: HTMLInputElement;
-
     @query("#first-name-input") firstNameInput!: HTMLInputElement;
     @query("#last-name-input") lastNameInput!: HTMLInputElement;
+    @query("md-tooltip") editingTooltip!: Tooltip.ELEMENT;
 
     nonAlphaNameErrorMessage = "Alpha characters only";
     undefinedNameErrorMessage = (nameType: "First" | "Last") => `${nameType} name required`;
 
-    // connectedCallback() {
-    //   super.connectedCallback();
-    //   // this.extractDataPoints();
-    // }
-
-    // firstUpdated(changedProperties: PropertyValues) {
-    //   super.firstUpdated(changedProperties);
-
-    //   // if (!this.firstName && !this.lastName) {
-    //   //   this.editingNames = true;
-    //   // }
-    // }
-
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
 
-      if (changedProperties.has("profileData")) {
-        this.profileDataPoints = this.collectProfileDataPoints();
-        this.requestUpdate();
+      if (changedProperties.has("profileDataPoints")) {
+        this.profileDataPointCount = this.profileDataPoints?.length || 0;
       }
 
       if (changedProperties.has("firstName") || changedProperties.has("lastName")) {
-        this.nameApiErrorMessage = "";
+        // this.nameApiErrorMessage = "";
         this.lastNameInvalid = false;
         this.firstNameInvalid = false;
         this.editingNames = !(this.firstName && this.lastName);
@@ -157,12 +126,12 @@ export namespace ProfileViewV2 {
 
       if (changedProperties.has("firstNameInputValue")) {
         this.firstNameErrorMessage = "";
-        this.nameApiErrorMessage = "";
+        // this.nameApiErrorMessage = "";
       }
 
       if (changedProperties.has("lastNameInputValue")) {
         this.lastNameErrorMessage = "";
-        this.nameApiErrorMessage = "";
+        // this.nameApiErrorMessage = "";
       }
 
       if (changedProperties.has("firstNameErrorMessage")) {
@@ -187,42 +156,6 @@ export namespace ProfileViewV2 {
         } else {
           this.lastNameInputMessageArray = [];
         }
-      }
-
-      if (changedProperties.has("nameApiErrorMessage")) {
-        if (this.nameApiErrorMessage) {
-          const errorMessage: Input.Message = {
-            type: "error",
-            message: this.nameApiErrorMessage,
-          };
-          this.firstNameInputMessageArray = [errorMessage];
-        } else {
-          this.firstNameInputMessageArray = [];
-        }
-      }
-    }
-
-    collectProfileDataPoints() {
-      if (this.profileData) {
-        const profileDataPoints: Array<ProfileDataPoint> = this.profileData
-          ?.filter((x: any) => x?.query?.widgetAttributes?.type === "table")
-          .map((x: any) => {
-            console.log("collectProfileDataPoints map(x)", x);
-            const { displayName } = x?.query;
-            // const propertyValue = this.getValue(x);
-            const value = x.result;
-            return {
-              displayName,
-              value,
-            };
-          });
-
-        this.profileDataExists = !!profileDataPoints?.length;
-
-        return profileDataPoints;
-      } else {
-        this.profileDataExists = false;
-        return [];
       }
     }
 
@@ -250,10 +183,31 @@ export namespace ProfileViewV2 {
     }
 
     editFirstLastName() {
+      this.editingTooltip.notifyTooltipDestroy();
       this.editingNames = true;
     }
 
+    handleProfileTryAgain() {
+      this.dispatchEvent(new CustomEvent("profile-error-try-again", {}));
+    }
+
+    handleNameTryAgain() {
+      this.dispatchEvent(new CustomEvent("name-error-try-again", {}));
+    }
+
     renderFirstLastNameSection() {
+      if (this.nameApiErrorMessage) {
+        return html`
+          <div class="name-section">
+            <cjaas-error-notification
+              title="Failed to fetch names"
+              tracking-id=${this.nameErrorTrackingID}
+              tiny-view
+              @error-try-again=${this.handleNameTryAgain}
+            ></cjaas-error-notification>
+          </div>
+        `;
+      }
       if (this.namesLoading) {
         return html`
           <div class="name-section">
@@ -339,16 +293,9 @@ export namespace ProfileViewV2 {
       }
     }
 
-    editProperty(propertyName: string) {
-      this.activePropertyEdit = propertyName;
-    }
-
     basicProfileProperties = ["Name", "First Name", "Last Name", "Email", "Phone"];
 
     renderProfileDataPoints() {
-      console.log("Profile Component this.profileData", this.profileData);
-      console.log("profileDataPoints (profileDataExists/dataPoints)", this.profileDataExists, this.profileDataPoints);
-
       return html`
         ${repeat(
           this.profileDataPoints,
@@ -362,24 +309,6 @@ export namespace ProfileViewV2 {
             `
         )}
       `;
-    }
-
-    getValue(x: any) {
-      let result = null;
-
-      if (x?.query?.formatValue) {
-        try {
-          result = x.result.map(x?.query?.formatValue).join(", ");
-        } catch (err) {
-          console.log("JDS Profile: Unable to format table value", err);
-        }
-      }
-
-      if (result === null) {
-        result = x?.result?.join(", ") || "-";
-      }
-
-      return result;
     }
 
     renderSpinner(size = 32) {
@@ -401,11 +330,20 @@ export namespace ProfileViewV2 {
     }
 
     cancelNameEdit() {
+      this.firstNameErrorMessage = "";
+      this.lastNameErrorMessage = "";
+      this.nameApiErrorMessage = "";
       this.editingNames = false;
     }
 
     renderSaveCancelOptions() {
-      if (this.editingNames && !this.errorMessage && !this.nameApiErrorMessage && !this.getProfileDataInProgress) {
+      if (
+        this.editingNames &&
+        !this.namesLoading &&
+        !this.errorMessage &&
+        !this.nameApiErrorMessage &&
+        !this.getProfileDataInProgress
+      ) {
         return html`
           <div class="save-cancel-button-group">
             <md-button class="cancel-edit-name" variant="secondary" @click=${this.cancelNameEdit}>Cancel</md-button>
@@ -415,20 +353,15 @@ export namespace ProfileViewV2 {
       }
     }
 
-    handleErrorTryAgain(e: CustomEvent) {
-      console.log("error-try-again", e);
-      this.requestUpdate();
-    }
-
     renderProfileContent() {
       if (this.errorMessage) {
         return html`
           <div class="error-container">
             <cjaas-error-notification
               title="Failed to load data"
-              error-id="jwurhfur 2wnel87"
-              error-link="https://www.google.com"
-              @error-try-again=${this.handleErrorTryAgain}
+              tracking-id=${this.profileErrorTrackingID}
+              compact-view
+              @error-try-again=${this.handleProfileTryAgain}
             ></cjaas-error-notification>
           </div>
         `;
@@ -439,9 +372,10 @@ export namespace ProfileViewV2 {
             <div class="loading-text-wrapper"><span class="main-loading-text">Loading...</span></div>
           </div>
         `;
-      } else if (this.profileDataExists) {
+      } else if (this.profileDataPointCount) {
+        const gridStyle = this.profileDataPointCount > 0 && this.profileDataPointCount < 4 ? "grid-style" : "";
         return html`
-          <div class="profile-details-container">
+          <div class=${`profile-details-container data-point-count-${this.profileDataPointCount} ${gridStyle}`}>
             <div class="name-column">
               ${this.renderFirstLastNameSection()}
             </div>
@@ -458,10 +392,10 @@ export namespace ProfileViewV2 {
     }
 
     render() {
-      // const noDataClass = !this.getProfileDataInProgress && !this.profileDataExists ? "no-data" : "";
-      const profileErrorStyling = this.errorMessage ? "profile-error-styling" : "";
+      const profileError = this.errorMessage ? "profile-error" : "";
+      const columns = this.getProfileDataInProgress || this.errorMessage ? "columns" : "";
       return html`
-        <div class=${`profile-section ${profileErrorStyling}`} part="profile" title="Customer Profile">
+        <div class=${`profile-section ${profileError} ${columns}`} part="profile" title="Customer Profile">
           <div class="top-header-row">
             <h3 class="profile-header">Customer Information</h3>
             ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}

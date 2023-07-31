@@ -93,6 +93,7 @@ const staticIcons = [
 // }
 
 // uses known event types and also generates random pairs for unknown events
+// only used by the old TimelineItem component
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
@@ -108,17 +109,13 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   if (!result && !TEMP_ICON_MAP[eventName]) {
     if (eventName?.includes("events from")) {
       result = {
-        // name: "icon-activities_16",
         name: "icon-multiple-devices_16",
         color: "orange",
       };
     } else {
       result = {
         name: "icon-activities_16",
-        // name: "icon-event_16",
         color: "orange",
-        // name: getRandomIcon(),
-        // color: getRandomColor(),
       };
     }
 
@@ -128,6 +125,27 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
   }
 
   return result;
+}
+
+export function lookupIcon(eventKeyword: string, iconMap: Timeline.TimelineCustomizations) {
+  let result: any;
+  const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
+  console.log("lookupIcon parsedIconMap", parsedIconMap);
+
+  Object.keys(parsedIconMap)?.forEach((x: string) => {
+    const regex = new RegExp(x, "i");
+
+    if (eventKeyword && regex.test(eventKeyword)) {
+      result = parsedIconMap[x];
+      console.log("lookupIcon result", result);
+    }
+  });
+
+  const defaultIcon = {
+    name: "icon-meetings_16",
+  };
+
+  return result || defaultIcon;
 }
 
 export function getTimeStamp(date: DateTime, isDateCluster = false) {
@@ -141,12 +159,10 @@ export function getTimeStamp(date: DateTime, isDateCluster = false) {
       return date.toFormat("D");
     }
     if (diff.days >= 30) {
-      // return date.toFormat("D");
       return date.toFormat("f");
     } else if (diff.days >= 1 && diff.days < 30) {
       return date.toFormat("f");
     } else if (diff.days <= 1) {
-      // return date.toFormat("tt");
       return date.toFormat("f");
     } else {
       return "now";
