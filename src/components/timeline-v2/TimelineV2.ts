@@ -634,17 +634,18 @@ export namespace TimelineV2 {
         <div class="timeline-section" part="timeline-wrapper">
           <div class="top-header-row">
             <h3 class="contact-activities-header">
-              Contacts & Activities<md-tooltip class="contact-activity-tooltip"
+              Activities<md-tooltip class="contact-activity-tooltip"
                 ><md-icon class="info-icon" name="info_16"></md-icon>
                 <div slot="tooltip-content">
                   <p class="contact-tooltip-message">
-                    <b>Contacts:</b> View a comprehensive historical and realtime data of all Customer interactions with
-                    Agents, including calls, chats, emails and messengers.
+                    <!-- <b>Contacts:</b>  -->
+                    View a comprehensive historical and realtime data of all Customer interactions with Agents,
+                    including calls, chats, emails and messengers.
                   </p>
-                  <p class="activities-tooltip-message">
+                  <!-- <p class="activities-tooltip-message">
                     <b>Activities:</b> Explore customer activities performed on third-party platforms or within our
                     website, such as logging into the portal or account reactivation
-                  </p>
+                  </p> -->
                 </div></md-tooltip
               >
             </h3>

@@ -395,12 +395,14 @@ export namespace ProfileViewV2 {
       const profileError = this.errorMessage ? "profile-error" : "";
       const columns = this.getProfileDataInProgress || this.errorMessage ? "columns" : "";
       return html`
-        <div class=${`profile-section ${profileError} ${columns}`} part="profile" title="Customer Profile">
-          <div class="top-header-row">
-            <h3 class="profile-header">Customer Information</h3>
-            ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}
+        <div class="profile-section-container">
+          <div class=${`container profile-section ${profileError} ${columns}`} part="profile" title="Customer Profile">
+            <div class="top-header-row">
+              <h3 class="profile-header">Customer Information</h3>
+              ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}
+            </div>
+            ${this.renderProfileContent()}
           </div>
-          ${this.renderProfileContent()}
         </div>
       `;
     }

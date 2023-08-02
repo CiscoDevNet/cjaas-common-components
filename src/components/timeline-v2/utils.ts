@@ -130,14 +130,12 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
 export function lookupIcon(eventKeyword: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
-  console.log("lookupIcon parsedIconMap", parsedIconMap);
 
   Object.keys(parsedIconMap)?.forEach((x: string) => {
     const regex = new RegExp(x, "i");
 
     if (eventKeyword && regex.test(eventKeyword)) {
       result = parsedIconMap[x];
-      console.log("lookupIcon result", result);
     }
   });
 
