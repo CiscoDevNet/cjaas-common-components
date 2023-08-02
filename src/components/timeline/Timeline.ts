@@ -87,14 +87,17 @@ export namespace Timeline {
     identitytype: "email" | "phone" | "customerId";
     previousidentity: null;
     datacontenttype: string;
-
     person?: string;
   }
 
   export interface ClusterInfoObject {
     id: string;
-    channelType: string;
-    origin: string;
+    data: {
+      channelType: string;
+      origin: string;
+      direction: "OUTBOUND" | "INBOUND";
+      destination: string;
+    };
   }
 
   export interface TimelineCustomizations {
@@ -417,18 +420,22 @@ export namespace Timeline {
       `;
     }
 
-    createClusterInfo(clusterArray: Array<CustomerEvent>) {
+    createClusterInfo(clusterArray: Array<CustomerEvent>): ClusterInfoObject {
       const firstRealEvent: CustomerEvent =
         clusterArray.find((event: CustomerEvent) => event?.data?.channelType !== undefined) || clusterArray[0];
 
-      const { channelType, origin, taskId, currentState } = firstRealEvent?.data;
+      const { channelType, origin, taskId, currentState, direction, destination } = firstRealEvent?.data;
       const formattedChannelType = channelType === "telephony" ? "Call" : channelType;
       const agentType = currentState ? "agent" : "";
 
       return {
         id: taskId || uuidv4(),
-        channelType: formattedChannelType || agentType,
-        origin,
+        data: {
+          channelType: formattedChannelType || agentType,
+          origin,
+          direction,
+          destination,
+        },
       };
     }
 
@@ -473,16 +480,17 @@ export namespace Timeline {
     }
 
     renderCluster(cluster: CustomerEvent[], clusterInfo: ClusterInfoObject, keyId: number) {
+      const clusterChannelType = clusterInfo?.data?.channelType;
       const clusterId = this.getClusterId(clusterInfo?.id, keyId);
-      const formattedClusterOrigin = formattedOrigin(clusterInfo.origin, clusterInfo.channelType);
+      const formattedClusterOrigin = formattedOrigin(clusterInfo, clusterChannelType);
 
       return this.collapsed.has(clusterId)
         ? html`
             <cjaas-timeline-item-group
               id=${clusterId}
               cluster-sub-title=${`${cluster.length} events`}
-              event-title=${clusterInfo.channelType === "agent" ? "" : formattedClusterOrigin}
-              group-icon=${clusterInfo.channelType}
+              event-title=${clusterChannelType === "agent" ? "" : formattedClusterOrigin}
+              group-icon=${clusterChannelType}
               time=${cluster[0].time}
               class="has-line"
               .events=${cluster}
@@ -573,7 +581,7 @@ export namespace Timeline {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          event-title=${event?.renderData?.title || formattedOrigin(event, event?.data?.channelType)}
           sub-title=${event?.renderData?.subTitle || ""}
           time=${event?.time}
           .data=${event?.data}
