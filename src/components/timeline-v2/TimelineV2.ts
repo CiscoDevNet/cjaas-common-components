@@ -12,7 +12,7 @@ import { repeat } from "lit-html/directives/repeat";
 import groupBy from "lodash.groupby";
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
-import { formattedOrigin, getRelativeDate } from "./utils";
+import { getRelativeDate } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import "@/components/timeline-v2/TimelineItemV2";
 import "@/components/timeline-v2/TimelineItemGroupV2";
@@ -26,6 +26,7 @@ import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
 import iconData from "@/assets/defaultIconsV2.json";
 import _ from "lodash";
+import { ifDefined } from "lit-html/directives/if-defined";
 
 const desertEmptyImage = "https://cjaas.cisco.com/assets/img/desert-open-results-192.png";
 
@@ -80,20 +81,50 @@ export namespace TimelineV2 {
     type?: string;
   }
 
+  // export interface CustomerEvent {
+  //   data: Record<string, any>;
+  //   renderData?: Record<string, any>;
+  //   id: string;
+  //   specversion: string;
+  //   type: string;
+  //   source: string;
+  //   time: string;
+  //   identity: string;
+  //   identitytype: "email" | "phone" | "customerId";
+  //   previousidentity: null;
+  //   datacontenttype: string;
+
+  //   person?: string;
+  // }
+
+  export interface CustomUIDataPayload {
+    title?: string;
+    subTitle?: string;
+    iconType?: string;
+    channelTypeTag?: string;
+  }
+
+  export interface RenderingDataObject {
+    title: string;
+    subTitle: string;
+    iconType: string;
+    channelTypeTag: string;
+  }
+
   export interface CustomerEvent {
-    data: Record<string, any>;
-    renderData?: Record<string, any>;
-    id: string;
     specversion: string;
     type: string;
     source: string;
+    id: string;
     time: string;
     identity: string;
     identitytype: "email" | "phone" | "customerId";
-    previousidentity: null;
+    previousidentity?: null;
     datacontenttype: string;
-
     person?: string;
+    data: Record<string, any>;
+    renderingData: RenderingDataObject;
+    customUIData?: CustomUIDataPayload;
   }
 
   export interface ClusterInfoObject {
@@ -166,6 +197,11 @@ export namespace TimelineV2 {
      */
     @property({ type: Array, attribute: false }) newestEvents: Array<CustomerEvent> = [];
     /**
+     * @prop mostRecentEvent
+     * A event payload representing the most recent event
+     */
+    @internalProperty() mostRecentEvent: CustomerEvent | undefined = undefined;
+    /**
      * @prop eventTypes
      * Dataset of all unique event types
      */
@@ -219,12 +255,6 @@ export namespace TimelineV2 {
      */
     @internalProperty() expandDetails = false;
 
-    @internalProperty() mostRecentISOTimestamp = new Date().toISOString();
-
-    @internalProperty() mostRecentEvent: any = undefined;
-
-    @internalProperty() formattedEvents: Array<CustomerEvent> | null = null;
-
     daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
     channelTypeOptions = [
@@ -260,10 +290,6 @@ export namespace TimelineV2 {
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
-      if (changedProperties.has("historicEvents")) {
-        this.formattedEvents = this.formatEvents(this.historicEvents);
-        this.createSets(this.formattedEvents);
-      }
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.consolidateEvents();
       }
@@ -286,60 +312,22 @@ export namespace TimelineV2 {
       // return events.filter((event: CustomerEvent) => !set.has(event?.data?.taskId) && set.add(event?.data?.taskId));
     }
 
-    /**
-     * @method formatEvents
-     */
-    formatEvents(allEvents: Array<CustomerEvent> | null): Array<CustomerEvent> | null {
-      this.mostRecentEvent = undefined;
-      // get the most recent event that isn't ongoing (last task:ended event)
+    // /**
+    //  * @method createSets
+    //  * @returns void
+    //  * Sets `filterOptions` property to a unique set of filter options for filter feature.
+    //  * Sets `eventTypes` property to a unique set of event types from current historicEvents.
+    //  */
+    // createSets(events: Array<CustomerEvent> | null) {
+    //   const uniqueFilterTypes: Set<string> = new Set(); // ex. chat, telephony, email, agent connected, etc
 
-      const events = allEvents ? this.combineTaskIdEvents(allEvents) : null;
-      console.log("[JDS Widget} sorted events (by taskId)", events);
-
-      events?.map((event: CustomerEvent) => {
-        const [eventType, eventSubType] = event?.type.split(":");
-        const channelTypeText = event?.data?.channelType === "telephony" ? "call" : event?.data?.channelType;
-        const agentState = event?.data?.currentState;
-        const formattedAgentState = agentState
-          ? agentState?.charAt(0)?.toUpperCase() + agentState?.slice(1)
-          : undefined;
-        const { channelType } = event?.data;
-
-        const formatDirectionText = event?.data?.direction?.toLowerCase();
-
-        event.renderData = {
-          title: `${formatDirectionText} ${channelTypeText}`,
-          description: event?.data?.queueName || `Queue ID: ${event?.data?.queueId}`,
-          filterType: channelType === "telephony" ? "voice" : channelType,
-          iconType: channelType === "telephony" ? `${formatDirectionText}-call` : channelType,
-        };
-
-        if (!this.mostRecentEvent && event?.type === "task:ended") {
-          this.mostRecentEvent = event;
-          console.log("[JDS Widget] Most Recent Event", this.mostRecentEvent);
-        }
-      });
-
-      return events;
-    }
-
-    /**
-     * @method createSets
-     * @returns void
-     * Sets `filterOptions` property to a unique set of filter options for filter feature.
-     * Sets `eventTypes` property to a unique set of event types from current historicEvents.
-     */
-    createSets(events: Array<CustomerEvent> | null) {
-      const eventTypeArray: Set<string> = new Set(); // ex. task:connected
-      const filterOptionsArray: Set<string> = new Set(); // ex. chat, telephony, email, agent connected
-
-      (events || []).forEach(event => {
-        eventTypeArray.add(event?.type);
-        filterOptionsArray.add(event?.renderData?.filterType);
-      });
-      this.eventTypes = Array.from(eventTypeArray);
-      this.filterTypes = Array.from(filterOptionsArray);
-    }
+    //   (events || []).forEach(event => {
+    //     event?.renderingData?.filterTypes?.forEach((eventFilterType: string) => {
+    //       uniqueFilterTypes.add(eventFilterType);
+    //     });
+    //   });
+    //   this.filterTypes = Array.from(uniqueFilterTypes);
+    // }
 
     getClusterId(text: string, key: number) {
       const myText = text || uuidv4();
@@ -500,13 +488,11 @@ export namespace TimelineV2 {
     renderTimelineItem(event: CustomerEvent, lastItem = false) {
       return html`
         <cjaas-timeline-item-v2
-          .event=${event}
-          title=${event?.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
-          description=${event?.renderData?.description || ""}
-          icon-type=${event?.renderData?.iconType}
+          title=${event?.renderingData?.title}
+          description=${event?.renderingData?.subTitle}
           time=${event?.time}
+          icon-type=${event?.renderingData?.iconType}
           .data=${event?.data}
-          id=${event?.id}
           .eventIconTemplate=${this.eventIconTemplate}
           class=${lastItem ? "" : "has-line"}
           ?is-ongoing=${event?.type !== "task:ended"}
@@ -545,15 +531,17 @@ export namespace TimelineV2 {
       `;
     }
 
-    filterByType(list: CustomerEvent[] | undefined | null) {
+    filterByType(eventList: CustomerEvent[] | undefined | null) {
       if (this.selectedChannelType !== ChannelTypeOptions.AllChannels && this.selectedChannelType) {
         return (
-          list?.filter(item =>
-            this.selectedChannelType.toLowerCase().includes(item?.renderData?.filterType.toLowerCase())
+          eventList?.filter(
+            (event: CustomerEvent) =>
+              event?.renderingData?.channelTypeTag &&
+              this.selectedChannelType.toLowerCase().includes(event?.renderingData?.channelTypeTag?.toLowerCase())
           ) || null
         );
       } else {
-        return list;
+        return eventList;
       }
     }
 
@@ -562,8 +550,8 @@ export namespace TimelineV2 {
     }
 
     filterByDateRange() {
-      return this.formattedEvents?.filter(item => {
-        return this.convertStringToDateObject(item.time) > this.dateRangeOldestDate.toUTC();
+      return this.historicEvents?.filter((event: CustomerEvent) => {
+        return this.convertStringToDateObject(event.time) > this.dateRangeOldestDate.toUTC();
       });
     }
 
@@ -662,10 +650,10 @@ export namespace TimelineV2 {
           </div>
           <div class="most-recent-wrapper">
             <cjaas-timeline-item-v2
-              title=${this.mostRecentEvent?.renderData?.title}
-              description=${this.mostRecentEvent?.renderData?.description}
-              time=${this.mostRecentEvent?.time}
-              icon-type=${this.mostRecentEvent?.renderData?.iconType}
+              title=${ifDefined(this.mostRecentEvent?.renderingData?.title)}
+              description=${ifDefined(this.mostRecentEvent?.renderingData?.subTitle)}
+              time=${ifDefined(this.mostRecentEvent?.time)}
+              icon-type=${ifDefined(this.mostRecentEvent?.renderingData?.iconType)}
               .data=${this.mostRecentEvent?.data}
               ?empty-most-recent=${!this.mostRecentEvent}
               is-most-recent

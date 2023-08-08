@@ -14,7 +14,8 @@ import { lookupIcon } from "./utils";
 import { customElementWithCheck } from "@/mixins";
 import * as iconData from "@/assets/defaultIconsV2.json";
 import { TimelineV2 } from "./TimelineV2";
-import { nothing } from "lit-html";
+import { nothing, TemplateResult } from "lit-html";
+import * as linkify from "linkifyjs";
 
 const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
@@ -124,6 +125,87 @@ export namespace TimelineItemV2 {
       return html`
         <md-badge class="event-status-badge" color="gold" small>Ongoing</md-badge>
       `;
+    }
+
+    parseSubTextUrlRecursively(stringValue: string): TemplateResult {
+      if (!stringValue.includes("](")) {
+        return html`
+          <span>${stringValue}</span>
+        `;
+      }
+
+      const firstBracketIndex = stringValue.indexOf("[");
+      const endBracket = stringValue.indexOf("]");
+      const endParentheses = stringValue.indexOf(")");
+
+      const urlText = stringValue.slice(firstBracketIndex + 1, endBracket);
+      const urlAddress = stringValue.slice(endBracket + 2, endParentheses);
+
+      const textBefore = stringValue.slice(0, firstBracketIndex);
+      const textAfter = stringValue.slice(endParentheses + 1);
+
+      const renderValue = html`
+        <span>${textBefore}</span><a href=${urlAddress} target="_blank">${urlText}</a>
+      `;
+
+      return html`
+        ${renderValue} ${this.parseSubTextUrlRecursively(textAfter)}
+      `;
+    }
+
+    /**
+     * @method copyValue
+     * @param {Event} e
+     * Copies text to clipboard
+     */
+    copyValue = (e: Event) => {
+      /* Get the text field */
+      const copyText = (e.target as HTMLElement).innerText as string;
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(copyText);
+    };
+
+    /**
+     * @method createTableRecursive
+     * @param data
+     * @returns Template
+     * Builds the timeline item's data table
+     */
+    createTableRecursive(data: any): any {
+      if (!data) {
+        return nothing;
+      } else {
+        return html`
+          ${Object.keys(data).map((x: string) => {
+            if (typeof data[x] !== "object") {
+              const dataValue = data[x];
+
+              if (dataValue) {
+                let renderValue = dataValue || "-";
+
+                if (typeof dataValue === "string") {
+                  if (linkify.test(dataValue, "url")) {
+                    renderValue = html`
+                      <a href=${dataValue} target="_blank">${renderValue}</a>
+                    `;
+                  } else {
+                    renderValue = this.parseSubTextUrlRecursively(dataValue);
+                  }
+                }
+
+                return html`
+                  <div title=${x} class="cell">${x}</div>
+                  <div title=${String(dataValue)} class="cell" @click=${(e: Event) => this.copyValue(e)}>
+                    ${renderValue}
+                  </div>
+                `;
+              }
+            } else {
+              return this.createTableRecursive(data[x]);
+            }
+          })}
+        `;
+      }
     }
 
     render() {
