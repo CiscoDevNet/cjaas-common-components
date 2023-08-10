@@ -16,6 +16,7 @@ import * as iconData from "@/assets/defaultIconsV2.json";
 import { TimelineV2 } from "./TimelineV2";
 import { nothing, TemplateResult } from "lit-html";
 import * as linkify from "linkifyjs";
+import "@momentum-ui/web-components/dist/comp/md-modal";
 
 const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
@@ -35,6 +36,8 @@ export namespace TimelineItemV2 {
      * @attr icon-type
      */
     @property({ type: String, attribute: "icon-type" }) iconType = "meetings_16";
+
+    @property({ type: String, attribute: "event-source" }) eventSource = "";
     /**
      * @attr time
      */
@@ -61,12 +64,36 @@ export namespace TimelineItemV2 {
     @internalProperty() formattedTime = "";
     @internalProperty() formattedMonth = "";
     @internalProperty() formattedDay = "";
+    @internalProperty() isHovered = false;
+    @internalProperty() areDetailsExpanded = false;
+    @internalProperty() isWxccEvent = false;
+    @internalProperty() hasData = false;
 
     updated(changedProperties: PropertyValues) {
       super.updated(changedProperties);
 
       if (changedProperties.has("time")) {
         this.formattedTime = this.formatTime(this.time);
+      }
+
+      if (changedProperties.has("eventSource")) {
+        this.isWxccEvent = this.eventSource.includes("wxcc");
+      }
+
+      if (changedProperties.has("data")) {
+        this.hasData = this.data && !!Object.values(this.data)?.length;
+      }
+    }
+
+    handleMouseEnter() {
+      if (!this.areDetailsExpanded) {
+        this.isHovered = true;
+      }
+    }
+
+    handleMouseLeave() {
+      if (!this.areDetailsExpanded) {
+        this.isHovered = false;
       }
     }
 
@@ -86,6 +113,11 @@ export namespace TimelineItemV2 {
       return {
         "most-recent": this.isMostRecent,
         "empty-most-recent": this.emptyMostRecent,
+        "expanded-details": this.areDetailsExpanded,
+        "is-wxcc-event": this.isWxccEvent,
+        "hovered-over": this.isHovered,
+        "has-data": this.hasData,
+        "are-details-expanded": this.areDetailsExpanded,
       };
     }
 
@@ -144,8 +176,9 @@ export namespace TimelineItemV2 {
       const textBefore = stringValue.slice(0, firstBracketIndex);
       const textAfter = stringValue.slice(endParentheses + 1);
 
+      const urlLink = urlAddress.startsWith("www") ? `//${urlAddress}` : urlAddress;
       const renderValue = html`
-        <span>${textBefore}</span><a href=${urlAddress} target="_blank">${urlText}</a>
+        <span>${textBefore}</span><a href=${urlLink} target="_blank">${urlText}</a>
       `;
 
       return html`
@@ -185,8 +218,9 @@ export namespace TimelineItemV2 {
 
                 if (typeof dataValue === "string") {
                   if (linkify.test(dataValue, "url")) {
+                    const urlLink = dataValue.startsWith("www") ? `//${dataValue}` : dataValue;
                     renderValue = html`
-                      <a href=${dataValue} target="_blank">${renderValue}</a>
+                      <a href=${urlLink} target="_blank">${renderValue}</a>
                     `;
                   } else {
                     renderValue = this.parseSubTextUrlRecursively(dataValue);
@@ -208,12 +242,51 @@ export namespace TimelineItemV2 {
       }
     }
 
+    expandEventDetails() {
+      this.areDetailsExpanded = true;
+    }
+
+    renderExpandingArrow() {
+      // if (this.isHovered && !this.isWxccEvent && this.hasData) {
+      if (this.isHovered && this.hasData) {
+        return html`
+          <md-button class="item-expand-button" hasRemoveStyle @click=${this.expandEventDetails}>
+            <md-icon name="arrow-right_16"></md-icon>
+          </md-button>
+        `;
+      } else {
+        return nothing;
+      }
+    }
+
+    renderDetailsModal() {
+      return html`
+        <md-modal
+          htmlId="modal-1"
+          ?show=${this.areDetailsExpanded}
+          size="dialog"
+          hideFooter
+          hideHeader
+          showCloseButton
+          @close-modal=${() => {
+            this.areDetailsExpanded = false;
+            this.isHovered = false;
+          }}
+        >
+          <div slot="header">Interaction Details</div>
+          <div class="details grid">
+            ${this.createTableRecursive(this.data)}
+          </div>
+        </md-modal>
+      `;
+    }
+
     render() {
       const iconName = this.getIconName(this.iconType);
 
       if (this.emptyMostRecent) {
         return html`
-          <div class="timeline-item ${classMap(this.groupClassMap)}">
+          <div id="timeline-item-container" class="timeline-item ${classMap(this.groupClassMap)}">
             <h3 class="most-recent-header">Most Recent</h3>
             <div class="body">
               <div class="image-wrapper">
@@ -225,7 +298,12 @@ export namespace TimelineItemV2 {
         `;
       } else {
         return html`
-          <div class="timeline-item ${classMap(this.groupClassMap)}">
+          <div
+            id="timeline-item-container"
+            class="timeline-item ${classMap(this.groupClassMap)}"
+            @mouseenter=${() => this.handleMouseEnter()}
+            @mouseleave=${() => this.handleMouseLeave()}
+          >
             <h3 class="most-recent-header">Most Recent</h3>
             <div class="body">
               ${this.renderLeftSection(iconName)}
@@ -240,7 +318,11 @@ export namespace TimelineItemV2 {
                   <span class="description">${this.description}</span>
                 </div>
               </div>
+              <div class="hover-arrow-section">
+                ${this.renderExpandingArrow()}
+              </div>
             </div>
+            ${this.renderDetailsModal()}
           </div>
         `;
       }

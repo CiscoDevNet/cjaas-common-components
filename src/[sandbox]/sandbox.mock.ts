@@ -1445,6 +1445,70 @@ export const testingHistoricalEventsV2: Timeline.CustomerEvent[] = [
   },
 ];
 
+export const latestFormattedEventsFromWidget = [
+  {
+    id: "f33e4b1a-e2fd-4a7f-ab90-8aead4bfbbd5",
+    specversion: "1.0",
+    type: "task:ended",
+    source: "/com/cisco/wxcc/b80ea9b5-b8c9-4278-9d36-c90059777476",
+    time: "2023-08-03T17:47:31.445Z",
+    identity: "egiere@cisco.com",
+    identitytype: "email",
+    previousidentity: null,
+    datacontenttype: "application/json",
+    data: {
+      origin: "egiere@cisco.com",
+      destination: "Chat_temp_WXC-CHAT-EP1",
+      createdTime: 1691084851248,
+      channelType: "chat",
+      taskId: "883263d4-3220-11ee-a214-6befe00e35b0",
+      direction: "INBOUND",
+      queueId: "6efe586b-5c59-47ba-8ee2-60250956e789",
+      reason: "Agent Left",
+      terminatingParty: "Agent",
+      website: "www.google.com",
+    },
+    renderingData: {
+      title: "inbound chat",
+      subTitle: "Queue ID: 6efe586b-5c59-47ba-8ee2-60250956e789",
+      iconType: "chat",
+      channelTypeTag: "chat",
+      eventSource: "wxcc",
+    },
+  },
+  {
+    id: "df1fe012-c3c7-4c5a-af93-cdbd7e158b19",
+    specversion: "1.0",
+    type: "task:ended",
+    source: "/com/cisco/wxcc/b80ea9b5-b8c9-4278-9d36-c90059777476",
+    time: "2023-08-02T22:01:43.721Z",
+    identity: "egiere@cisco.com",
+    identitytype: "email",
+    previousidentity: null,
+    datacontenttype: "application/json",
+    data: {
+      origin: "egiere@cisco.com",
+      destination: "wxcc.ccp.switch@gmail.com",
+      createdTime: 1691013703327,
+      channelType: "email",
+      taskId: "1d17ff05-315f-11ee-90ff-cde67654503f",
+      direction: "INBOUND",
+      queueId: "7a682870-472b-4a0f-b3e9-01fadf4efcf3",
+      reason: "Agent Ended",
+      terminatingParty: "Agent",
+      website: "www.google.com",
+      summary:
+        "The customer visited the [Google Search Engine](http://www.google.com) and had a hard time completing his task [Help](www.google.com).",
+    },
+    renderingData: {
+      title: "inbound email",
+      subTitle: "Queue ID: 7a682870-472b-4a0f-b3e9-01fadf4efcf3",
+      iconType: "email",
+      channelTypeTag: "email",
+    },
+  },
+];
+
 export const exampleEventListFromAgentDesktop = [
   {
     id: "ce743464-7673-49ce-8157-60942b2d07a1",

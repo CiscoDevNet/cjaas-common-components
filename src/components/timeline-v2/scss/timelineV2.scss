@@ -259,7 +259,6 @@ md-toggle-switch {
     flex: 1;
     overflow-y: scroll;
     position: relative;
-    z-index: 1;
     .has-line {
       border-bottom: 1px solid var(--md-quaternary-bg-color, #DEDEDE);
     }

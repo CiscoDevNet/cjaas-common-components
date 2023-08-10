@@ -102,6 +102,7 @@ export namespace TimelineV2 {
     subTitle?: string;
     iconType?: string;
     channelTypeTag?: string;
+    string?: string;
   }
 
   export interface RenderingDataObject {
@@ -109,6 +110,7 @@ export namespace TimelineV2 {
     subTitle: string;
     iconType: string;
     channelTypeTag: string;
+    eventSource: string;
   }
 
   export interface CustomerEvent {
@@ -492,6 +494,7 @@ export namespace TimelineV2 {
           description=${event?.renderingData?.subTitle}
           time=${event?.time}
           icon-type=${event?.renderingData?.iconType}
+          event-source=${event?.renderingData?.eventSource}
           .data=${event?.data}
           .eventIconTemplate=${this.eventIconTemplate}
           class=${lastItem ? "" : "has-line"}

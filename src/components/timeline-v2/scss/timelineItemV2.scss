@@ -11,6 +11,18 @@
   padding: 0.75rem 1rem;
   font-family: $brand-font-regular;
 
+  &.has-data {
+    // &:not(.is-wxcc-event) {
+      &.hovered-over {
+        background-color: var(--md-secondary-bg-color, #f7f7f7);
+      }
+
+      &.expanded-details {
+        background: var(--md-tertiary-bg-color, #ededed);
+      }
+    // }
+  }
+
   .most-recent-header {
     display: none;
   }
@@ -40,6 +52,7 @@
     }
 
     .right-section {
+      flex: 1;
 
       .row {
         line-height: 21px;
@@ -64,6 +77,13 @@
         margin-top: 6px;
         gap: 0.75rem;
       }
+    }
+
+    .hover-arrow-section {
+      color: var(--md-primary-text-color, #121212);
+      display: flex;
+      align-items: center;
+      width: 1rem;
     }
   }
 }
@@ -113,4 +133,52 @@
 .event-icon::part(icon) {
   line-height: 16px;
   color: var(--md-secondary-text-color, #545454);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 2rem;
+  margin: 1rem;
+  font-size: 12px;
+
+  margin: 0;
+  width: calc(100% - 24px);
+
+  .cell {
+    vertical-align: top;
+  }
+
+  .cell:nth-child(odd) {
+    color: var(--md-secondary-text-color, #545454);
+  }
+
+  .cell:nth-child(even) {
+    color: var(--md-primary-text-color, #121212);
+  }
+}
+
+md-modal::part(modal-container) {
+  width: 515px;
+    height: 420px;
+    max-height: calc(100vh - 100px);
+    bottom: 1rem;
+    right: 1rem;
+    margin: unset;
+    left: unset;
+    top: unset;
+}
+
+md-modal::part(modal-content) {
+  height: 100%;
+}
+
+md-modal::part(modal-header) {
+  padding: 0px 0px 1rem;
+  width: fit-content;
+  margin-top: -8px;
+}
+
+md-modal::part(modal-body) {
+  padding: 0;
 }
