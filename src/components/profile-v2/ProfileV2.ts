@@ -397,11 +397,11 @@ export namespace ProfileViewV2 {
       return html`
         <div class="profile-section-container">
           <div class=${`container profile-section ${profileError} ${columns}`} part="profile" title="Customer Profile">
+            ${this.renderProfileContent()}
             <div class="top-header-row">
               <h3 class="profile-header">Customer Information</h3>
               ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}
             </div>
-            ${this.renderProfileContent()}
           </div>
         </div>
       `;

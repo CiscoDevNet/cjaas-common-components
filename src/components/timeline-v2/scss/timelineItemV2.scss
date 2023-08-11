@@ -169,6 +169,11 @@ md-modal::part(modal-container) {
     top: unset;
 }
 
+md-modal::part(modal-backdrop) {
+  background: unset;
+  transition: unset;
+}
+
 md-modal::part(modal-content) {
   height: 100%;
 }

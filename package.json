@@ -1,6 +1,6 @@
 {
   "name": "@cjaas/common-components",
-  "version": "5.0.0-dev5",
+  "version": "5.0.0-dev6",
   "author": "Elena Giere",
   "license": "MIT",
   "repository": "https://github.com/CiscoDevNet/cjaas-common-components.git",
@@ -15,7 +15,7 @@
     "dist:watch": "npm run check && webpack --config-name=distDevWatch",
     "check": "check-peer-dependencies --yarn",
     "npm:auth": "uuip-publish-auth [uuip]",
-    "npm:publish": "npm run npm:auth && npm run dist && uuip-publish dist uuip && cd publish && npm publish",
+    "npm:publish": "npm run npm:auth && npm run dist:dev && uuip-publish dist uuip && cd publish && npm publish",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:ci": "jest --coverage --updateSnapshot --maxWorkers=4",

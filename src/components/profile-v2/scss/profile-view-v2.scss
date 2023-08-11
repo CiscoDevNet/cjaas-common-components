@@ -17,7 +17,8 @@
 .profile-section {
   font-family: "CiscoSansTT Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding: 0.875rem 1rem;
-  display: grid;
+  display: flex;
+  flex-direction: column-reverse;
 
   // @media screen and (max-width: $small-screen) {
   //   max-height: 280px;
