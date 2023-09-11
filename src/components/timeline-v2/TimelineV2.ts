@@ -632,8 +632,8 @@ export namespace TimelineV2 {
                 <div slot="tooltip-content">
                   <p class="contact-tooltip-message">
                     <!-- <b>Contacts:</b>  -->
-                    View a comprehensive historical and realtime data of all Customer interactions with Agents,
-                    including calls, chats, emails and messengers.
+                    View your customer’s end-to-end customer journey and their business activities (calls, chats,
+                    website visits, and more).
                   </p>
                   <!-- <p class="activities-tooltip-message">
                     <b>Activities:</b> Explore customer activities performed on third-party platforms or within our

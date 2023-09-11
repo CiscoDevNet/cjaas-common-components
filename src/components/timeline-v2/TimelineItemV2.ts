@@ -276,7 +276,7 @@ export namespace TimelineItemV2 {
             this.isHovered = false;
           }}
         >
-          <div slot="header">Interaction Details</div>
+          <div slot="header">Activity Details</div>
           <div class="details grid">
             ${this.createTableRecursive(this.data)}
           </div>
