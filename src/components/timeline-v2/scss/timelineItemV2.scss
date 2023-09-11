@@ -12,7 +12,7 @@
   font-family: $brand-font-regular;
 
   &.has-data {
-    // &:not(.is-wxcc-event) {
+    &:not(.is-wxcc-event) {
       &.hovered-over {
         background-color: var(--md-secondary-bg-color, #f7f7f7);
       }
@@ -20,7 +20,7 @@
       &.expanded-details {
         background: var(--md-tertiary-bg-color, #ededed);
       }
-    // }
+    }
   }
 
   .most-recent-header {
@@ -76,6 +76,14 @@
         color: var(--md-secondary-text-color, #545454);
         margin-top: 6px;
         gap: 0.75rem;
+
+        .description {
+          height: 21px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 75%;
+        }
       }
     }
 
@@ -86,6 +94,10 @@
       width: 1rem;
     }
   }
+}
+
+.most-recent .body .hover-arrow-section {
+  align-items: unset;
 }
 
 .timeline-item.most-recent {
@@ -137,7 +149,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(auto, .5fr) 1fr;
   column-gap: 2rem;
   margin: 1rem;
   font-size: 12px;
@@ -186,4 +198,9 @@ md-modal::part(modal-header) {
 
 md-modal::part(modal-body) {
   padding: 0;
+}
+
+.item-expand-button {
+  height: 1rem;
+  width: 1rem;
 }

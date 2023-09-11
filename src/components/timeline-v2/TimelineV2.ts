@@ -111,6 +111,7 @@ export namespace TimelineV2 {
     iconType: string;
     channelTypeTag: string;
     eventSource: string;
+    isActive: boolean;
   }
 
   export interface CustomerEvent {
@@ -488,6 +489,7 @@ export namespace TimelineV2 {
     }
 
     renderTimelineItem(event: CustomerEvent, lastItem = false) {
+      console.log("[TIMELINE V2] render item", event);
       return html`
         <cjaas-timeline-item-v2
           title=${event?.renderingData?.title}
@@ -498,7 +500,7 @@ export namespace TimelineV2 {
           .data=${event?.data}
           .eventIconTemplate=${this.eventIconTemplate}
           class=${lastItem ? "" : "has-line"}
-          ?is-ongoing=${event?.type !== "task:ended"}
+          ?is-ongoing=${event?.renderingData?.isActive}
         ></cjaas-timeline-item-v2>
       `;
     }
@@ -657,6 +659,8 @@ export namespace TimelineV2 {
               description=${ifDefined(this.mostRecentEvent?.renderingData?.subTitle)}
               time=${ifDefined(this.mostRecentEvent?.time)}
               icon-type=${ifDefined(this.mostRecentEvent?.renderingData?.iconType)}
+              event-source=${ifDefined(this.mostRecentEvent?.renderingData?.eventSource)}
+              .eventIconTemplate=${this.eventIconTemplate}
               .data=${this.mostRecentEvent?.data}
               ?empty-most-recent=${!this.mostRecentEvent}
               is-most-recent

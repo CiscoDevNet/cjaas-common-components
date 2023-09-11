@@ -210,6 +210,9 @@ export namespace TimelineItemV2 {
       } else {
         return html`
           ${Object.keys(data).map((x: string) => {
+            if (x === "uiData") {
+              return;
+            }
             if (typeof data[x] !== "object") {
               const dataValue = data[x];
 
@@ -247,8 +250,7 @@ export namespace TimelineItemV2 {
     }
 
     renderExpandingArrow() {
-      // if (this.isHovered && !this.isWxccEvent && this.hasData) {
-      if (this.isHovered && this.hasData) {
+      if (this.isHovered && !this.isWxccEvent && this.hasData) {
         return html`
           <md-button class="item-expand-button" hasRemoveStyle @click=${this.expandEventDetails}>
             <md-icon name="arrow-right_16"></md-icon>
@@ -268,6 +270,7 @@ export namespace TimelineItemV2 {
           hideFooter
           hideHeader
           showCloseButton
+          backdropClickExit
           @close-modal=${() => {
             this.areDetailsExpanded = false;
             this.isHovered = false;
