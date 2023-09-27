@@ -28,26 +28,45 @@ export function getTimelineEventFromMessage(message: any) {
   return event;
 }
 
-export function formattedOrigin(origin: string, channelType: string) {
-  const hasPlusSign = (origin as string)?.charAt(0) === "+";
+export function formattedOrigin(event: Timeline.CustomerEvent | Timeline.ClusterInfoObject, channelType: string) {
+  const formattedOrigin = event?.data?.direction === "OUTBOUND" ? event?.data?.destination : event?.data?.origin;
+  console.log(
+    `[JDS WIDGET] Formatted Origin (event direction: ${event?.data?.direction}) ${
+      event?.data?.direction === "OUTBOUND" ? "event?.data?.destination" : "event?.data?.origin"
+    }`,
+    formattedOrigin
+  );
+
+  const hasPlusSign = (formattedOrigin as string)?.charAt(0) === "+";
   if (channelType === "telephony" || hasPlusSign) {
     try {
-      const parsedNumber = parsePhoneNumber(origin);
+      const parsedNumber = parsePhoneNumber(formattedOrigin);
 
       if (parsedNumber?.country === "US") {
         const national = parsedNumber?.formatNational() && `+1 ${parsedNumber?.formatNational()}`;
-        return national || parsedNumber?.formatInternational() || origin;
+        return national || parsedNumber?.formatInternational() || formattedOrigin;
       } else {
-        return parsedNumber?.formatInternational() || origin;
+        return parsedNumber?.formatInternational() || formattedOrigin;
       }
     } catch (error) {
-      console.warn(
-        "[JDS WIDGET] your event payload shows `channelType` as `telephony`. With that, the `origin` property should be a valid phone number."
-      );
-      return origin;
+      if (event?.data?.direction === "OUTBOUND") {
+        console.warn(
+          "[JDS WIDGET] your event payload shows `channelType` as `telephony` and `direction` as `OUTBOUND`. With that, the `destination` property should be a valid phone number.",
+          event?.data?.channelType,
+          event?.data?.direction,
+          event?.data?.destination
+        );
+      } else {
+        console.warn(
+          "[JDS WIDGET] your event payload shows `channelType` as `telephony`. With that, the `origin` property should be a valid phone number.",
+          event?.data?.channelType,
+          event?.data?.origin
+        );
+      }
+      return formattedOrigin;
     }
   } else {
-    return origin;
+    return formattedOrigin;
   }
 }
 

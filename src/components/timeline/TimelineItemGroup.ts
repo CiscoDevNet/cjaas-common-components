@@ -92,7 +92,7 @@ export namespace TimelineItemGroup {
       return html`
         <cjaas-timeline-item
           .event=${event}
-          event-title=${event.renderData?.title || formattedOrigin(event?.data?.origin, event?.data?.channelType)}
+          event-title=${event.renderData?.title || formattedOrigin(event, event?.data?.channelType)}
           sub-title=${event.renderData?.subTitle || ""}
           .time=${event.time}
           .data=${event.data}
