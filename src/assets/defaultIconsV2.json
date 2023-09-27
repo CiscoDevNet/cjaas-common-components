@@ -1,0 +1,23 @@
+{
+  "outbound-call": {
+    "name": "icon-outgoing-call-active_16"
+  },
+  "inbound-call": {
+    "name": "icon-incoming-call-active_16"
+  },
+  "Chat": {
+    "name": "icon-chat-active_16"
+  },
+  "Messenger": {
+    "name": "icon-messenger_16"
+  },
+  "Activity": {
+    "name": "icon-meetings_16"
+  },
+  "Email": {
+    "name": "icon-email-active_16"
+  },
+  "SMS": {
+    "name": "icon-sms_16"
+  }
+}

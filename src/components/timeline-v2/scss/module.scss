@@ -6,9 +6,12 @@
  *
  */
 
-@import "@/wc_scss/tools/functions/core";
 @import "@/wc_scss/colors/settings-base.scss";
 @import "@/wc_scss/colors/settings";
-@import "@/wc_scss/cjaas-styles/table-mixin";
-@import "@/wc_scss/cjaas-styles/variables";
-@import "./timer";
+@import "@/wc_scss/typography/settings.scss";
+
+@import "./settings";
+@import "./mixins";
+@import "./timelineItemV2";
+@import "./timelineV2";
+@import "./timeline-item-group";

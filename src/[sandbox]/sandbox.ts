@@ -2,7 +2,9 @@ import styles from "@/[sandbox]/sandbox.scss";
 import "elix/define/ListExplorer.js";
 import { customElement, html, LitElement, property, PropertyValues } from "lit-element";
 import { timelineTemplate } from "./examples/timeline";
+import { timelineV2Template } from "./examples/timeline-v2";
 import { profileTemplate } from "./examples/profile";
+import { profileV2Template } from "./examples/profile-v2";
 import { getWebexWalkinTemplate } from "./examples/webexWalkin";
 import { timerTemplate } from "./examples/timer";
 import { conditionTemplate } from "./examples/condition";
@@ -11,6 +13,8 @@ import { identityTemplate } from "./examples/identity";
 import { eventTogglesTemplate } from "./examples/eventToggles";
 
 import "@momentum-ui/web-components/dist/comp/md-theme";
+import { errorNotificationTemplate } from "./examples/error-notification";
+import { timelineItemV2Template } from "./examples/timeline-item-v2";
 
 @customElement("momentum-ui-web-components-sandbox")
 export class Sandbox extends LitElement {
@@ -88,9 +92,21 @@ export class Sandbox extends LitElement {
             <h2>cjaas-timeline</h2>
             ${timelineTemplate}
           </div>
+          <div class="container" aria-label="cjaas-timeline-item-v2">
+            <h2>cjaas-timeline-item-v2</h2>
+            ${timelineItemV2Template}
+          </div>
+          <div class="container" aria-label="cjaas-timeline-v2">
+            <h2>cjaas-timeline-v2</h2>
+            ${timelineV2Template}
+          </div>
           <div class="container" aria-label="cjaas-profile">
             <h2>cjaas-profile</h2>
             ${profileTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-profile-v2">
+            <h2>cjaas-profile-v2</h2>
+            ${profileV2Template}
           </div>
           <div class="container" aria-label="cjaas-webex-walkin">
             <h2>cjaas-webex-walkin</h2>
@@ -115,6 +131,10 @@ export class Sandbox extends LitElement {
           <div class="container" aria-label="cjaas-event-toggles">
             <h2>cjaas-event-toggles</h2>
             ${eventTogglesTemplate}
+          </div>
+          <div class="container" aria-label="cjaas-error-notification">
+            <h2>cjaas-error-notification</h2>
+            ${errorNotificationTemplate}
           </div>
         </elix-list-explorer>
       </md-theme>

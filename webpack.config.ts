@@ -149,6 +149,9 @@ const commonDist = merge(common, {
     "comp/cjaas-webex-walkin-entry": "./src/components/webexWalkin/WebexWalkin.ts",
     "comp/cjaas-identity-entry": "./src/components/identity/Identity.ts",
     "comp/cjaas-timer-entry": "./src/components/timer/Timer.ts",
+    "comp/cjaas-timeline-v2-entry": "./src/components/timeline-v2/TimelineV2.ts",
+    "comp/cjass-profile-v2-entry": "./src/components/profile-v2/ProfileV2.ts",
+    "comp/cjaas-error-notification-entry": "./src/components/error-notification/ErrorNotification.ts",
   },
   output: {
     path: pDist,
