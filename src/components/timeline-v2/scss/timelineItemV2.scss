@@ -204,3 +204,27 @@ md-modal::part(modal-body) {
   height: 1rem;
   width: 1rem;
 }
+
+.sentiment-section {
+  display: flex;
+  align-items: center;
+}
+
+.sentiment-badge {
+  padding: 0px 16px;
+  background-color: var(--md-alert-success-bg-color, #befade);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--md-primary-success-text-color, #03612C);
+  height: 32px;
+  border-radius: 8px;
+
+
+  .sentiment-label {
+    font-family: $brand-font-regular;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 14px;
+  }
+}

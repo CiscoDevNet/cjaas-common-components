@@ -261,6 +261,17 @@ export namespace TimelineItemV2 {
       }
     }
 
+    renderSentimentBadge() {
+      return html`
+        <div class="sentiment-section">
+          <div class="sentiment-badge">
+            <md-icon name="emoticons_20" class="sentiment-icon"></md-icon>
+            <span class="sentiment-label">Positive</span>
+          </div>
+        </div>
+      `;
+    }
+
     renderDetailsModal() {
       return html`
         <md-modal
@@ -321,6 +332,7 @@ export namespace TimelineItemV2 {
                   <span class="description">${this.description}</span>
                 </div>
               </div>
+              ${this.renderSentimentBadge()}
               <div class="hover-arrow-section">
                 ${this.renderExpandingArrow()}
               </div>
