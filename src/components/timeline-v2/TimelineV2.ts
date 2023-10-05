@@ -496,6 +496,7 @@ export namespace TimelineV2 {
           description=${event?.renderingData?.subTitle}
           time=${event?.time}
           icon-type=${event?.renderingData?.iconType}
+          sentiment=${ifDefined(event?.data?.overallSentiment)}
           event-source=${event?.renderingData?.eventSource}
           .data=${event?.data}
           .eventIconTemplate=${this.eventIconTemplate}

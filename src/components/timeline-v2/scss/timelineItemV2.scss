@@ -92,6 +92,11 @@
       display: flex;
       align-items: center;
       width: 1rem;
+      visibility: visible;
+
+      &.hide {
+        visibility: hidden;
+      }
     }
   }
 }
@@ -211,14 +216,33 @@ md-modal::part(modal-body) {
 }
 
 .sentiment-badge {
-  padding: 0px 16px;
-  background-color: var(--md-alert-success-bg-color, #befade);
+  padding-left: 10px;
   display: flex;
   gap: 6px;
   align-items: center;
   color: var(--md-primary-success-text-color, #03612C);
   height: 32px;
+  width: 95px;
   border-radius: 8px;
+
+  &.Positive {
+    background-color: var(--md-alert-success-bg-color, #befade);
+    color: var(--md-primary-success-text-color, #03612C);
+  }
+
+  &.Neutral {
+    color: var(--md-secondary-text-color, #545454);
+    background: var(--md-quaternary-bg-color, #dedede);
+  }
+
+  &.Negative {
+    background-color: var(--input-error-bg-color,#ffe8e3);
+    color: var(--md-alert-error-text-color, #A12512);
+  }
+
+  .sentiment-icon::part(icon) {
+    font-size: 20px;
+  }
 
 
   .sentiment-label {

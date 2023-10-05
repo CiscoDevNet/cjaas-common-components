@@ -20,8 +20,12 @@ import "@momentum-ui/web-components/dist/comp/md-modal";
 
 const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
+export const sentimentType = ["Positive", "Negative", "Neutral"] as const;
+
 export namespace TimelineItemV2 {
+  export type sentimentType = typeof sentimentType[number];
   export type ShowcaseList = string[];
+
   @customElementWithCheck("cjaas-timeline-item-v2")
   export class ELEMENT extends LitElement {
     /**
@@ -36,6 +40,8 @@ export namespace TimelineItemV2 {
      * @attr icon-type
      */
     @property({ type: String, attribute: "icon-type" }) iconType = "meetings_16";
+
+    @property({ type: String }) sentiment: TimelineItemV2.sentimentType | "" = "";
 
     @property({ type: String, attribute: "event-source" }) eventSource = "";
     /**
@@ -250,26 +256,30 @@ export namespace TimelineItemV2 {
     }
 
     renderExpandingArrow() {
-      if (this.isHovered && !this.isWxccEvent && this.hasData) {
-        return html`
-          <md-button class="item-expand-button" hasRemoveStyle @click=${this.expandEventDetails}>
-            <md-icon name="arrow-right_16"></md-icon>
-          </md-button>
-        `;
-      } else {
-        return nothing;
-      }
+      return html`
+        <md-button class="item-expand-button" hasRemoveStyle @click=${this.expandEventDetails}>
+          <md-icon name="arrow-right_16"></md-icon>
+        </md-button>
+      `;
     }
 
     renderSentimentBadge() {
-      return html`
-        <div class="sentiment-section">
-          <div class="sentiment-badge">
-            <md-icon name="emoticons_20" class="sentiment-icon"></md-icon>
-            <span class="sentiment-label">Positive</span>
+      if (this.sentiment) {
+        const sentimentIconMapping = {
+          Positive: "emoticons_20",
+          Negative: "emoticon-sad_24",
+          Neutral: "emoticon-passive_24",
+        };
+
+        return html`
+          <div class="sentiment-section">
+            <div class=${`sentiment-badge ${this.sentiment}`}>
+              <md-icon name=${sentimentIconMapping[this.sentiment]} class="sentiment-icon"></md-icon>
+              <span class="sentiment-label">${this.sentiment}</span>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     }
 
     renderDetailsModal() {
@@ -297,6 +307,7 @@ export namespace TimelineItemV2 {
 
     render() {
       const iconName = this.getIconName(this.iconType);
+      const showDetailsArrow = this.isHovered && !this.isWxccEvent && this.hasData;
 
       if (this.emptyMostRecent) {
         return html`
@@ -332,8 +343,8 @@ export namespace TimelineItemV2 {
                   <span class="description">${this.description}</span>
                 </div>
               </div>
-              ${this.renderSentimentBadge()}
-              <div class="hover-arrow-section">
+              ${this.sentiment ? this.renderSentimentBadge() : nothing}
+              <div class=${`hover-arrow-section ${showDetailsArrow ? "" : "hide"}`}>
                 ${this.renderExpandingArrow()}
               </div>
             </div>
