@@ -1497,7 +1497,7 @@ export const latestFormattedEventsFromWidget = [
     previousidentity: null,
     datacontenttype: "application/json",
     data: {
-      overallSentiment: "Positive",
+      customerSentiment: "Positive",
       origin: "egiere@cisco.com",
       destination: "Chat_temp_WXC-CHAT-EP1",
       createdTime: 1691084851248,
@@ -1528,7 +1528,7 @@ export const latestFormattedEventsFromWidget = [
     previousidentity: null,
     datacontenttype: "application/json",
     data: {
-      overallSentiment: "Negative",
+      customerSentiment: "Negative",
       origin: "egiere@cisco.com",
       destination: "Chat_temp_WXC-CHAT-EP1",
       createdTime: 1691084851248,
@@ -1589,7 +1589,7 @@ export const latestFormattedEventsFromWidget = [
     previousidentity: null,
     datacontenttype: "application/json",
     data: {
-      overallSentiment: "Neutral",
+      customerSentiment: "Neutral",
       origin: "egiere@cisco.com",
       destination: "wxcc.ccp.switch@gmail.com",
       createdTime: 1691013703327,
