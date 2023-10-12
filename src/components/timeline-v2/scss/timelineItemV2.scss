@@ -37,6 +37,7 @@
       text-align: center;
       align-self: center;
       gap: 0.25rem;
+      flex: 0 0 24px;
 
       .month {
        font-size: 12px;
@@ -53,6 +54,7 @@
 
     .right-section {
       flex: 1;
+      min-width: 0;
 
       .row {
         line-height: 21px;
@@ -62,6 +64,7 @@
         font-weight: 600;
         display: flex;
         align-items: center;
+        gap: 3px;
 
         .title {
           text-transform: capitalize;
@@ -82,7 +85,10 @@
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
-          width: 75%;
+        }
+
+        .time {
+          flex: 0 0 65px;
         }
       }
     }
@@ -93,9 +99,11 @@
       align-items: center;
       width: 1rem;
       visibility: visible;
+      flex: 0 0 16px;
 
       &.hide {
         visibility: hidden;
+        flex: 0 0 16px;
       }
     }
   }
@@ -213,6 +221,7 @@ md-modal::part(modal-body) {
 .sentiment-section {
   display: flex;
   align-items: center;
+  flex: 0 0 105px;
 }
 
 .sentiment-badge {
@@ -225,17 +234,17 @@ md-modal::part(modal-body) {
   width: 95px;
   border-radius: 8px;
 
-  &.Positive {
+  &.positive {
     background-color: var(--md-alert-success-bg-color, #befade);
     color: var(--md-primary-success-text-color, #03612C);
   }
 
-  &.Neutral {
+  &.neutral {
     color: var(--md-secondary-text-color, #545454);
     background: var(--md-quaternary-bg-color, #dedede);
   }
 
-  &.Negative {
+  &.negative {
     background-color: var(--input-error-bg-color,#ffe8e3);
     color: var(--md-alert-error-text-color, #A12512);
   }
@@ -250,5 +259,6 @@ md-modal::part(modal-body) {
     font-size: 14px;
     font-weight: bold;
     line-height: 14px;
+    text-transform: capitalize;
   }
 }

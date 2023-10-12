@@ -20,7 +20,7 @@ import "@momentum-ui/web-components/dist/comp/md-modal";
 
 const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
-export const sentimentType = ["Positive", "Negative", "Neutral"] as const;
+export const sentimentType = ["positive", "negative", "neutral"] as const;
 
 export namespace TimelineItemV2 {
   export type sentimentType = typeof sentimentType[number];
@@ -266,9 +266,9 @@ export namespace TimelineItemV2 {
     renderSentimentBadge() {
       if (this.sentiment) {
         const sentimentIconMapping = {
-          Positive: "emoticons_20",
-          Negative: "emoticon-sad_24",
-          Neutral: "emoticon-passive_24",
+          positive: "emoticons_20",
+          negative: "emoticon-sad_24",
+          neutral: "emoticon-passive_24",
         };
 
         return html`

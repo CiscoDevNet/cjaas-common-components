@@ -489,14 +489,13 @@ export namespace TimelineV2 {
     }
 
     renderTimelineItem(event: CustomerEvent, lastItem = false) {
-      console.log("[TIMELINE V2] render item", event);
       return html`
         <cjaas-timeline-item-v2
           title=${event?.renderingData?.title}
           description=${event?.renderingData?.subTitle}
           time=${event?.time}
           icon-type=${event?.renderingData?.iconType}
-          sentiment=${ifDefined(event?.data?.customerSentiment)}
+          sentiment=${ifDefined(event?.data?.customerSentiment?.toLowerCase())}
           event-source=${event?.renderingData?.eventSource}
           .data=${event?.data}
           .eventIconTemplate=${this.eventIconTemplate}
