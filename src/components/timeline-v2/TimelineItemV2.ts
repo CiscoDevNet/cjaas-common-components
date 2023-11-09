@@ -10,13 +10,14 @@ import { LitElement, html, property, PropertyValues, internalProperty } from "li
 import { classMap } from "lit-html/directives/class-map";
 import { DateTime } from "luxon";
 import styles from "./scss/module.scss";
-import { lookupIcon } from "./utils";
+import { getIconData } from "./utils";
 import { customElementWithCheck } from "@/mixins";
-import * as iconData from "@/assets/defaultIconsV2.json";
+import * as iconData from "@/assets/defaultIcons.json";
 import { TimelineV2 } from "./TimelineV2";
 import { nothing, TemplateResult } from "lit-html";
 import * as linkify from "linkifyjs";
 import "@momentum-ui/web-components/dist/comp/md-modal";
+import "@momentum-ui/web-components/dist/comp/md-badge";
 
 const boxOpenImage = "https://cjaas.cisco.com/assets/img/box-open-120.png";
 
@@ -25,6 +26,11 @@ export const sentimentType = ["positive", "negative", "neutral"] as const;
 export namespace TimelineItemV2 {
   export type sentimentType = typeof sentimentType[number];
   export type ShowcaseList = string[];
+
+  export interface IconData {
+    name: string;
+    color: string;
+  }
 
   @customElementWithCheck("cjaas-timeline-item-v2")
   export class ELEMENT extends LitElement {
@@ -127,23 +133,41 @@ export namespace TimelineItemV2 {
       };
     }
 
-    getIconName(iconType: string) {
+    getIconData(iconType: string) {
       let iconKeyword;
       let iconData;
       if (this.data) {
-        iconKeyword = iconType || this.data?.channelType || "";
-        iconData = lookupIcon(iconKeyword, this.eventIconTemplate!);
+        iconKeyword = iconType || this.data?.channelType || this.data?.identitytype || "";
+        iconData = getIconData(iconKeyword, this.eventIconTemplate!);
       }
-      return iconData?.name;
+      return iconData;
     }
 
-    renderEventIcon(iconName: string, size = 16) {
-      return html`
-        <md-icon class="event-icon" .name=${iconName} size=${size}></md-icon>
-      `;
+    renderEventIcon(iconData: IconData, size = 16) {
+      const { name, color } = iconData;
+
+      if (this.isMostRecent) {
+        return html`
+          <md-icon class="event-icon" .name=${iconData?.name} size=${14}></md-icon>
+        `;
+      } else if (iconData?.color) {
+        return html`
+          <md-badge class="badge" .circle=${true} size="40" .color=${color}>
+            ${name
+              ? html`
+                  <md-icon class="badge-icon" .name=${name} size=${size}></md-icon>
+                `
+              : nothing}
+          </md-badge>
+        `;
+      } else {
+        return html`
+          <md-icon class="badge-icon" .name=${name} size=${size}></md-icon>
+        `;
+      }
     }
 
-    renderLeftSection(iconName: string) {
+    renderLeftSection(iconData: IconData) {
       if (this.isMostRecent) {
         return html`
           <div class="left-section vertical-date">
@@ -153,7 +177,7 @@ export namespace TimelineItemV2 {
       } else {
         return html`
           <div class="left-section vertical-date">
-            ${this.renderEventIcon(iconName)}
+            ${this.renderEventIcon(iconData)}
           </div>
         `;
       }
@@ -306,8 +330,10 @@ export namespace TimelineItemV2 {
     }
 
     render() {
-      const iconName = this.getIconName(this.iconType);
+      // const iconName = this.getIconName(this.iconType);
       const showDetailsArrow = this.isHovered && !this.isWxccEvent && this.hasData;
+
+      const iconData = this.getIconData(this.iconType);
 
       if (this.emptyMostRecent) {
         return html`
@@ -331,10 +357,10 @@ export namespace TimelineItemV2 {
           >
             <h3 class="most-recent-header">Most Recent</h3>
             <div class="body">
-              ${this.renderLeftSection(iconName)}
+              ${this.renderLeftSection(iconData)}
               <div class="right-section">
                 <div class="row first-row">
-                  ${this.isMostRecent ? this.renderEventIcon(iconName, 14) : nothing}
+                  ${this.isMostRecent ? this.renderEventIcon(iconData) : nothing}
                   <span class="title">${this.title}</span>
                   ${this.isOngoing ? this.renderOngoingStatus() : nothing}
                 </div>

@@ -1,4 +1,20 @@
 {
+  "Chat": {
+    "name": "icon-chat-active_16",
+    "color": "cobalt"
+  },
+  "Messenger": {
+    "name": "icon-messenger_16",
+    "color": "cobalt"
+  },
+  "Activity": {
+    "name": "icon-meetings_16",
+    "color": "grey"
+  },
+  "Email": {
+    "name": "icon-email-active_16",
+    "color": "violet"
+  },
   "SMS": {
     "name": "icon-sms_16",
     "color": "mint"
@@ -15,13 +31,17 @@
     "name": "icon-handset-active_16",
     "color": "green"
   },
-  "Chat": {
-    "name": "icon-chat-active_16",
-    "color": "cobalt"
+  "outbound-call": {
+    "name": "icon-outgoing-call-active_16",
+    "color": "green"
   },
-  "Email": {
-    "name": "icon-email-active_16",
-    "color": "violet"
+  "inbound-call": {
+    "name": "icon-incoming-call-active_16",
+    "color": "green"
+  },
+  "Phone": {
+    "name": "icon-handset-active_16",
+    "color": "green"
   },
   "wrapup": {
     "name": "icon-close-space_18",
@@ -30,10 +50,6 @@
   "agent": {
     "name": "icon-headset_16",
     "color": "pink"
-  },
-  "Messenger": {
-    "name": "icon-messenger_16",
-    "color": "cobalt"
   },
   "social": {
     "name": "icon-contact-group_16",
@@ -61,8 +77,7 @@
   },
   "Quote": {
     "name": "icon-file-spreadsheet_16",
-    "color": "cobalt",
-    "showcase": "firstName"
+    "color": "cobalt"
   },
   "NPS.*": {
     "name": "icon-analysis_16",
@@ -82,8 +97,7 @@
   },
   "Trigger Sent to Server": {
     "name": "icon-event_16",
-    "color": "violet",
-    "showcase": "user"
+    "color": "violet"
   },
   "Survey Response Collected": {
     "name": "icon-report_16",

@@ -327,8 +327,12 @@ md-toggle-switch {
         width: 240px
       }
       .filter-dropdown::part(dropdown-header) {
+        text-transform: capitalize;
         border-radius: 25px;
         background-color: var(--md-primary-one-bg-color, #ffffff);
+      }
+      .filter-dropdown::part(label) {
+        text-transform: capitalize;
       }
     }
   }

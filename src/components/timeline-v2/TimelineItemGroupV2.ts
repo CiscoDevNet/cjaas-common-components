@@ -11,7 +11,7 @@ import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
 import { TimelineV2 } from "./TimelineV2";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import * as iconData from "@/assets/defaultIconsV2.json";
+import * as iconData from "@/assets/defaultIcons.json";
 import { formattedOrigin } from "./utils";
 
 export namespace TimelineItemGroupV2 {

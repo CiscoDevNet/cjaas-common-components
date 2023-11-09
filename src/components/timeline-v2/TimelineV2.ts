@@ -24,7 +24,7 @@ import "@momentum-ui/web-components/dist/comp/md-button-group";
 import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
 import "@momentum-ui/web-components/dist/comp/md-spinner";
 import "@momentum-ui/web-components/dist/comp/md-chip";
-import iconData from "@/assets/defaultIconsV2.json";
+import iconData from "@/assets/defaultIcons.json";
 import _ from "lodash";
 import { ifDefined } from "lit-html/directives/if-defined";
 
@@ -41,13 +41,13 @@ export namespace TimelineV2 {
     Task = "task",
   }
 
-  export enum ChannelTypeOptions {
-    "AllChannels" = "All Channels",
-    "Voice" = "Voice",
-    "Chat" = "Chat",
-    "Email" = "Email",
-    "Messenger" = "Messenger",
-  }
+  // export enum ChannelTypeOptions {
+  //   "AllChannels" = "All Channels",
+  //   "Voice" = "Voice",
+  //   "Chat" = "Chat",
+  //   "Email" = "Email",
+  //   "Messenger" = "Messenger",
+  // }
 
   export enum TimeRangeOption {
     "AllTime" = "All Time",
@@ -102,7 +102,7 @@ export namespace TimelineV2 {
     subTitle?: string;
     iconType?: string;
     channelTypeTag?: string;
-    string?: string;
+    filterTags?: string | Array<string>;
   }
 
   export interface RenderingDataObject {
@@ -112,6 +112,7 @@ export namespace TimelineV2 {
     channelTypeTag: string;
     eventSource: string;
     isActive: boolean;
+    filterTags: Array<string>;
   }
 
   export interface CustomerEvent {
@@ -144,6 +145,8 @@ export namespace TimelineV2 {
       showcase?: string;
     };
   }
+
+  export const DEFAULT_CHANNEL_OPTION = "All Channels";
 
   @customElementWithCheck("cjaas-timeline-v2")
   export class ELEMENT extends LitElement {
@@ -200,6 +203,11 @@ export namespace TimelineV2 {
      */
     @property({ type: Array, attribute: false }) newestEvents: Array<CustomerEvent> = [];
     /**
+     * @prop dynamicChannelTypeOptions
+     * An array of filter options that was dynamically created based on all existing events
+     */
+    @property({ type: Array, attribute: false }) dynamicChannelTypeOptions: Array<string> = [];
+    /**
      * @prop mostRecentEvent
      * A event payload representing the most recent event
      */
@@ -219,12 +227,6 @@ export namespace TimelineV2 {
      * Dataset of all unique channel & task Ids
      */
     @property({ type: Array, attribute: false }) channelTaskTypes: Array<string> = [];
-    /**
-     * @prop activeTypes
-     * Dataset tracking all visible event types (in event filter)
-     */
-    @property({ type: Array, attribute: false }) selectedChannelType: ChannelTypeOptions =
-      ChannelTypeOptions.AllChannels;
     /**
      * @prop activeDates
      * Dataset tracking all visible dates (in date filter)
@@ -258,15 +260,17 @@ export namespace TimelineV2 {
      */
     @internalProperty() expandDetails = false;
 
+    @internalProperty() selectedChannelType = DEFAULT_CHANNEL_OPTION;
+
     daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-    channelTypeOptions = [
-      ChannelTypeOptions.AllChannels,
-      ChannelTypeOptions.Voice,
-      ChannelTypeOptions.Chat,
-      ChannelTypeOptions.Email,
-      ChannelTypeOptions.Messenger,
-    ];
+    // channelTypeOptions = [
+    //   ChannelTypeOptions.AllChannels,
+    //   ChannelTypeOptions.Voice,
+    //   ChannelTypeOptions.Chat,
+    //   ChannelTypeOptions.Email,
+    //   ChannelTypeOptions.Messenger,
+    // ];
 
     timeRangeOptions = [
       TimeRangeOption.AllTime,
@@ -314,23 +318,6 @@ export namespace TimelineV2 {
       // const set = new Set();
       // return events.filter((event: CustomerEvent) => !set.has(event?.data?.taskId) && set.add(event?.data?.taskId));
     }
-
-    // /**
-    //  * @method createSets
-    //  * @returns void
-    //  * Sets `filterOptions` property to a unique set of filter options for filter feature.
-    //  * Sets `eventTypes` property to a unique set of event types from current historicEvents.
-    //  */
-    // createSets(events: Array<CustomerEvent> | null) {
-    //   const uniqueFilterTypes: Set<string> = new Set(); // ex. chat, telephony, email, agent connected, etc
-
-    //   (events || []).forEach(event => {
-    //     event?.renderingData?.filterTypes?.forEach((eventFilterType: string) => {
-    //       uniqueFilterTypes.add(eventFilterType);
-    //     });
-    //   });
-    //   this.filterTypes = Array.from(uniqueFilterTypes);
-    // }
 
     getClusterId(text: string, key: number) {
       const myText = text || uuidv4();
@@ -536,13 +523,27 @@ export namespace TimelineV2 {
       `;
     }
 
+    // filterByType(eventList: CustomerEvent[] | undefined | null) {
+    //   if (this.selectedChannelType !== ChannelTypeOptions.AllChannels && this.selectedChannelType) {
+    //     return (
+    //       eventList?.filter(
+    //         (event: CustomerEvent) =>
+    //           event?.renderingData?.channelTypeTag &&
+    //           this.selectedChannelType.toLowerCase().includes(event?.renderingData?.channelTypeTag?.toLowerCase())
+    //       ) || null
+    //     );
+    //   } else {
+    //     return eventList;
+    //   }
+    // }
+
     filterByType(eventList: CustomerEvent[] | undefined | null) {
-      if (this.selectedChannelType !== ChannelTypeOptions.AllChannels && this.selectedChannelType) {
+      if (this.selectedChannelType !== DEFAULT_CHANNEL_OPTION && this.selectedChannelType) {
         return (
           eventList?.filter(
             (event: CustomerEvent) =>
-              event?.renderingData?.channelTypeTag &&
-              this.selectedChannelType.toLowerCase().includes(event?.renderingData?.channelTypeTag?.toLowerCase())
+              event?.renderingData?.filterTags?.length &&
+              event.renderingData.filterTags.includes(this.selectedChannelType.toLowerCase())
           ) || null
         );
       } else {
@@ -671,8 +672,8 @@ export namespace TimelineV2 {
               <p class="filter-label">Channel Types</p>
               <md-dropdown
                 class="filter-dropdown channels-dropdown"
-                .defaultOption=${this.channelTypeOptions[0]}
-                .options=${this.channelTypeOptions}
+                .defaultOption=${this.selectedChannelType}
+                .options=${this.dynamicChannelTypeOptions}
                 @dropdown-selected=${(event: CustomEvent) => this.handleChannelTypeSelection(event)}
               ></md-dropdown>
             </div>
