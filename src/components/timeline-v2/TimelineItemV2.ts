@@ -282,13 +282,13 @@ export namespace TimelineItemV2 {
     }
 
     expandEventDetails() {
-      this.areDetailsExpanded = true;
+      this.areDetailsExpanded = !this.areDetailsExpanded;
     }
 
     renderExpandingArrow() {
       return html`
         <md-button class="item-expand-button" hasRemoveStyle @click=${this.expandEventDetails}>
-          <md-icon name="arrow-right_16"></md-icon>
+          <md-icon name=${this.areDetailsExpanded ? "arrow-up_16" : "arrow-down_16"}></md-icon>
         </md-button>
       `;
     }
@@ -312,33 +312,40 @@ export namespace TimelineItemV2 {
       }
     }
 
-    renderDetailsModal() {
+    renderExpandedDetails = () => {
+      if (this.data === nothing) return nothing;
       return html`
-        <md-modal
-          htmlId="modal-1"
-          ?show=${this.areDetailsExpanded}
-          size="dialog"
-          hideFooter
-          hideHeader
-          showCloseButton
-          backdropClickExit
-          @close-modal=${() => {
-            this.areDetailsExpanded = false;
-            this.isHovered = false;
-          }}
-        >
-          <div slot="header">Activity Details</div>
-          <div class="details grid">
-            ${this.createTableRecursive(this.data)}
-          </div>
-        </md-modal>
+        <div class="details grid">
+          ${this.createTableRecursive(this.data)}
+        </div>
       `;
-    }
+    };
+
+    // renderDetailsModal() {
+    //   return html`
+    //     <md-modal
+    //       htmlId="modal-1"
+    //       ?show=${this.areDetailsExpanded}
+    //       size="dialog"
+    //       hideFooter
+    //       hideHeader
+    //       showCloseButton
+    //       backdropClickExit
+    //       @close-modal=${() => {
+    //         this.areDetailsExpanded = false;
+    //         this.isHovered = false;
+    //       }}
+    //     >
+    //       <div slot="header">Activity Details</div>
+    //       <div class="details grid">
+    //         ${this.createTableRecursive(this.data)}
+    //       </div>
+    //     </md-modal>
+    //   `;
+    // }
 
     render() {
-      // const iconName = this.getIconName(this.iconType);
       const showDetailsArrow = this.isHovered && !this.isWxccEvent && this.hasData;
-
       const iconData = this.getIconData(this.iconType);
 
       if (this.emptyMostRecent) {
@@ -351,6 +358,7 @@ export namespace TimelineItemV2 {
               </div>
               <span class="no-data-text">No Data</span>
             </div>
+            ${this.areDetailsExpanded ? this.renderExpandedDetails() : nothing}
           </div>
         `;
       } else {
@@ -380,13 +388,15 @@ export namespace TimelineItemV2 {
                 ${this.renderExpandingArrow()}
               </div>
             </div>
-            ${this.renderDetailsModal()}
+            ${this.areDetailsExpanded ? this.renderExpandedDetails() : nothing}
           </div>
         `;
       }
     }
   }
 }
+
+// line 391:  ${this.renderDetailsModal()}
 
 declare global {
   interface HTMLElementTagNameMap {

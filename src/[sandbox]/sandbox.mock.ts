@@ -1487,6 +1487,38 @@ export const testingHistoricalEventsV2: Timeline.CustomerEvent[] = [
 
 export const latestFormattedEventsFromWidget = [
   {
+    id: "df1fe012-c3c7-4c5a-af93-cdbd7e158b19",
+    specversion: "1.0",
+    type: "task:ended",
+    source: "/com/cisco/wxcc/b80ea9b5-b8c9-4278-9d36-c90059777476",
+    time: "2023-08-02T22:01:43.721Z",
+    identity: "egiere@cisco.com",
+    identitytype: "email",
+    previousidentity: null,
+    datacontenttype: "application/json",
+    data: {
+      customerSentiment: "neutral",
+      origin: "egiere@cisco.com",
+      destination: "wxcc.ccp.switch@gmail.com",
+      createdTime: 1691013703327,
+      channelType: "email",
+      taskId: "1d17ff05-315f-11ee-90ff-cde67654503f",
+      direction: "INBOUND",
+      queueId: "7a682870-472b-4a0f-b3e9-01fadf4efcf3",
+      reason: "Agent Ended",
+      terminatingParty: "Agent",
+      website: "www.google.com",
+      summary:
+        "The customer visited the [Google Search Engine](http://www.google.com) and had a hard time completing his task [Help](www.google.com).",
+    },
+    renderingData: {
+      title: "inbound email",
+      subTitle: "Queue ID: 7a682870-472b-4a0f-b3e9-01fadf4efcf3",
+      iconType: "email",
+      channelTypeTag: "email",
+    },
+  },
+  {
     id: "a5b3eae5-f59a-4b4d-bfbb-8f06b32d91f7_6446cf87ef0fe32cf02d39ed_4083866332",
     specversion: "1.0",
     type: "empath:data",

@@ -10,6 +10,7 @@
   border-radius: 10px;
   padding: 0.75rem 1rem;
   font-family: $brand-font-regular;
+  margin: 0.5rem 0;
 
   &.has-data {
     &:not(.is-wxcc-event) {
@@ -176,9 +177,11 @@
   column-gap: 2rem;
   margin: 1rem;
   font-size: 12px;
-
-  margin: 0;
   width: calc(100% - 24px);
+
+  column-gap: 3rem;
+  margin: 0.75rem 0.5rem 0.5rem 1rem;
+  grid-template-columns: auto 1fr;
 
   .cell {
     vertical-align: top;
