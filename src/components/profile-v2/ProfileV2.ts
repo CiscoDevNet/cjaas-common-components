@@ -391,23 +391,48 @@ export namespace ProfileViewV2 {
       }
     }
 
-    render() {
+    renderLongColumnReverseList() {
       const profileError = this.errorMessage ? "profile-error" : "";
-      const columns = this.getProfileDataInProgress || this.errorMessage ? "columns" : "";
-      return html`
-        <div class="profile-section-container">
-          <div class=${`container profile-section ${profileError} ${columns}`} part="profile" title="Customer Profile">
+      if (profileError || this.getProfileDataInProgress) {
+        return html`
+          ${this.renderProfileContent()}
+          <div class="top-header-row">
+            <h3 class="profile-header">Customer Information</h3>
+            ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}
+          </div>
+        `;
+      } else {
+        return html`
+          <div class="column-reverse-focus">
             ${this.renderProfileContent()}
             <div class="top-header-row">
               <h3 class="profile-header">Customer Information</h3>
               ${this.getProfileDataInProgress ? nothing : this.renderSaveCancelOptions()}
             </div>
           </div>
+        `;
+      }
+    }
+
+    render() {
+      const profileError = this.errorMessage ? "profile-error" : "";
+      const columns = this.getProfileDataInProgress || this.errorMessage ? "columns" : "";
+      const showVertically = this.profileDataPointCount > 3;
+      return html`
+        <div class="profile-section-container">
+          <div
+            class=${`container profile-section ${showVertically ? "show-vertically" : ""} ${profileError} ${columns}`}
+            part="profile"
+            title="Customer Profile"
+          >
+            ${this.renderLongColumnReverseList()}
+          </div>
         </div>
       `;
     }
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     "cjaas-profile-v2": ProfileViewV2.ELEMENT;
