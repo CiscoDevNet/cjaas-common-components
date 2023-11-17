@@ -135,6 +135,16 @@
   }
 }
 
+.timeline-item.most-recent .body .right-section {
+  .first-row {
+    gap: 0.4rem;
+  }
+
+  .second-row {
+    margin-top: 3px;
+  }
+}
+
 .timeline-item.empty-most-recent {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

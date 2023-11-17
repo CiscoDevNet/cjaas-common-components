@@ -148,7 +148,13 @@ export namespace TimelineItemV2 {
 
       if (this.isMostRecent) {
         return html`
-          <md-icon class="event-icon" .name=${iconData?.name} size=${14}></md-icon>
+          <md-badge class="badge" .circle=${true} width="12px" height="12px" .color=${color}>
+            ${name
+              ? html`
+                  <md-icon class="badge-icon" .name=${name} size=${12}></md-icon>
+                `
+              : nothing}
+          </md-badge>
         `;
       } else if (iconData?.color) {
         return html`
