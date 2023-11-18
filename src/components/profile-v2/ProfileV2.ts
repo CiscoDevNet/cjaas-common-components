@@ -51,6 +51,11 @@ export namespace ProfileViewV2 {
      */
     @property({ type: String }) customer = "";
     /**
+     * @prop aliases
+     * A list of aliases
+     */
+    @property({ attribute: false }) aliases: Array<string> | null = null;
+    /**
      * @prop profileDataPoints
      * The profile Data Points provided from the template fetch, populated in the table view
      */
@@ -77,6 +82,7 @@ export namespace ProfileViewV2 {
 
     @internalProperty() profileDataPointCount = 0;
     @internalProperty() editingNames = false;
+    @internalProperty() openAliasView = false;
 
     @internalProperty() firstNameInputValue = "";
     @internalProperty() lastNameInputValue = "";
@@ -187,12 +193,64 @@ export namespace ProfileViewV2 {
       this.editingNames = true;
     }
 
+    viewAliases() {
+      this.openAliasView = !this.openAliasView;
+    }
+
     handleProfileTryAgain() {
       this.dispatchEvent(new CustomEvent("profile-error-try-again", {}));
     }
 
     handleNameTryAgain() {
       this.dispatchEvent(new CustomEvent("name-error-try-again", {}));
+    }
+
+    renderAliasList() {
+      if (this.aliases) {
+        return html`
+          ${repeat(
+            this.aliases,
+            (alias: string) => alias,
+            alias =>
+              html`
+                <p class="listed-alias">${alias}</p>
+              `
+          )}
+        `;
+      }
+    }
+
+    renderAliasModal() {
+      return html`
+        <md-modal
+          htmlId="modal-2"
+          ?show=${this.openAliasView}
+          size="dialog"
+          hideFooter
+          hideHeader
+          showCloseButton
+          backdropClickExit
+          @close-modal=${() => {
+            this.openAliasView = false;
+          }}
+        >
+          <div slot="header">Aliases</div>
+          ${this.renderAliasList()}
+        </md-modal>
+      `;
+    }
+
+    renderAliasButton() {
+      return html`
+        <div class="view-alias-component">
+          <md-tooltip message="View aliases" placement="top">
+            <md-button circle @click=${this.viewAliases} class="view-aliases-button"
+              ><md-icon slot="icon" name="participant-list_16"></md-icon
+            ></md-button>
+          </md-tooltip>
+        </div>
+        ${this.renderAliasModal()}
+      `;
     }
 
     renderFirstLastNameSection() {
@@ -243,6 +301,7 @@ export namespace ProfileViewV2 {
       } else {
         return html`
           <div class="name-section">
+            ${this.aliases ? this.renderAliasButton() : nothing}
             <span class="static-name">
               ${this.firstName} ${this.lastName}
             </span>

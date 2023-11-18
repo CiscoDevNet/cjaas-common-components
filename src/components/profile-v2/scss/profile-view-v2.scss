@@ -306,3 +306,38 @@
     padding-top: 2px;
   }
 }
+
+.view-alias-component {
+  margin-right: 0.25rem;
+  display: inline;
+}
+
+md-modal::part(modal-backdrop) {
+  background: unset;
+  transition: unset;
+}
+
+md-modal::part(modal-container) {
+  width: 18rem;
+  max-height: calc(100vh - 100px);
+  bottom: 1rem;
+  right: 1rem;
+  margin: unset;
+  left: unset;
+  top: unset;
+  max-height: unset;
+  right: unset;
+  top: 6.75rem;
+  left: 1rem;
+}
+
+md-modal::part(modal-body) {
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.listed-alias {
+  margin: 0px;
+  margin-bottom: 0.5rem;
+  font-size: 12px;
+}

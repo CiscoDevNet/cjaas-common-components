@@ -17,6 +17,7 @@ export const profileV2Template = html`
   <h4>UX Refresh Profile Section Default (2 data points)</h4>
   <cjaas-profile-v2
     .profileDataPoints=${profileDataPointsMocked}
+    .aliases=${["egiere@cisco.com", "+1 (630) 303-0847"]}
     ?names-loading=${false}
     first-name="Michael"
     last-name="Littlefoot"
