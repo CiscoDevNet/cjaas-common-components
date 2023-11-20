@@ -93,7 +93,7 @@ const staticIcons = [
 // }
 
 // uses known event types and also generates random pairs for unknown events
-// only used by the old TimelineItem component
+// now used again by timelineItemV2
 export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomizations) {
   let result: any;
   const parsedIconMap = JSON.parse(JSON.stringify(iconMap))?.default || JSON.parse(JSON.stringify(iconMap));
@@ -108,8 +108,8 @@ export function getIconData(eventName: string, iconMap: Timeline.TimelineCustomi
 
   if (!result && !TEMP_ICON_MAP[eventName]) {
     result = {
-      name: "icon-activities_16",
-      color: "orange",
+      name: "icon-meetings_16",
+      color: "grey",
     };
 
     TEMP_ICON_MAP[eventName] = result;

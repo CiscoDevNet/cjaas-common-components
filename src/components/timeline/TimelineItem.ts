@@ -236,8 +236,8 @@ export namespace TimelineItem {
           iconKeyword = this.data[this.badgeKeyword] || isAgent || "";
         }
         iconData = getIconData(iconKeyword, this.eventIconTemplate!) || {
-          name: "icon-activities_16",
-          color: "orange", // TODO CHANGE
+          name: "icon-meetings_16",
+          color: "grey", // TODO CHANGE
         };
       }
 
