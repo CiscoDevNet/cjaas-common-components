@@ -146,7 +146,7 @@ export namespace TimelineV2 {
     };
   }
 
-  export const DEFAULT_CHANNEL_OPTION = "All Channels";
+  export const DEFAULT_CHANNEL_OPTION = "all channels";
 
   @customElementWithCheck("cjaas-timeline-v2")
   export class ELEMENT extends LitElement {
@@ -208,6 +208,11 @@ export namespace TimelineV2 {
      */
     @property({ type: Array, attribute: false }) dynamicChannelTypeOptions: Array<string> = [];
     /**
+     * @prop defaultFilterOption
+     * The default selected filter type
+     */
+    @property({ type: String, attribute: "default-filter-option" }) defaultFilterOption = DEFAULT_CHANNEL_OPTION;
+    /**
      * @prop mostRecentEvent
      * A event payload representing the most recent event
      */
@@ -260,7 +265,7 @@ export namespace TimelineV2 {
      */
     @internalProperty() expandDetails = false;
 
-    @internalProperty() selectedChannelType = DEFAULT_CHANNEL_OPTION;
+    @internalProperty() selectedChannelType = "";
 
     daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -299,6 +304,21 @@ export namespace TimelineV2 {
       super.updated(changedProperties);
       if (changedProperties.has("newestEvents") && this.liveStream) {
         this.consolidateEvents();
+      }
+
+      if (changedProperties.has("dynamicChannelTypeOptions")) {
+        const hasDefaultOption = this.dynamicChannelTypeOptions.includes(this.defaultFilterOption.toLowerCase());
+        console.log("here", this.dynamicChannelTypeOptions, this.defaultFilterOption.toLowerCase());
+        if (!hasDefaultOption) {
+          console.error(
+            `[JDS WIDGET]: Your default filter option (${this.defaultFilterOption}) doesn't exist in the dynamic filter options.`
+          );
+          this.selectedChannelType = DEFAULT_CHANNEL_OPTION;
+        } else {
+          this.selectedChannelType = this.defaultFilterOption;
+        }
+        this.requestUpdate();
+        console.log("end of change filter (default/selected)", this.defaultFilterOption, this.selectedChannelType);
       }
     }
 
@@ -603,6 +623,7 @@ export namespace TimelineV2 {
     handleChannelTypeSelection(event: CustomEvent) {
       const { option } = event?.detail;
       this.selectedChannelType = option;
+      console.log("selectedChannelType handle select", this.selectedChannelType);
     }
 
     handleTimeRangeSelection(event: CustomEvent) {
@@ -619,6 +640,7 @@ export namespace TimelineV2 {
 
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
 
+      console.log("render timelinev2 selectedChannelType", this.selectedChannelType);
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
@@ -672,7 +694,7 @@ export namespace TimelineV2 {
               <p class="filter-label">Channel Types</p>
               <md-dropdown
                 class="filter-dropdown channels-dropdown"
-                .defaultOption=${this.selectedChannelType}
+                .defaultOption=${this.selectedChannelType || DEFAULT_CHANNEL_OPTION}
                 .options=${this.dynamicChannelTypeOptions}
                 @dropdown-selected=${(event: CustomEvent) => this.handleChannelTypeSelection(event)}
               ></md-dropdown>
