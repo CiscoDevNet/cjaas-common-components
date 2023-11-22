@@ -9,7 +9,7 @@
 import { LitElement, html, property, internalProperty } from "lit-element";
 import styles from "./scss/module.scss";
 import { customElementWithCheck } from "@/mixins";
-import "@momentum-ui/web-components/dist/comp/md-combobox";
+// import "@momentum-ui/web-components/dist/comp/md-combobox";
 import { classMap } from "lit-html/directives/class-map";
 import { Key } from "@/constants";
 

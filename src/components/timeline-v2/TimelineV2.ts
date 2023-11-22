@@ -265,8 +265,6 @@ export namespace TimelineV2 {
      */
     @internalProperty() expandDetails = false;
 
-    @internalProperty() selectedChannelType = "";
-
     daysOfTheWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
     // channelTypeOptions = [
@@ -306,19 +304,20 @@ export namespace TimelineV2 {
         this.consolidateEvents();
       }
 
-      if (changedProperties.has("dynamicChannelTypeOptions")) {
+      if (changedProperties.has("dynamicChannelTypeOptions") || changedProperties.has("defaultFilterOption")) {
         const hasDefaultOption = this.dynamicChannelTypeOptions.includes(this.defaultFilterOption.toLowerCase());
-        console.log("here", this.dynamicChannelTypeOptions, this.defaultFilterOption.toLowerCase());
         if (!hasDefaultOption) {
           console.error(
             `[JDS WIDGET]: Your default filter option (${this.defaultFilterOption}) doesn't exist in the dynamic filter options.`
           );
-          this.selectedChannelType = DEFAULT_CHANNEL_OPTION;
-        } else {
-          this.selectedChannelType = this.defaultFilterOption;
+          this.defaultFilterOption = DEFAULT_CHANNEL_OPTION;
         }
-        this.requestUpdate();
-        console.log("end of change filter (default/selected)", this.defaultFilterOption, this.selectedChannelType);
+        console.log(
+          "end of change filter (default/selected)",
+          hasDefaultOption,
+          this.defaultFilterOption,
+          this.defaultFilterOption
+        );
       }
     }
 
@@ -544,12 +543,12 @@ export namespace TimelineV2 {
     }
 
     // filterByType(eventList: CustomerEvent[] | undefined | null) {
-    //   if (this.selectedChannelType !== ChannelTypeOptions.AllChannels && this.selectedChannelType) {
+    //   if (this.defaultFilterOption !== ChannelTypeOptions.AllChannels && this.defaultFilterOption) {
     //     return (
     //       eventList?.filter(
     //         (event: CustomerEvent) =>
     //           event?.renderingData?.channelTypeTag &&
-    //           this.selectedChannelType.toLowerCase().includes(event?.renderingData?.channelTypeTag?.toLowerCase())
+    //           this.defaultFilterOption.toLowerCase().includes(event?.renderingData?.channelTypeTag?.toLowerCase())
     //       ) || null
     //     );
     //   } else {
@@ -558,12 +557,12 @@ export namespace TimelineV2 {
     // }
 
     filterByType(eventList: CustomerEvent[] | undefined | null) {
-      if (this.selectedChannelType !== DEFAULT_CHANNEL_OPTION && this.selectedChannelType) {
+      if (this.defaultFilterOption !== DEFAULT_CHANNEL_OPTION && this.defaultFilterOption) {
         return (
           eventList?.filter(
             (event: CustomerEvent) =>
               event?.renderingData?.filterTags?.length &&
-              event.renderingData.filterTags.includes(this.selectedChannelType.toLowerCase())
+              event.renderingData.filterTags.includes(this.defaultFilterOption.toLowerCase())
           ) || null
         );
       } else {
@@ -622,8 +621,7 @@ export namespace TimelineV2 {
 
     handleChannelTypeSelection(event: CustomEvent) {
       const { option } = event?.detail;
-      this.selectedChannelType = option;
-      console.log("selectedChannelType handle select", this.selectedChannelType);
+      this.defaultFilterOption = option;
     }
 
     handleTimeRangeSelection(event: CustomEvent) {
@@ -640,7 +638,6 @@ export namespace TimelineV2 {
 
       const groupedByDate = groupBy(limitedList, (item: CustomerEvent) => getRelativeDate(item.time).toISODate());
 
-      console.log("render timelinev2 selectedChannelType", this.selectedChannelType);
       const dateGroupArray = Object.keys(groupedByDate).map((date: string) => {
         const obj = { date, events: groupedByDate[date] };
         return obj;
@@ -694,7 +691,7 @@ export namespace TimelineV2 {
               <p class="filter-label">Channel Types</p>
               <md-dropdown
                 class="filter-dropdown channels-dropdown"
-                .defaultOption=${this.selectedChannelType || DEFAULT_CHANNEL_OPTION}
+                .defaultOption=${this.defaultFilterOption}
                 .options=${this.dynamicChannelTypeOptions}
                 @dropdown-selected=${(event: CustomEvent) => this.handleChannelTypeSelection(event)}
               ></md-dropdown>

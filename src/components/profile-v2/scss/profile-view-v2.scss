@@ -329,6 +329,7 @@ md-modal::part(modal-container) {
   right: unset;
   top: 6.75rem;
   left: 1rem;
+  justify-content: unset;
 }
 
 md-modal::part(modal-body) {
