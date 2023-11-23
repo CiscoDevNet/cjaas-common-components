@@ -134,6 +134,10 @@
   .event-status-badge {
     display: none;
   }
+
+  .grid {
+    margin-left: 8rem;
+  }
 }
 
 .timeline-item.most-recent .body .right-section {
@@ -182,7 +186,7 @@
   column-gap: 3rem;
   margin: 1rem 0.5rem 0.5rem 1rem;
   grid-template-columns: auto 1fr;
-  margin-left: 9.125rem;
+  margin-left: 9rem;
 
   .cell {
     vertical-align: top;
