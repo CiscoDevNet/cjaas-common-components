@@ -18,12 +18,6 @@ import "@/components/timeline/TimelineItem";
 import "@/components/timeline/TimelineItemGroup";
 import "@/components/event-toggles/EventToggles";
 import styles from "./scss/module.scss";
-import "@momentum-ui/web-components/dist/comp/md-badge";
-import "@momentum-ui/web-components/dist/comp/md-button";
-import "@momentum-ui/web-components/dist/comp/md-button-group";
-import "@momentum-ui/web-components/dist/comp/md-toggle-switch";
-import "@momentum-ui/web-components/dist/comp/md-spinner";
-import "@momentum-ui/web-components/dist/comp/md-chip";
 import iconData from "@/assets/defaultIcons.json";
 
 export namespace Timeline {
