@@ -3,10 +3,8 @@ import { internalProperty, LitElement, property, PropertyValues, query } from "l
 import { html, nothing } from "lit-html";
 import { ParseError, parsePhoneNumberWithError } from "libphonenumber-js";
 import * as linkify from "linkifyjs";
-
-import "@momentum-ui/web-components/dist/comp/md-progress-bar";
 import styles from "./scss/identity.scss";
-import { Input } from "@momentum-ui/web-components";
+import { InputMessage } from "@/types/cjaas";
 
 export interface IdentityData {
   id: string;
@@ -62,10 +60,10 @@ export namespace Identity {
     @internalProperty() isAliasValid = false;
 
     @internalProperty() aliasValidationErrorMessage = "";
-    @internalProperty() inputMessageArray: Array<Input.Message> = [];
+    @internalProperty() inputMessageArray: Array<InputMessage> = [];
     @internalProperty() invalidParsedPhoneErrorMessage = "";
 
-    @query("#alias-input") aliasInput!: Input.ELEMENT;
+    @query("#alias-input") aliasInput!: any;
 
     invalidEmailMessage = "Invalid email address";
     invalidPhoneMessage = "Invalid phone number";
@@ -91,7 +89,7 @@ export namespace Identity {
 
       if (changedProperties.has("aliasValidationErrorMessage")) {
         if (this.aliasValidationErrorMessage) {
-          const errorMessage: Input.Message = {
+          const errorMessage: InputMessage = {
             type: "error",
             message: this.aliasValidationErrorMessage,
           };

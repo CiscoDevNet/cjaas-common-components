@@ -41,3 +41,12 @@ export interface Profile {
     journeyEvents?: string;
   }>;
 }
+
+export type MessageType = "error" | "success" | "warning" | "priority";
+
+export type InputMessage = {
+  type: MessageType;
+  message: string;
+  id?: string;
+  ariaLive?: "off" | "assertive" | "polite";
+};
